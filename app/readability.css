@@ -1,0 +1,59 @@
+/* Readability pass: preserve the compact layout without using sub-10px body copy. */
+.eyebrow,
+.card-heading > span,
+.card-heading > a,
+.match-meta,
+.match-meta small,
+.caption,
+.player-card em,
+.player-card > p,
+.match-row time,
+.match-side small,
+.summary-list,
+.route-summary,
+.map-legend span,
+.analysis-kpis span,
+.analysis-kpis small,
+.comparison-table > div,
+.best-note p {
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+th,
+.squad-table .squad-head,
+.comparison-table .comparison-head,
+.best-table-head,
+.best-roster-head > span,
+.criteria-help aside small {
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.squad-table > div,
+.best-roster > button > strong,
+.best-roster > button > span,
+.best-player-detail dd {
+  font-size: 11px;
+}
+
+.squad-table strong small,
+.best-roster > button > strong small,
+.best-player-detail dt,
+.best-player-detail strong small,
+.best-player-detail > b small {
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.best-card > b { font-size: 12px; }
+.best-card > small { font-size: 9px; }
+.best-card > em { font-size: 9px; }
+.criteria-help aside p { font-size: 11px; }
+.toolbar input,
+.toolbar span,
+.compact-matches > a { font-size: 12px; }
+
+@media (max-width: 620px) {
+  .best-card > b { font-size: 10px; }
+}
