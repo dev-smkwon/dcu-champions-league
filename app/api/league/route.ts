@@ -108,7 +108,10 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
           ? rating * .6 + goalsPerGame + assistsPerGame + goalConversion * .55 + effectiveShotRate * .25 + defensiveActionsPerGame * .12 + aerialsPerGame * .05 + passAccuracy * .18
           : rating * .55 + goalsPerGame * 1.5 + assistsPerGame + goalConversion * 1.2 + effectiveShotRate * .35 + defensiveActionsPerGame * .07 + aerialsPerGame * .05 + passAccuracy * .15;
     const score = rawScore * reliability;
-    return { ...x, rating: Math.round(rating * 100) / 100, goalsPerGame, assistsPerGame, goalContributionsPerGame: (x.goals + x.assists) / x.appearances, goalConversion, effectiveShotRate, defensiveActionsPerGame, passAccuracy, aerialSuccessRate: x.aerials / Math.max(1, x.aerialTry), dribbleSuccessRate: x.dribbleSuccess / Math.max(1, x.dribbleTry), score };
+    const dribbleSuccessRate = x.dribbleSuccess / Math.max(1, x.dribbleTry);
+    const dribbleSuccessPerGame = x.dribbleSuccess / x.appearances;
+    const takeOnImpact = dribbleSuccessPerGame * .55 + dribbleSuccessRate * 3 + goalsPerGame * 1.5;
+    return { ...x, rating: Math.round(rating * 100) / 100, goalsPerGame, assistsPerGame, goalContributionsPerGame: (x.goals + x.assists) / x.appearances, goalConversion, effectiveShotRate, defensiveActionsPerGame, passAccuracy, aerialSuccessRate: x.aerials / Math.max(1, x.aerialTry), dribbleSuccessRate, dribbleSuccessPerGame, takeOnImpact, score };
   });
   const take = (test: (position: number) => boolean, count: number) => {
     return all.filter((x) => x.appearances >= minimumAppearances && test(x.position)).sort((a, b) => b.score - a.score || b.rating - a.rating).slice(0, count);
@@ -156,7 +159,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
   const top = (key: string, minimum = 1, descending = true) => players.filter((x) => x.appearances >= minimum).sort((a, b) => (Number(b[key]) - Number(a[key])) * (descending ? 1 : -1)).slice(0, 10);
   const perGame = (key: string) => players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: Number(x[key] || 0) / x.appearances })).sort((a, b) => b.perGameValue - a.perGameValue).slice(0, 10);
   const boards = [
-    { id: "dribble-rate", emoji: "🪩", title: "벗기기 선수", description: "50회 이상 시도한 카드의 돌파 성공률", value: "dribbleSuccessRate", percent: true, rows: players.filter((x) => x.dribbleTry >= 50).sort((a, b) => b.dribbleSuccessRate - a.dribbleSuccessRate).slice(0, 10) },
+    { id: "dribble-rate", emoji: "🪩", title: "벗기기 선수", description: "5경기+ · 돌파 빈도·성공률·득점력을 합친 벗기기 지수", value: "takeOnImpact", decimal: true, rows: players.filter((x) => x.appearances >= 5 && x.dribbleTry >= 30).sort((a, b) => b.takeOnImpact - a.takeOnImpact || b.dribbleSuccess - a.dribbleSuccess).slice(0, 10) },
     { id: "goals", emoji: "👑", title: "득점왕", description: "가장 많은 골을 넣은 카드", value: "goals", rows: top("goals"), perGameRows: perGame("goals") },
     { id: "assists", emoji: "🎁", title: "도움왕", description: "동료를 가장 많이 빛낸 카드", value: "assists", rows: top("assists"), perGameRows: perGame("assists") },
     { id: "conversion", emoji: "🎯", title: "원샷 원킬", description: "10회 이상 슈팅한 카드의 골 전환율", value: "goalConversion", percent: true, rows: players.filter((x) => x.shots >= 10).sort((a, b) => b.goalConversion - a.goalConversion).slice(0, 10) },
