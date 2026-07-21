@@ -140,13 +140,15 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     }
   }
   const leader = (source: Map<string, any>, category: string) => [...source.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => value).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts)[0] || null;
-  const shotAwards = [...Object.entries(shotLabels).map(([type, meta]) => ({ ...meta, user: leader(userShots, type), player: leader(playerShots, type) })), { title: "중거리 포병", emoji: "🚀", user: leader(userShots, "outside"), player: leader(playerShots, "outside") }];
+  const award = (category: string, title: string, emoji: string) => { const user = leader(userShots, category); const player = [...playerShots.entries()].filter(([key, value]) => key.startsWith(`${category}|`) && value.owner === user?.name).map(([, value]) => value).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts)[0] || null; return { title, emoji, user, player }; };
+  const shotAwards = [...Object.entries(shotLabels).map(([type, meta]) => award(type, meta.title, meta.emoji)), award("outside", "중거리 포병", "🚀")];
   const keepers = [...goalkeepers.values()].map((x) => ({ ...x, concededPerGame: x.conceded / x.appearances, rating: x.ratingTotal / x.appearances })).filter((x) => x.appearances >= 3);
   const users = [...discipline.values()];
   const investmentPlayers = players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, gradeEfficiency: x.score / Math.max(1, x.grade) }));
   const top = (key: string, minimum = 1, descending = true) => players.filter((x) => x.appearances >= minimum).sort((a, b) => (Number(b[key]) - Number(a[key])) * (descending ? 1 : -1)).slice(0, 10);
   const perGame = (key: string) => players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: Number(x[key] || 0) / x.appearances })).sort((a, b) => b.perGameValue - a.perGameValue).slice(0, 10);
   return { shotAwards, boards: [
+    { id: "dribble-rate", emoji: "🪩", title: "벗기기 선수", description: "50회 이상 시도한 카드의 돌파 성공률", value: "dribbleSuccessRate", percent: true, rows: players.filter((x) => x.dribbleTry >= 50).sort((a, b) => b.dribbleSuccessRate - a.dribbleSuccessRate).slice(0, 10) },
     { id: "goals", emoji: "👑", title: "득점왕", description: "가장 많은 골을 넣은 카드", value: "goals", rows: top("goals"), perGameRows: perGame("goals") },
     { id: "assists", emoji: "🎁", title: "도움왕", description: "동료를 가장 많이 빛낸 카드", value: "assists", rows: top("assists"), perGameRows: perGame("assists") },
     { id: "conversion", emoji: "🎯", title: "원샷 원킬", description: "10회 이상 슈팅한 카드의 골 전환율", value: "goalConversion", percent: true, rows: players.filter((x) => x.shots >= 10).sort((a, b) => b.goalConversion - a.goalConversion).slice(0, 10) },
@@ -165,7 +167,8 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     { id: "red", emoji: "🟥", title: "퇴장 본능", description: "레드카드를 가장 많이 받은 카드", value: "redCards", rows: top("redCards"), perGameRows: perGame("redCards") },
     { id: "fouls", emoji: "📣", title: "파울 장인", description: "유저별 반칙 횟수", value: "fouls", rows: [...users].sort((a, b) => b.fouls - a.fouls), perGameRows: users.filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: x.fouls / x.appearances })).sort((a, b) => b.perGameValue - a.perGameValue) },
     { id: "dribbles", emoji: "🕺", title: "돌파 대장", description: "드리블 성공 횟수", value: "dribbleSuccess", rows: top("dribbleSuccess"), perGameRows: perGame("dribbleSuccess") },
-    { id: "dribble-rate", emoji: "🪩", title: "벗기기 전문가", description: "50회 이상 시도한 카드의 돌파 성공률", value: "dribbleSuccessRate", percent: true, rows: players.filter((x) => x.dribbleTry >= 50).sort((a, b) => b.dribbleSuccessRate - a.dribbleSuccessRate).slice(0, 10) },
+    { id: "trigger-happy", emoji: "🔫", title: "난사왕", description: "슈팅을 가장 많이 시도한 카드", value: "shots", rows: top("shots"), perGameRows: perGame("shots") },
+    { id: "body-block", emoji: "🛡️", title: "몸으로 말해요", description: "블록으로 슈팅을 막아낸 카드", value: "blocks", rows: top("blocks"), perGameRows: perGame("blocks") },
   ] };
 }
 
