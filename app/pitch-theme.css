@@ -58,3 +58,45 @@
     width: 100%;
   }
 }
+
+.section-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.section-controls select {
+  min-width: 150px;
+  padding: 10px 34px 10px 13px;
+  border: 1px solid rgba(156, 184, 255, 0.34);
+  border-radius: 12px;
+  background: #0b1944;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  outline: none;
+}
+
+.section-controls p {
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .analysis-section .section-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .section-controls {
+    width: 100%;
+  }
+
+  .section-controls select {
+    width: 100%;
+  }
+
+  .section-controls p {
+    display: none;
+  }
+}
