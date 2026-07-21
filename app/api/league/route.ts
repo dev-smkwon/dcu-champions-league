@@ -120,7 +120,7 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
 function recordBook(matches: Match[], names: Map<number, string>, players: any[]) {
   const shotLabels: Record<number, { title: string; emoji: string }> = { 2: { title: "감아차기 예술가", emoji: "🌀" }, 3: { title: "공중의 지배자", emoji: "🛫" }, 5: { title: "발리 장인", emoji: "⚡" }, 6: { title: "프리킥 마법사", emoji: "🪄" }, 8: { title: "파워 슛 대장", emoji: "💥" } };
   const userShots = new Map<string, { name: string; goals: number; attempts: number }>();
-  const playerShots = new Map<string, { owner: string; name: string; goals: number; attempts: number }>();
+  const playerShots = new Map<string, { owner: string; spId: number; name: string; goals: number; attempts: number }>();
   const goalkeepers = new Map<string, { owner: string; spId: number; name: string; grade: number; appearances: number; conceded: number; ratingTotal: number }>();
   const discipline = new Map<string, { owner: string; name: string; kind: string; appearances: number; fouls: number; yellowCards: number; redCards: number }>();
   for (const match of matches) for (let sideIndex = 0; sideIndex < match.matchInfo.length; sideIndex++) {
@@ -131,7 +131,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
       const type = Number(shot.type); const goal = Number(shot.result) === 3; const playerName = names.get(Number(shot.spId)) || `선수 ${shot.spId}`;
       for (const category of [String(type), shot.inPenalty ? "inside" : "outside"]) {
         const userKey = `${category}|${info.nickname}`; const user = userShots.get(userKey) || { name: info.nickname, goals: 0, attempts: 0 }; user.attempts++; if (goal) user.goals++; userShots.set(userKey, user);
-        const playerKey = `${category}|${info.nickname}|${shot.spId}`; const player = playerShots.get(playerKey) || { owner: info.nickname, name: playerName, goals: 0, attempts: 0 }; player.attempts++; if (goal) player.goals++; playerShots.set(playerKey, player);
+        const playerKey = `${category}|${info.nickname}|${shot.spId}`; const player = playerShots.get(playerKey) || { owner: info.nickname, spId: Number(shot.spId), name: playerName, goals: 0, attempts: 0 }; player.attempts++; if (goal) player.goals++; playerShots.set(playerKey, player);
       }
     }
     for (const player of info.player || []) if (player.spPosition === 0 && player.status.spRating > 0) {
@@ -140,7 +140,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     }
   }
   const leader = (source: Map<string, any>, category: string) => [...source.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => value).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts)[0] || null;
-  const award = (category: string, title: string, emoji: string) => { const user = leader(userShots, category); const player = [...playerShots.entries()].filter(([key, value]) => key.startsWith(`${category}|`) && value.owner === user?.name).map(([, value]) => value).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts)[0] || null; return { title, emoji, user, player }; };
+  const award = (category: string, title: string, emoji: string) => { const user = leader(userShots, category); const rankings = [...playerShots.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => ({ ...value, conversion: value.goals / Math.max(1, value.attempts) })).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts); const player = rankings.find((value) => value.owner === user?.name) || null; return { id: category, title, emoji, user, player, rankings: rankings.slice(0, 15) }; };
   const shotAwards = [...Object.entries(shotLabels).map(([type, meta]) => award(type, meta.title, meta.emoji)), award("outside", "중거리 포병", "🚀")];
   const keepers = [...goalkeepers.values()].map((x) => ({ ...x, concededPerGame: x.conceded / x.appearances, rating: x.ratingTotal / x.appearances })).filter((x) => x.appearances >= 3);
   const users = [...discipline.values()];
