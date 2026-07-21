@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { FloatingNav } from "./components/FloatingNav";
 import { LoadingState } from "./components/LoadingState";
+import { useTriSort } from "./hooks/useTriSort";
 
 type PlayerRow = { rank: number; name: string; p: number; w: number; d: number; l: number; gf: number; ga: number; gd: number; pts: number; form: string[] };
 type ApiMatch = { id: string; date: string; type: number; home: string; away: string; homeGoals: number; awayGoals: number; homeShootout: number; awayShootout: number };
@@ -35,6 +36,7 @@ export default function Home() {
   const table = useMemo(() => live?.connected
     ? (shootout ? live.standings!.includingShootout : live.standings!.excludingShootout)
     : previewPlayers.map((x) => ({ ...x, pts: x.w * 3 + x.d, gd: x.gf - x.ga })), [live, shootout]);
+  const sortedTable = useTriSort(table);
   const matchList = live?.connected ? live.matches!.slice(0, 3).map((m) => ({
     id: m.id,
     date: new Date(`${m.date}+09:00`).toLocaleString("ko-KR", { month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }),
@@ -102,8 +104,8 @@ export default function Home() {
           </div>
           <div className="table-wrap">
             <table>
-              <thead><tr><th>#</th><th>감독명</th><th>경기</th><th>승</th><th>무</th><th>패</th><th>득점</th><th>실점</th><th>득실차</th><th>승점</th><th>최근 5경기</th></tr></thead>
-              <tbody>{table.map((x) => <tr key={x.name}>
+              <thead><tr>{([['rank','#'],['name','감독명'],['p','경기'],['w','승'],['d','무'],['l','패'],['gf','득점'],['ga','실점'],['gd','득실차'],['pts','승점']] as Array<[keyof PlayerRow,string]>).map(([key,label]) => <th key={key}><button className="sort-head" onClick={() => sortedTable.toggle(key)}>{label}<i>{sortedTable.indicator(key)}</i></button></th>)}<th>최근 5경기</th></tr></thead>
+              <tbody>{sortedTable.rows.map((x) => <tr key={x.name}>
                 <td><b className={`rank r${x.rank}`}>{x.rank}</b></td>
                 <td><div className="manager"><span>{x.name.slice(0,1)}</span><b>{x.name}</b>{x.rank === 1 && <small>LEADER</small>}</div></td>
                 <td>{x.p}</td><td>{x.w}</td><td>{x.d}</td><td>{x.l}</td><td>{x.gf}</td><td>{x.ga}</td><td className={x.gd > 0 ? "positive" : "negative"}>{x.gd > 0 ? "+" : ""}{x.gd}</td><td><strong className="points">{x.pts}</strong></td>

@@ -18,11 +18,11 @@ type MatchInfo = {
 
 type Match = { matchId: string; matchDate: string; matchType: number; matchInfo: MatchInfo[] };
 
-async function nexon<T>(path: string, key: string): Promise<T> {
+async function nexon<T>(path: string, key: string, revalidate: number | false = 7200): Promise<T> {
   for (let attempt = 0; attempt < 3; attempt++) {
     const response = await fetch(`${API}${path}`, {
       headers: { "x-nxopen-api-key": key },
-      next: { revalidate: 3600 },
+      ...(revalidate === false ? { cache: "force-cache" as const } : { next: { revalidate } }),
     });
     if (response.ok) return response.json() as Promise<T>;
     if (response.status !== 429 && response.status < 500) throw new Error(`NEXON API ${response.status}`);
@@ -125,7 +125,7 @@ export async function GET() {
 
   try {
     const identities = await Promise.all(NICKNAMES.map(async (nickname) => {
-      const result = await nexon<{ ouid: string }>(`/id?nickname=${encodeURIComponent(nickname)}`, key);
+      const result = await nexon<{ ouid: string }>(`/id?nickname=${encodeURIComponent(nickname)}`, key, 86400);
       return { nickname, ouid: result.ouid };
     }));
     const ouids = new Set(identities.map((x) => x.ouid));
@@ -134,7 +134,7 @@ export async function GET() {
       const lists = [] as string[][];
       for (const type of matchTypes) {
         for (let offset = 0; offset <= 400; offset += 100) {
-          const page = await nexon<string[]>(`/user/match?ouid=${ouid}&matchtype=${type}&offset=${offset}&limit=100`, key);
+          const page = await nexon<string[]>(`/user/match?ouid=${ouid}&matchtype=${type}&offset=${offset}&limit=100`, key, 7200);
           lists.push(page);
           if (page.length < 100) break;
         }
@@ -146,7 +146,7 @@ export async function GET() {
     const ids = [...counts].filter(([, count]) => count >= 2).map(([id]) => id);
     const details: Match[] = [];
     for (let i = 0; i < ids.length; i += 5) {
-      const batch = await Promise.all(ids.slice(i, i + 5).map((id) => nexon<Match>(`/match-detail?matchid=${id}`, key)));
+      const batch = await Promise.all(ids.slice(i, i + 5).map((id) => nexon<Match>(`/match-detail?matchid=${id}`, key, false)));
       details.push(...batch);
     }
     const matches = details.filter((m) => new Date(`${m.matchDate}+09:00`) >= START && m.matchInfo.length === 2 && m.matchInfo.every((x) => ouids.has(x.ouid)))
@@ -176,7 +176,7 @@ export async function GET() {
         homeShots: m.matchInfo[0].shoot.shootTotal || 0, awayShots: m.matchInfo[1].shoot.shootTotal || 0,
         homeClasses: squadClasses(m.matchInfo[0], seasonNames), awayClasses: squadClasses(m.matchInfo[1], seasonNames),
       })),
-    });
+    }, { headers: { "Cache-Control": "public, s-maxage=600, stale-while-revalidate=3600" } });
   } catch (error) {
     return NextResponse.json({ connected: false, reason: error instanceof Error ? error.message : "API 연결 실패" }, { status: 502 });
   }

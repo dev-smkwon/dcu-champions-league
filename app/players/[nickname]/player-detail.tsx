@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FloatingNav } from "../../components/FloatingNav";
 import { LoadingState } from "../../components/LoadingState";
+import { useTriSort } from "../../hooks/useTriSort";
 
 type SquadPlayer = { spId: number; name: string; position: number; grade: number; appearances: number; goals: number; assists: number; shots: number; passTry: number; passSuccess: number; tackles: number; interceptions: number; rating: number };
 type Stats = { matches: number; shots: number; onTarget: number; goals: number; passTry: number; passSuccess: number; possession: number; routes: number[]; goalBuckets: number[]; shotMap: Array<{ x: number; y: number; goal: boolean }>; squad: SquadPlayer[] };
@@ -12,6 +13,7 @@ type Match = { id: string; date: string; home: string; away: string; homeGoals: 
 export function PlayerDetail({ nickname }: { nickname: string }) {
   const [data, setData] = useState<any>(null);
   useEffect(() => { fetch("/api/league").then((r) => r.json()).then(setData); }, []);
+  const squadTable = useTriSort<(SquadPlayer & { passRate: number })>(((data?.analytics?.[nickname]?.squad || []) as SquadPlayer[]).map((card) => ({ ...card, passRate: Math.round(card.passSuccess / Math.max(1, card.passTry) * 100) })));
   if (!data) return <main className="subpage"><FloatingNav /><LoadingState /></main>;
   const player = data.standings?.excludingShootout?.find((p: any) => p.name === nickname);
   const stats = data.analytics?.[nickname] as Stats | undefined;
@@ -26,7 +28,7 @@ export function PlayerDetail({ nickname }: { nickname: string }) {
         <div className="route-summary">{["왼쪽", "중앙", "오른쪽"].map((label, i) => <div key={label}><span>{label}</span><b>{Math.round(stats.routes[i] / routeTotal * 100)}%</b><i><em style={{ width: `${stats.routes[i] / routeTotal * 100}%` }} /></i></div>)}</div>
       </article>
       <article className="clean-card stat-stack"><div><span>경기당 득점</span><b>{(stats.goals / Math.max(1, stats.matches)).toFixed(2)}</b></div><div><span>유효 슈팅률</span><b>{Math.round(stats.onTarget / Math.max(1, stats.shots) * 100)}%</b></div><div><span>패스 성공률</span><b>{Math.round(stats.passSuccess / Math.max(1, stats.passTry) * 100)}%</b></div><div><span>평균 점유율</span><b>{Math.round(stats.possession / Math.max(1, stats.matches))}%</b></div></article>
-      <article className="clean-card span-three"><div className="card-heading"><div><p>SQUAD RECORDS</p><h2>{nickname}의 사용 선수 기록</h2></div><span>출장 경기순</span></div><div className="squad-table"><div className="squad-head"><span>선수</span><span>출장</span><span>골</span><span>도움</span><span>평점</span><span>패스</span></div>{stats.squad.slice(0, 24).map((card) => <div key={`${card.spId}-${card.grade}`}><i>{card.name.slice(0,1)}</i><strong>{card.name}<small>+{card.grade} · POS {card.position}</small></strong><span>{card.appearances}</span><span>{card.goals}</span><span>{card.assists}</span><b>{card.rating.toFixed(1)}</b><span>{Math.round(card.passSuccess / Math.max(1,card.passTry)*100)}%</span></div>)}</div></article>
+      <article className="clean-card span-three squad-record-card"><div className="card-heading"><div><p>SQUAD RECORDS</p><h2>{nickname}의 사용 선수 기록</h2></div><span>헤더를 눌러 정렬</span></div><div className="squad-table"><div className="squad-head">{([['name','선수'],['appearances','출장'],['goals','골'],['assists','도움'],['rating','평점'],['passRate','패스']] as Array<[keyof (SquadPlayer & {passRate:number}),string]>).map(([key,label]) => <button className="sort-head" onClick={() => squadTable.toggle(key)} key={key}>{label}<i>{squadTable.indicator(key)}</i></button>)}</div>{squadTable.rows.slice(0, 24).map((card) => <div key={`${card.spId}-${card.grade}`}><i>{card.name.slice(0,1)}</i><strong>{card.name}<small>+{card.grade} · POS {card.position}</small></strong><span>{card.appearances}</span><span>{card.goals}</span><span>{card.assists}</span><b>{card.rating.toFixed(1)}</b><span>{card.passRate}%</span></div>)}</div></article>
       <article className="clean-card span-three"><div className="card-heading"><div><p>RECENT FORM</p><h2>최근 경기</h2></div><Link href={`/matches?player=${encodeURIComponent(nickname)}`}>전체 보기 →</Link></div><div className="compact-matches">{matches.map((m: Match) => <Link href={`/matches/${m.id}`} key={m.id}><time>{new Date(`${m.date}+09:00`).toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}</time><b>{m.home}</b><strong>{m.homeGoals} – {m.awayGoals}</strong><b>{m.away}</b></Link>)}</div></article>
     </section>
   </main>;

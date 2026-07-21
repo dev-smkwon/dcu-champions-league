@@ -1,0 +1,20 @@
+.sort-head { display:inline-flex; align-items:center; justify-content:center; gap:5px; padding:5px 3px; border:0; background:transparent; color:inherit; font:inherit; white-space:nowrap; }
+.sort-head i { color:#315efb; font-size:11px; font-style:normal; opacity:.6; }
+.sort-head:hover { color:#315efb; }
+th:nth-child(2) .sort-head { justify-content:flex-start; }
+
+.squad-record-card .card-heading { margin-bottom:10px; }
+.squad-table .squad-head { grid-template-columns:38px minmax(180px,2fr) repeat(5,minmax(55px,.45fr)); min-height:44px; padding:4px 10px; }
+.squad-table .squad-head .sort-head:first-child { grid-column:1/3; justify-content:flex-start; padding-left:48px; }
+.squad-table>div:not(.squad-head) { min-height:54px; }
+
+.best-table-head { grid-template-columns:30px minmax(105px,1fr) 36px 42px 55px 45px; }
+.best-table-head .sort-head:first-child { grid-column:1/3; justify-content:flex-start; }
+.best-table-head .sort-head { font-size:11px; }
+
+.comparison-head .sort-head { width:100%; }
+.comparison-head .sort-head:first-of-type { justify-content:flex-start; }
+.class-head .sort-head { width:100%; }
+.class-head .sort-head:first-child,.class-head .sort-head:nth-child(2) { justify-content:flex-start; }
+
+@media(max-width:620px){.sort-head{gap:3px}.sort-head i{font-size:11px}}
