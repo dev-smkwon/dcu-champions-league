@@ -22,9 +22,9 @@ const previewPlayers = [
 ];
 
 const previewMatches = [
-  { date: "7월 20일 · 23:41", home: "씅민쓰", away: "6년제", score: "3 : 1", note: "공식경기" },
-  { date: "7월 20일 · 22:18", home: "따이민", away: "박수환", score: "2 : 2", note: "친선경기 · 승부차기 4:3" },
-  { date: "7월 19일 · 01:06", home: "그냥강혜중", away: "대가대다님", score: "1 : 0", note: "공식경기" },
+  { id: "", date: "7월 20일 · 23:41", home: "씅민쓰", away: "6년제", score: "3 : 1", note: "공식경기", result: "win" },
+  { id: "", date: "7월 20일 · 22:18", home: "따이민", away: "박수환", score: "2 : 2", note: "친선경기 · 승부차기 4:3", result: "draw" },
+  { id: "", date: "7월 19일 · 01:06", home: "그냥강혜중", away: "대가대다님", score: "1 : 0", note: "공식경기", result: "win" },
 ];
 
 export default function Home() {
@@ -36,9 +36,11 @@ export default function Home() {
     ? (shootout ? live.standings!.includingShootout : live.standings!.excludingShootout)
     : previewPlayers.map((x) => ({ ...x, pts: x.w * 3 + x.d, gd: x.gf - x.ga })), [live, shootout]);
   const matchList = live?.connected ? live.matches!.slice(0, 3).map((m) => ({
+    id: m.id,
     date: new Date(`${m.date}+09:00`).toLocaleString("ko-KR", { month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }),
     home: m.home, away: m.away, score: `${m.homeGoals} : ${m.awayGoals}`,
     note: `${m.type === 50 ? "공식경기" : "친선경기"}${m.homeShootout || m.awayShootout ? ` · 승부차기 ${m.homeShootout}:${m.awayShootout}` : ""}`,
+    result: m.homeGoals > m.awayGoals ? "win" : m.homeGoals < m.awayGoals ? "loss" : "draw",
   })) : previewMatches;
   const stats = live?.analytics?.[selectedPlayer];
   const routeTotal = stats?.routes.reduce((sum, value) => sum + value, 0) || 0;
@@ -113,11 +115,11 @@ export default function Home() {
         </article>
 
         <aside className="panel recent" id="matches">
-          <div className="panel-head"><div><p className="eyebrow dark">RECENT</p><h2>최근 경기</h2></div><button className="link-btn">전체 보기 →</button></div>
-          <div className="matches">{matchList.map((m) => <div className="match" key={`${m.date}-${m.home}`}>
+          <div className="panel-head"><div><p className="eyebrow dark">RECENT</p><h2>최근 경기</h2></div><Link href="/matches" className="link-btn">전체 보기 →</Link></div>
+          <div className="matches">{matchList.map((m) => <Link href={`/matches/${m.id}`} className={`match recent-${m.result}`} key={`${m.date}-${m.home}`}>
             <div className="match-meta"><span>{m.date}</span><small>{m.note}</small></div>
-            <div className="scoreline"><b>{m.home}</b><strong>{m.score}</strong><b>{m.away}</b></div>
-          </div>)}</div>
+            <div className="scoreline"><b>{m.home}</b><strong>{m.score}</strong><b>{m.away}</b></div><i className="recent-arrow">›</i>
+          </Link>)}</div>
         </aside>
       </section>
 

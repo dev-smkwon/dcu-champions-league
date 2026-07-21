@@ -1,0 +1,31 @@
+.recent .panel-head { margin-bottom:14px; }
+.recent .link-btn { display:inline-flex; align-items:center; padding:9px 11px; border-radius:10px; color:#315efb; font-size:12px; text-decoration:none; transition:.18s; }
+.recent .link-btn:hover { background:#edf2ff; }
+.recent .matches { display:grid; gap:9px; }
+.recent .match { position:relative; display:block; overflow:hidden; padding:14px 34px 14px 14px; border:1px solid #e3e8f2; border-radius:15px; background:#fafbfe; color:var(--ink); text-decoration:none; transition:.18s; }
+.recent .match:hover { border-color:#b9c8ee; background:#f4f7ff; box-shadow:0 8px 20px rgba(31,55,110,.08); transform:translateY(-1px); }
+.recent .match:before { position:absolute; top:10px; bottom:10px; left:0; width:4px; border-radius:0 5px 5px 0; background:#8b95a5; content:""; }
+.recent .match.recent-win:before { background:#159159; }
+.recent .match.recent-loss:before { background:#d83c4e; }
+.recent .match-meta { font-size:11px; }
+.recent .match-meta small { padding:3px 6px; border-radius:6px; background:#edf0f6; font-size:10px; }
+.recent .scoreline { grid-template-columns:1fr 74px 1fr; margin-top:12px; }
+.recent .scoreline b { overflow:hidden; font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
+.recent .scoreline strong { border-radius:9px; background:#0d1838; font-size:18px; }
+.recent-arrow { position:absolute; top:50%; right:13px; color:#9aa5b8; font-size:21px; font-style:normal; transform:translateY(-50%); }
+
+/* Remaining microcopy in the dark analysis cards. */
+.dark-card .card-title small { color:#aebbd6; font-size:12px; font-weight:650; }
+.dark-card .card-title div>span { font-size:10px; }
+.dark-card .big-metric>span { color:#c0cae0; font-size:12px; line-height:1.45; }
+.dark-card .big-metric span b { color:#8fa0c2; font-size:11px; line-height:1.45; }
+.dark-card .mini-metrics div { font-size:12px; }
+.dark-card .mini-metrics b { font-size:17px; }
+.dark-card .route-bars>div { font-size:11px; }
+.dark-card .chart span { color:#a6b1ca; font-size:10px; }
+.dark-card .insight span,.dark-card .insight b { font-size:11px; line-height:1.45; }
+
+@media(max-width:650px){
+  .recent .match { padding-right:28px; }
+  .recent .scoreline { grid-template-columns:1fr 64px 1fr; }
+}
