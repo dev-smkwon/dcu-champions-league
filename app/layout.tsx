@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "DCU Champions League",
   description: "대구가톨릭대 친구들의 FC Online 리그 순위와 플레이 패턴",
   icons: { icon: "/favicon.svg" },
