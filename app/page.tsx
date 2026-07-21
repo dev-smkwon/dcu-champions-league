@@ -113,11 +113,11 @@ export default function Home() {
           </div>
           <div className="table-wrap">
             <table>
-              <thead><tr>{([['rank','#'],['name','감독명'],['p','경기'],['w','승'],['d','무'],['l','패'],['gf','득점'],['ga','실점'],['gd','득실차'],['pts','승점'],...(adjustedRanking ? [['adjustedPpg','보정 PPG'] as [keyof RankedRow,string]] : [])] as Array<[keyof RankedRow,string]>).map(([key,label]) => <th key={key}><button className="sort-head" onClick={() => sortedTable.toggle(key)}>{label}<i>{sortedTable.indicator(key)}</i></button></th>)}<th>최근 5경기</th></tr></thead>
+              <thead><tr>{([['rank','#'],['name','감독명'],['p','경기'],['w','승'],['d','무'],['l','패'],['gf','득점'],['ga','실점'],['gd','득실차'],['pts','승점'],['adjustedPpg','보정 PPG']] as Array<[keyof RankedRow,string]>).map(([key,label]) => <th key={key} className={key === "adjustedPpg" && !adjustedRanking ? "adjusted-muted" : ""}><button className="sort-head" onClick={() => sortedTable.toggle(key)}>{label}<i>{sortedTable.indicator(key)}</i></button></th>)}<th>최근 5경기</th></tr></thead>
               <tbody>{sortedTable.rows.map((x) => <tr key={x.name}>
                 <td><b className={`rank r${x.rank}`}>{x.rank || "–"}</b></td>
                 <td><div className="manager"><span>{x.name.slice(0,1)}</span><b>{x.name}</b>{x.rank === 1 && <small>LEADER</small>}</div></td>
-                <td>{x.p}</td><td>{x.w}</td><td>{x.d}</td><td>{x.l}</td><td>{x.gf}</td><td>{x.ga}</td><td className={x.gd > 0 ? "positive" : "negative"}>{x.gd > 0 ? "+" : ""}{x.gd}</td><td><strong className="points">{x.pts}</strong></td>{adjustedRanking && <td><strong className="adjusted-score">{x.p ? x.adjustedPpg.toFixed(2) : "–"}</strong><small className="rank-confidence">신뢰도 {Math.round(x.confidence * 100)}%</small></td>}
+                <td>{x.p}</td><td>{x.w}</td><td>{x.d}</td><td>{x.l}</td><td>{x.gf}</td><td>{x.ga}</td><td className={x.gd > 0 ? "positive" : "negative"}>{x.gd > 0 ? "+" : ""}{x.gd}</td><td><strong className="points">{x.pts}</strong></td><td className={!adjustedRanking ? "adjusted-muted" : ""}><strong className="adjusted-score">{adjustedRanking && x.p ? x.adjustedPpg.toFixed(2) : "–"}</strong><small className="rank-confidence">{adjustedRanking ? `신뢰도 ${Math.round(x.confidence * 100)}%` : "공식 순위"}</small></td>
                 <td><div className="form">{x.form.map((f, i) => <i className={f} key={i}>{f}</i>)}</div></td>
               </tr>)}</tbody>
             </table>
