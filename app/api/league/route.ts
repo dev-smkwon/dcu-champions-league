@@ -73,10 +73,9 @@ function analytics(matches: Match[], names: Map<number, string>) {
   return result;
 }
 
-function weeklyBest(matches: Match[], names: Map<number, string>) {
-  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+function bestEleven(matches: Match[], names: Map<number, string>, minimumAppearances: number) {
   const candidates = new Map<string, any>();
-  for (const match of matches.filter((m) => new Date(`${m.matchDate}+09:00`) >= since)) for (const info of match.matchInfo) for (const player of info.player || []) {
+  for (const match of matches) for (const info of match.matchInfo) for (const player of info.player || []) {
     if (player.spPosition === 28 || player.status.spRating <= 0) continue;
     const key = `${info.nickname}-${player.spId}-${player.spGrade}`;
     const item = candidates.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, shots: 0, effectiveShots: 0, passTry: 0, passSuccess: 0, tackles: 0, interceptions: 0, blocks: 0, defending: 0, aerials: 0, ratingTotal: 0 };
@@ -103,9 +102,19 @@ function weeklyBest(matches: Match[], names: Map<number, string>) {
     return { ...x, rating: Math.round(rating * 100) / 100, goalsPerGame, assistsPerGame, goalConversion, effectiveShotRate, defensiveActionsPerGame, passAccuracy, score };
   });
   const take = (test: (position: number) => boolean, count: number) => {
-    return all.filter((x) => x.appearances >= 5 && test(x.position)).sort((a, b) => b.score - a.score || b.rating - a.rating).slice(0, count);
+    return all.filter((x) => x.appearances >= minimumAppearances && test(x.position)).sort((a, b) => b.score - a.score || b.rating - a.rating).slice(0, count);
   };
   return [...take((p) => p === 0, 1), ...take((p) => p >= 1 && p <= 8, 4), ...take((p) => p >= 9 && p <= 19, 3), ...take((p) => p >= 20 && p <= 27, 3)];
+}
+
+function squadClasses(info: MatchInfo, seasons: Map<number, string>) {
+  const counts = new Map<number, number>();
+  for (const player of info.player || []) {
+    if (player.spPosition === 28) continue;
+    const seasonId = Math.floor(player.spId / 1_000_000);
+    counts.set(seasonId, (counts.get(seasonId) || 0) + 1);
+  }
+  return [...counts].map(([id, count]) => ({ id, name: seasons.get(id) || `시즌 ${id}`, count })).sort((a, b) => b.count - a.count).slice(0, 3);
 }
 
 export async function GET() {
@@ -140,8 +149,13 @@ export async function GET() {
     }
     const matches = details.filter((m) => new Date(`${m.matchDate}+09:00`) >= START && m.matchInfo.length === 2 && m.matchInfo.every((x) => ouids.has(x.ouid)))
       .sort((a, b) => b.matchDate.localeCompare(a.matchDate));
-    const playerMeta = await fetch("https://open.api.nexon.com/static/fconline/meta/spid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Array<{ id: number; name: string }>;
+    const [playerMeta, seasonMeta] = await Promise.all([
+      fetch("https://open.api.nexon.com/static/fconline/meta/spid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Promise<Array<{ id: number; name: string }>>,
+      fetch("https://open.api.nexon.com/static/fconline/meta/seasonid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Promise<Array<{ seasonId: number; className: string }>>,
+    ]);
     const playerNames = new Map(playerMeta.map((player) => [player.id, player.name]));
+    const seasonNames = new Map(seasonMeta.map((season) => [season.seasonId, season.className]));
+    const weeklyMatches = matches.filter((m) => new Date(`${m.matchDate}+09:00`) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
     return NextResponse.json({
       connected: true,
       updatedAt: new Date().toISOString(),
@@ -149,7 +163,8 @@ export async function GET() {
       matchCount: matches.length,
       standings: { excludingShootout: table(matches, false), includingShootout: table(matches, true) },
       analytics: analytics(matches, playerNames),
-      weeklyBest: weeklyBest(matches, playerNames),
+      weeklyBest: bestEleven(weeklyMatches, playerNames, 5),
+      seasonBest: bestEleven(matches, playerNames, 10),
       matches: matches.map((m) => ({
         id: m.matchId, date: m.matchDate, type: m.matchType,
         home: m.matchInfo[0].nickname, away: m.matchInfo[1].nickname,
@@ -157,6 +172,7 @@ export async function GET() {
         homeShootout: m.matchInfo[0].shoot.shootOutScore || 0, awayShootout: m.matchInfo[1].shoot.shootOutScore || 0,
         homePossession: m.matchInfo[0].matchDetail.possession || 0, awayPossession: m.matchInfo[1].matchDetail.possession || 0,
         homeShots: m.matchInfo[0].shoot.shootTotal || 0, awayShots: m.matchInfo[1].shoot.shootTotal || 0,
+        homeClasses: squadClasses(m.matchInfo[0], seasonNames), awayClasses: squadClasses(m.matchInfo[1], seasonNames),
       })),
     });
   } catch (error) {
