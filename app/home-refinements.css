@@ -1,4 +1,5 @@
 .recent .panel-head { margin-bottom:14px; }
+.content-grid { grid-template-columns:minmax(0,3.35fr) minmax(270px,.8fr); }
 .recent .link-btn { display:inline-flex; align-items:center; padding:9px 11px; border-radius:10px; color:#315efb; font-size:12px; text-decoration:none; transition:.18s; }
 .recent .link-btn:hover { background:#edf2ff; }
 .recent .matches { display:grid; gap:9px; }
@@ -14,6 +15,21 @@
 .recent .scoreline strong { border-radius:9px; background:#0d1838; font-size:18px; }
 .recent-arrow { position:absolute; top:50%; right:13px; color:#9aa5b8; font-size:21px; font-style:normal; transform:translateY(-50%); }
 .ranking-controls{display:flex;align-items:center;gap:15px}.ranking-mode{display:flex;padding:4px;border:1px solid #dfe5f1;border-radius:12px;background:#f4f6fa}.ranking-mode button{padding:7px 11px;border:0;border-radius:9px;background:transparent;color:#7d879b;font-size:12px;font-weight:750}.ranking-mode button.active{background:#0b1944;color:#fff;box-shadow:0 4px 10px rgba(11,25,68,.18)}.adjusted-score{display:block;color:#315efb;font:700 17px "Barlow Condensed"}.rank-confidence{display:block;margin-top:2px;color:#98a2b3;font-size:10px;white-space:nowrap}.standings td{height:61px}.standings .caption{min-height:34px;line-height:1.55}.standings .adjusted-muted{color:#b8c0ce}.standings td.adjusted-muted .adjusted-score{color:#b8c0ce}.standings td.adjusted-muted .rank-confidence{visibility:hidden}
+
+@media(min-width:1001px){
+  .standings .table-wrap{overflow-x:hidden}
+  .standings table{min-width:0;table-layout:fixed}
+  .standings th,.standings td{padding-right:4px;padding-left:4px}
+  .standings th:nth-child(1),.standings td:nth-child(1){width:4%}
+  .standings th:nth-child(2),.standings td:nth-child(2){width:17%}
+  .standings th:nth-child(11),.standings td:nth-child(11){width:10%}
+  .standings th:nth-child(12),.standings td:nth-child(12){width:12%}
+  .standings .manager{gap:6px}
+  .standings .manager>span{width:25px;height:25px}
+  .standings .manager small{padding:3px;font-size:9px}
+  .recent .scoreline{grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr)}
+  .recent .scoreline strong{padding-right:5px;padding-left:5px}
+}
 
 /* Remaining microcopy in the dark analysis cards. */
 .dark-card .card-title small { color:#aebbd6; font-size:12px; font-weight:650; }
