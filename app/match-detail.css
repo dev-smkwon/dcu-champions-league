@@ -1,0 +1,35 @@
+.goal-timeline { margin-top:22px; padding-top:18px; border-top:1px solid var(--hair); }
+.goal-timeline h3 { margin:0 0 10px; font-size:13px; }
+.goal-timeline>div { display:grid; grid-template-columns:38px 1fr auto; align-items:center; gap:10px; padding:9px 0; border-top:1px solid #edf0f6; }
+.goal-timeline time { color:var(--blue); font:700 13px "Barlow Condensed"; }
+.goal-timeline span { display:flex; min-width:0; flex-direction:column; }
+.goal-timeline span b { font-size:12px; }
+.goal-timeline span small { margin-top:3px; color:var(--sub); font-size:10px; }
+.goal-timeline em { padding:4px 6px; border-radius:6px; background:#eaf0ff; color:var(--blue); font-size:8px; font-style:normal; font-weight:800; }
+.goal-timeline>p { color:var(--sub); font-size:11px; }
+
+.shot-map { overflow:visible; }
+.shot-event { position:absolute; inset:0; pointer-events:none; }
+.shot-event svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; opacity:0; transition:.16s; }
+.shot-event svg line { stroke:rgba(255,255,255,.72); stroke-width:.55; stroke-dasharray:2 1; vector-effect:non-scaling-stroke; }
+.shot-event button { position:absolute; z-index:4; width:16px; height:16px; padding:0; border:2px solid #fff; border-radius:50%; background:#7fa5ff; box-shadow:0 0 0 3px rgba(100,145,255,.2); transform:translate(-50%,-50%); pointer-events:auto; }
+.shot-event.goal button { width:20px; height:20px; background:#ffd84d; box-shadow:0 0 0 4px rgba(255,216,77,.24); }
+.shot-event:has(button:hover) svg,.shot-event:has(button:focus-visible) svg { opacity:1; }
+.shot-event button>i { display:block; width:100%; height:100%; border-radius:50%; }
+.shot-event button>span { position:absolute; z-index:20; left:50%; bottom:calc(100% + 12px); display:none; width:210px; padding:12px 13px; border:1px solid rgba(255,255,255,.16); border-radius:12px; background:rgba(5,15,42,.96); box-shadow:0 14px 35px rgba(0,0,0,.28); color:#fff; text-align:left; transform:translateX(-50%); }
+.shot-event button:hover>span,.shot-event button:focus-visible>span { display:flex; flex-direction:column; gap:5px; }
+.shot-event button>span b { padding-right:38px; font-size:12px; }
+.shot-event button>span small { color:#bdc8df; font-size:10px; line-height:1.35; }
+.shot-event button>span em { position:absolute; top:11px; right:11px; color:#8fb0ff; font-size:8px; font-style:normal; font-weight:800; }
+.shot-event.goal button>span em { color:#ffd84d; }
+.shot-map-note { margin:12px 2px 0; color:var(--sub); font-size:10px; line-height:1.55; }
+
+/* Match detail readability */
+.versus-stats span,.summary-list span,.summary-list b,.summary-list small { font-size:11px; }
+.versus-stats b { font-size:16px; }
+.match-hero>p,.match-hero small { font-size:11px; }
+.card-heading>div>p { font-size:10px; }
+
+@media(max-width:600px){
+  .shot-event button>span { width:180px; }
+}

@@ -14,5 +14,11 @@ export async function GET(_request: Request, context: { params: Promise<{ matchI
   const match = await response.json();
   const allowed = match.matchType === 40 && new Date(`${match.matchDate}+09:00`) >= START && match.matchInfo?.length === 2 && match.matchInfo.every((player: { nickname: string }) => MEMBERS.has(player.nickname));
   if (!allowed) return NextResponse.json({ error: "리그 내부 친선경기가 아닙니다." }, { status: 404 });
+  const playerMeta = await fetch("https://open.api.nexon.com/static/fconline/meta/spid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Array<{ id: number; name: string }>;
+  const playerNames = new Map(playerMeta.map((player) => [player.id, player.name]));
+  for (const side of match.matchInfo) for (const shot of side.shootDetail || []) {
+    shot.playerName = playerNames.get(shot.spId) || `선수 ${shot.spId}`;
+    shot.assistPlayerName = shot.assist && shot.assistSpId > 0 ? playerNames.get(shot.assistSpId) || `선수 ${shot.assistSpId}` : null;
+  }
   return NextResponse.json(match);
 }
