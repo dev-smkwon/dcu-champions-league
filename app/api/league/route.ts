@@ -11,7 +11,7 @@ type MatchInfo = {
   nickname: string;
   matchDetail: { matchResult: string; possession: number; foul: number; yellowCards: number; redCards: number; dribble: number };
   shoot: { goalTotal: number; shootOutScore: number; shootTotal: number; effectiveShootTotal: number };
-  pass: { passTry: number; passSuccess: number };
+  pass: { passTry: number; passSuccess: number; longPassTry: number; longPassSuccess: number; bouncingLobPassTry: number; bouncingLobPassSuccess: number; lobbedThroughPassTry: number; lobbedThroughPassSuccess: number };
   shootDetail: Array<{ spId: number; goalTime: number; x: number; y: number; result: number; type: number; inPenalty: boolean }>;
   player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; block: number; defending: number; aerialTry: number; aerialSuccess: number; dribbleTry: number; dribbleSuccess: number; yellowCards: number; redCards: number; spRating: number } }>;
 };
@@ -132,11 +132,14 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
   const userShots = new Map<string, { name: string; goals: number; attempts: number }>();
   const playerShots = new Map<string, { owner: string; spId: number; name: string; goals: number; attempts: number }>();
   const goalkeepers = new Map<string, { owner: string; spId: number; name: string; grade: number; appearances: number; conceded: number; ratingTotal: number }>();
-  const discipline = new Map<string, { owner: string; name: string; kind: string; appearances: number; fouls: number; yellowCards: number; redCards: number }>();
+  const discipline = new Map<string, { owner: string; name: string; kind: string; appearances: number; fouls: number; yellowCards: number; redCards: number; aerialPassTry: number; aerialPassSuccess: number }>();
   for (const match of matches) for (let sideIndex = 0; sideIndex < match.matchInfo.length; sideIndex++) {
     const info = match.matchInfo[sideIndex]; const opponent = match.matchInfo[sideIndex === 0 ? 1 : 0];
-    const userDiscipline = discipline.get(info.nickname) || { owner: info.nickname, name: info.nickname, kind: "user", appearances: 0, fouls: 0, yellowCards: 0, redCards: 0 };
-    userDiscipline.appearances++; userDiscipline.fouls += Number(info.matchDetail.foul || 0); userDiscipline.yellowCards += Number(info.matchDetail.yellowCards || 0); userDiscipline.redCards += Number(info.matchDetail.redCards || 0); discipline.set(info.nickname, userDiscipline);
+    const userDiscipline = discipline.get(info.nickname) || { owner: info.nickname, name: info.nickname, kind: "user", appearances: 0, fouls: 0, yellowCards: 0, redCards: 0, aerialPassTry: 0, aerialPassSuccess: 0 };
+    userDiscipline.appearances++; userDiscipline.fouls += Number(info.matchDetail.foul || 0); userDiscipline.yellowCards += Number(info.matchDetail.yellowCards || 0); userDiscipline.redCards += Number(info.matchDetail.redCards || 0);
+    userDiscipline.aerialPassTry += Number(info.pass.longPassTry || 0) + Number(info.pass.bouncingLobPassTry || 0) + Number(info.pass.lobbedThroughPassTry || 0);
+    userDiscipline.aerialPassSuccess += Number(info.pass.longPassSuccess || 0) + Number(info.pass.bouncingLobPassSuccess || 0) + Number(info.pass.lobbedThroughPassSuccess || 0);
+    discipline.set(info.nickname, userDiscipline);
     for (const shot of info.shootDetail || []) {
       const type = Number(shot.type); const goal = Number(shot.result) === 3; const playerName = names.get(Number(shot.spId)) || `선수 ${shot.spId}`;
       const groupedCategories = shotAwardsConfig.filter((award) => award.types.includes(type)).map((award) => award.id);
@@ -154,7 +157,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
   const award = (category: string, title: string, emoji: string) => { const user = leader(userShots, category); const rankings = [...playerShots.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => ({ ...value, conversion: value.goals / Math.max(1, value.attempts) })).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts); const player = rankings.find((value) => value.owner === user?.name) || null; return { id: category, title, emoji, user, player, rankings: rankings.slice(0, 10) }; };
   const shotAwards = [...shotAwardsConfig.map((config) => award(config.id, config.title, config.emoji)), award("outside", "중거리 포병", "🚀")];
   const keepers = [...goalkeepers.values()].map((x) => ({ ...x, concededPerGame: x.conceded / x.appearances, rating: x.ratingTotal / x.appearances })).filter((x) => x.appearances >= 3);
-  const users = [...discipline.values()];
+  const users = [...discipline.values()].map((user) => ({ ...user, aerialPassAccuracy: user.aerialPassSuccess / Math.max(1, user.aerialPassTry), aerialPassSuccessPerGame: user.aerialPassSuccess / Math.max(1, user.appearances) }));
   const investmentPlayers = players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, gradeEfficiency: x.score / Math.max(1, x.grade) }));
   const top = (key: string, minimum = 1, descending = true) => players.filter((x) => x.appearances >= minimum).sort((a, b) => (Number(b[key]) - Number(a[key])) * (descending ? 1 : -1)).slice(0, 10);
   const perGame = (key: string) => players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: Number(x[key] || 0) / x.appearances })).sort((a, b) => b.perGameValue - a.perGameValue).slice(0, 10);
@@ -180,6 +183,8 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     { id: "dribbles", emoji: "🕺", title: "돌파 대장", description: "드리블 성공 횟수", value: "dribbleSuccess", rows: top("dribbleSuccess"), perGameRows: perGame("dribbleSuccess") },
     { id: "trigger-happy", emoji: "🔫", title: "난사왕", description: "50회 이상 슈팅 중 골 전환율이 낮은 순", value: "goalConversion", percent: true, rows: players.filter((x) => x.shots >= 50).sort((a, b) => a.goalConversion - b.goalConversion || b.shots - a.shots).slice(0, 10) },
     { id: "body-block", emoji: "🛡️", title: "몸으로 말해요", description: "블록으로 슈팅을 막아낸 카드", value: "blocks", rows: top("blocks"), perGameRows: perGame("blocks") },
+    { id: "aerial-delivery", emoji: "📦", title: "택배 크로스 후보", description: "유저별 롱패스·로빙 패스 성공 누적 (크로스 대체 지표)", value: "aerialPassSuccess", rows: [...users].sort((a, b) => b.aerialPassSuccess - a.aerialPassSuccess), perGameRows: [...users].filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: x.aerialPassSuccessPerGame })).sort((a, b) => b.perGameValue - a.perGameValue) },
+    { id: "aerial-accuracy", emoji: "🎁", title: "공중 배송 정확도", description: "공중 패스 20회 이상 시도한 유저의 성공률", value: "aerialPassAccuracy", percent: true, rows: [...users].filter((x) => x.aerialPassTry >= 20).sort((a, b) => b.aerialPassAccuracy - a.aerialPassAccuracy || b.aerialPassSuccess - a.aerialPassSuccess) },
     { id: "low-rating", emoji: "🫥", title: "평점 비상", description: "5경기 이상 출전 평균 평점 낮은 순", value: "rating", decimal: true, rows: [...players].filter((x) => x.appearances >= 5).sort((a, b) => a.rating - b.rating).slice(0, 10) },
     { id: "off-target", emoji: "🛰️", title: "골대 탐색 중", description: "20회 이상 슈팅한 카드의 유효 슈팅률 낮은 순", value: "effectiveShotRate", percent: true, rows: [...players].filter((x) => x.shots >= 20).sort((a, b) => a.effectiveShotRate - b.effectiveShotRate || b.shots - a.shots).slice(0, 10) },
     { id: "pass-lost", emoji: "🧭", title: "패스 길 잃음", description: "100회 이상 패스한 카드의 성공률 낮은 순", value: "passAccuracy", percent: true, rows: [...players].filter((x) => x.passTry >= 100).sort((a, b) => a.passAccuracy - b.passAccuracy || b.passTry - a.passTry).slice(0, 10) },
