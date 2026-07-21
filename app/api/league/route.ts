@@ -12,7 +12,7 @@ type MatchInfo = {
   matchDetail: { matchResult: string; possession: number };
   shoot: { goalTotal: number; shootOutScore: number; shootTotal: number; effectiveShootTotal: number };
   pass: { passTry: number; passSuccess: number };
-  shootDetail: Array<{ goalTime: number; x: number; y: number; result: number; inPenalty: boolean }>;
+  shootDetail: Array<{ goalTime: number; x: number; y: number; result: number; type: number; inPenalty: boolean }>;
   player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; block: number; defending: number; aerialSuccess: number; spRating: number } }>;
 };
 
@@ -49,16 +49,23 @@ function table(matches: Match[], includeShootout: boolean) {
 }
 
 function analytics(matches: Match[], names: Map<number, string>) {
-  const result = Object.fromEntries(NICKNAMES.map((name) => [name, { matches: 0, shots: 0, onTarget: 0, goals: 0, passTry: 0, passSuccess: 0, possession: 0, routes: [0, 0, 0], goalBuckets: [0, 0, 0, 0, 0, 0], shotMap: [] as Array<{ x: number; y: number; goal: boolean }>, squad: {} as Record<string, any> }]));
+  const shotTypeNames: Record<number, string> = { 1: "일반 슛", 2: "감아차기", 3: "헤더", 4: "로빙 슛", 5: "발리 슛", 6: "프리킥", 7: "페널티킥", 8: "파워 슛" };
+  const result = Object.fromEntries(NICKNAMES.map((name) => [name, { matches: 0, shots: 0, onTarget: 0, goals: 0, passTry: 0, passSuccess: 0, possession: 0, routes: [0, 0, 0], goalBuckets: [0, 0, 0, 0, 0, 0], shotMap: [] as Array<{ x: number; y: number; goal: boolean }>, goalBreakdown: { types: {} as Record<string, { attempts: number; goals: number }>, locations: { inside: { attempts: 0, goals: 0 }, outside: { attempts: 0, goals: 0 } } }, squad: {} as Record<string, any> }]));
   for (const match of matches) for (const info of match.matchInfo) {
     const row = result[info.nickname];
     row.matches++; row.shots += info.shoot.shootTotal || 0; row.onTarget += info.shoot.effectiveShootTotal || 0;
     row.goals += info.shoot.goalTotal || 0; row.passTry += info.pass.passTry || 0; row.passSuccess += info.pass.passSuccess || 0; row.possession += info.matchDetail.possession || 0;
     for (const shot of info.shootDetail || []) {
       const y = Math.max(0, Math.min(1, Number(shot.y || 0)));
+      const goal = Number(shot.result) === 3;
+      const typeName = shotTypeNames[Number(shot.type)] || "기타 슛";
+      const typeRow = row.goalBreakdown.types[typeName] ||= { attempts: 0, goals: 0 };
+      const locationRow = shot.inPenalty ? row.goalBreakdown.locations.inside : row.goalBreakdown.locations.outside;
+      typeRow.attempts++; locationRow.attempts++;
+      if (goal) { typeRow.goals++; locationRow.goals++; }
       row.routes[y < .33 ? 0 : y < .66 ? 1 : 2]++;
-      row.shotMap.push({ x: Math.max(0, Math.min(1, Number(shot.x || 0))), y, goal: Number(shot.result) === 3 });
-      if (Number(shot.result) === 3) {
+      row.shotMap.push({ x: Math.max(0, Math.min(1, Number(shot.x || 0))), y, goal });
+      if (goal) {
         const raw = Number(shot.goalTime || 0); const period = Math.floor(raw / 2 ** 24);
         const seconds = raw - period * 2 ** 24 + [0, 45, 90, 105, 120][Math.min(period, 4)] * 60;
         row.goalBuckets[Math.min(5, Math.floor(seconds / 900))]++;
@@ -106,7 +113,8 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
   const take = (test: (position: number) => boolean, count: number) => {
     return all.filter((x) => x.appearances >= minimumAppearances && test(x.position)).sort((a, b) => b.score - a.score || b.rating - a.rating).slice(0, count);
   };
-  return [...take((p) => p === 0, 1), ...take((p) => p >= 1 && p <= 8, 4), ...take((p) => p >= 9 && p <= 19, 3), ...take((p) => p >= 20 && p <= 27, 3)];
+  const picks = [...take((p) => p === 0, 1), ...take((p) => p >= 1 && p <= 8, 4), ...take((p) => p >= 9 && p <= 19, 3), ...take((p) => p >= 20 && p <= 27, 3)];
+  return { picks, all: all.sort((a, b) => b.score - a.score || b.rating - a.rating) };
 }
 
 function squadClasses(info: MatchInfo, seasons: Map<number, string>) {
@@ -158,6 +166,8 @@ export async function GET() {
     const playerNames = new Map(playerMeta.map((player) => [player.id, player.name]));
     const seasonNames = new Map(seasonMeta.map((season) => [season.seasonId, season.className]));
     const weeklyMatches = matches.filter((m) => new Date(`${m.matchDate}+09:00`) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    const weeklySelection = bestEleven(weeklyMatches, playerNames, 5);
+    const seasonSelection = bestEleven(matches, playerNames, 10);
     return NextResponse.json({
       connected: true,
       updatedAt: new Date().toISOString(),
@@ -165,8 +175,10 @@ export async function GET() {
       matchCount: matches.length,
       standings: { excludingShootout: table(matches, false), includingShootout: table(matches, true) },
       analytics: analytics(matches, playerNames),
-      weeklyBest: bestEleven(weeklyMatches, playerNames, 5),
-      seasonBest: bestEleven(matches, playerNames, 10),
+      weeklyBest: weeklySelection.picks,
+      seasonBest: seasonSelection.picks,
+      weeklyPlayers: weeklySelection.all,
+      seasonPlayers: seasonSelection.all,
       matches: matches.map((m) => ({
         id: m.matchId, date: m.matchDate, type: m.matchType,
         home: m.matchInfo[0].nickname, away: m.matchInfo[1].nickname,
