@@ -139,6 +139,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
   const leader = (source: Map<string, any>, category: string) => [...source.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => value).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts)[0] || null;
   const shotAwards = [...Object.entries(shotLabels).map(([type, meta]) => ({ ...meta, user: leader(userShots, type), player: leader(playerShots, type) })), { title: "중거리 포병", emoji: "🚀", user: leader(userShots, "outside"), player: leader(playerShots, "outside") }];
   const keepers = [...goalkeepers.values()].map((x) => ({ ...x, concededPerGame: x.conceded / x.appearances, rating: x.ratingTotal / x.appearances })).filter((x) => x.appearances >= 3);
+  const investmentPlayers = players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, gradeEfficiency: x.score / Math.max(1, x.grade) }));
   const top = (key: string, minimum = 1, descending = true) => players.filter((x) => x.appearances >= minimum).sort((a, b) => (Number(b[key]) - Number(a[key])) * (descending ? 1 : -1)).slice(0, 10);
   return { shotAwards, boards: [
     { id: "goals", emoji: "👑", title: "득점왕", description: "가장 많은 골을 넣은 카드", value: "goals", rows: top("goals") },
@@ -153,6 +154,8 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     { id: "busy", emoji: "🚨", title: "가장 바쁜 수비수", description: "5경기 이상 수비수의 경기당 수비 행동", value: "defensiveActionsPerGame", decimal: true, rows: players.filter((x) => x.appearances >= 5 && x.position >= 1 && x.position <= 8).sort((a, b) => b.defensiveActionsPerGame - a.defensiveActionsPerGame).slice(0, 10) },
     { id: "oil-hands", emoji: "🧤", title: "기름손 주의보", description: "3경기 이상 GK 중 경기당 실점이 많은 순", value: "concededPerGame", decimal: true, rows: keepers.sort((a, b) => b.concededPerGame - a.concededPerGame).slice(0, 10) },
     { id: "wall", emoji: "🔒", title: "철벽 수문장", description: "3경기 이상 GK 중 경기당 실점이 적은 순", value: "concededPerGame", decimal: true, rows: [...keepers].sort((a, b) => a.concededPerGame - b.concededPerGame).slice(0, 10) },
+    { id: "value", emoji: "💎", title: "강화 효율왕", description: "5경기 이상 · 강화등급 대비 포지션 보정 성과", value: "gradeEfficiency", decimal: true, rows: [...investmentPlayers].sort((a, b) => b.gradeEfficiency - a.gradeEfficiency).slice(0, 10) },
+    { id: "underperform", emoji: "📉", title: "고강화 아쉬움", description: "+8 이상 · 5경기 이상 중 낮은 성과점수", value: "score", decimal: true, rows: investmentPlayers.filter((x) => x.grade >= 8).sort((a, b) => a.score - b.score).slice(0, 10) },
   ] };
 }
 

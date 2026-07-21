@@ -158,7 +158,6 @@ export default function Home() {
         </div>
       </section>
 
-      <footer><div className="brand small"><span className="crest">D</span><span><b>DCU</b><small>CHAMPIONS LEAGUE</small></span></div><p>친구들과 만드는 우리만의 리그 · NEXON Open API 기반</p><span>2026 SUMMER</span></footer>
     </main>
   );
 }

@@ -29,7 +29,7 @@ export default function RecordsPage() {
       <div className="shot-award-grid">{records.shotAwards.map((award) => <article className="shot-award" key={award.title}><i>{award.emoji}</i><div><p>{award.title}</p><h3>{award.user?.name || "아직 없음"}</h3><span>유저 · {award.user?.goals || 0}골 / {award.user?.attempts || 0}회 시도</span></div><div className="award-player"><small>PLAYER</small><b>{award.player?.name || "기록 없음"}</b><span>{award.player?.owner || "-"} · {award.player?.goals || 0}골</span></div></article>)}</div>
       <div className="records-intro board-title"><div><p>LEADERBOARDS</p><h2>별별 랭킹</h2></div><span>카드 단위 누적 기록 · 최소 표본은 카드별 표기</span></div>
       <div className="record-board-grid">{records.boards.map((board) => <article className={`record-board board-${board.id}`} key={board.id}><header><i>{board.emoji}</i><div><h3>{board.title}</h3><p>{board.description}</p></div></header><div>{board.rows.length ? board.rows.slice(0, 7).map((row, index) => <div className="record-row" key={`${row.owner}-${row.spId || row.name}-${row.grade || 0}`}><em>{index + 1}</em><strong>{row.name}<small>{row.owner} · +{row.grade || 0} · {row.appearances}경기</small></strong><b>{displayValue(board, row)}</b></div>) : <p className="no-record">조건을 충족한 선수가 아직 없습니다.</p>}</div></article>)}</div>
-      <aside className="record-notes"><b>기록 해석 안내</b><p>‘기름손 주의보’는 개인 실책 판정이 아니라 해당 골키퍼가 출전한 경기의 팀 실점을 경기 수로 나눈 값입니다. ‘가장 바쁜 수비수’도 실책이 아니라 태클·가로채기·블록·수비 행동의 경기당 합계입니다. 재미있는 별칭과 실제 계산 기준을 구분해 봐주세요.</p></aside>
+      <aside className="record-notes"><b>기록 해석 안내</b><p>‘기름손 주의보’는 개인 실책 판정이 아니라 해당 골키퍼가 출전한 경기의 팀 실점을 경기 수로 나눈 값입니다. ‘가장 바쁜 수비수’도 실책이 아니라 태클·가로채기·블록·수비 행동의 경기당 합계입니다. ‘강화 효율왕’과 ‘고강화 아쉬움’은 시장 시세가 아니라 강화등급과 포지션 보정 성과점수를 비교한 참고 지표입니다.</p></aside>
     </section>
   </main>;
 }

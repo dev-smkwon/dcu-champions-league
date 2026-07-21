@@ -41,7 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ko">
       <body>
         {children}
-        <div className="nexon-api-attribution">Data based on NEXON Open API</div>
+        <footer className="site-footer"><div className="site-footer-brand"><span>D</span><strong>DCU CHAMPIONS LEAGUE<small>친구들과 만드는 우리만의 리그</small></strong></div><div className="api-credit"><i /> <span><b>Data based on NEXON Open API</b><small>경기 데이터는 NEXON Open API를 통해 제공됩니다.</small></span></div><em>2026 SUMMER</em></footer>
       </body>
     </html>
   );
