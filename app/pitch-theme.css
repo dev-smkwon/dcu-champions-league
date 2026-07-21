@@ -31,3 +31,30 @@
 .best-mid {
   border-top-color: rgba(255, 255, 255, 0.58);
 }
+
+/* The compact home heat map should still read as a regulation football pitch. */
+.analysis-section .attack .pitch {
+  width: min(100%, 560px);
+  height: auto;
+  aspect-ratio: 105 / 68;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.analysis-section .attack .pitch .circle {
+  width: 15%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.analysis-section .attack .pitch .box {
+  top: 25%;
+  width: 14%;
+  height: 50%;
+}
+
+@media (max-width: 650px) {
+  .analysis-section .attack .pitch {
+    width: 100%;
+  }
+}
