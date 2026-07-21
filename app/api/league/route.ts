@@ -141,15 +141,16 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
   const keepers = [...goalkeepers.values()].map((x) => ({ ...x, concededPerGame: x.conceded / x.appearances, rating: x.ratingTotal / x.appearances })).filter((x) => x.appearances >= 3);
   const investmentPlayers = players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, gradeEfficiency: x.score / Math.max(1, x.grade) }));
   const top = (key: string, minimum = 1, descending = true) => players.filter((x) => x.appearances >= minimum).sort((a, b) => (Number(b[key]) - Number(a[key])) * (descending ? 1 : -1)).slice(0, 10);
+  const perGame = (key: string) => players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: Number(x[key] || 0) / x.appearances })).sort((a, b) => b.perGameValue - a.perGameValue).slice(0, 10);
   return { shotAwards, boards: [
-    { id: "goals", emoji: "👑", title: "득점왕", description: "가장 많은 골을 넣은 카드", value: "goals", rows: top("goals") },
-    { id: "assists", emoji: "🎁", title: "도움왕", description: "동료를 가장 많이 빛낸 카드", value: "assists", rows: top("assists") },
+    { id: "goals", emoji: "👑", title: "득점왕", description: "가장 많은 골을 넣은 카드", value: "goals", rows: top("goals"), perGameRows: perGame("goals") },
+    { id: "assists", emoji: "🎁", title: "도움왕", description: "동료를 가장 많이 빛낸 카드", value: "assists", rows: top("assists"), perGameRows: perGame("assists") },
     { id: "conversion", emoji: "🎯", title: "원샷 원킬", description: "10회 이상 슈팅한 카드의 골 전환율", value: "goalConversion", percent: true, rows: players.filter((x) => x.shots >= 10).sort((a, b) => b.goalConversion - a.goalConversion).slice(0, 10) },
     { id: "rating", emoji: "⭐", title: "평점 괴물", description: "5경기 이상 출전 평균 평점", value: "rating", decimal: true, rows: top("rating", 5) },
     { id: "ironman", emoji: "🦾", title: "철인", description: "가장 많이 출전한 카드", value: "appearances", rows: top("appearances") },
-    { id: "tackles", emoji: "🧹", title: "청소부", description: "태클 성공 누적 순위", value: "tackles", rows: top("tackles") },
-    { id: "interceptions", emoji: "🧱", title: "길목 차단", description: "가로채기 누적 순위", value: "interceptions", rows: top("interceptions") },
-    { id: "aerials", emoji: "🦅", title: "제공권 제왕", description: "공중볼 성공 누적 순위", value: "aerials", rows: top("aerials") },
+    { id: "tackles", emoji: "🧹", title: "청소부", description: "태클 성공 순위", value: "tackles", rows: top("tackles"), perGameRows: perGame("tackles") },
+    { id: "interceptions", emoji: "🧱", title: "길목 차단", description: "가로채기 순위", value: "interceptions", rows: top("interceptions"), perGameRows: perGame("interceptions") },
+    { id: "aerials", emoji: "🦅", title: "제공권 제왕", description: "공중볼 성공 순위", value: "aerials", rows: top("aerials"), perGameRows: perGame("aerials") },
     { id: "passes", emoji: "🧠", title: "패스 마스터", description: "500회 이상 시도한 카드의 패스 성공률", value: "passAccuracy", percent: true, rows: players.filter((x) => x.passTry >= 500).sort((a, b) => b.passAccuracy - a.passAccuracy).slice(0, 10) },
     { id: "busy", emoji: "🚨", title: "가장 바쁜 수비수", description: "5경기 이상 수비수의 경기당 수비 행동", value: "defensiveActionsPerGame", decimal: true, rows: players.filter((x) => x.appearances >= 5 && x.position >= 1 && x.position <= 8).sort((a, b) => b.defensiveActionsPerGame - a.defensiveActionsPerGame).slice(0, 10) },
     { id: "oil-hands", emoji: "🧤", title: "기름손 주의보", description: "3경기 이상 GK 중 경기당 실점이 많은 순", value: "concededPerGame", decimal: true, rows: keepers.sort((a, b) => b.concededPerGame - a.concededPerGame).slice(0, 10) },
