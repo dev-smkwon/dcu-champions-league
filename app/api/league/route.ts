@@ -82,11 +82,28 @@ function weeklyBest(matches: Match[], names: Map<number, string>) {
     const item = candidates.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, shots: 0, effectiveShots: 0, passTry: 0, passSuccess: 0, tackles: 0, interceptions: 0, blocks: 0, defending: 0, aerials: 0, ratingTotal: 0 };
     item.appearances++; item.goals += player.status.goal || 0; item.assists += player.status.assist || 0; item.shots += player.status.shoot || 0; item.effectiveShots += player.status.effectiveShoot || 0; item.passTry += player.status.passTry || 0; item.passSuccess += player.status.passSuccess || 0; item.tackles += player.status.tackle || 0; item.interceptions += player.status.intercept || 0; item.blocks += player.status.block || 0; item.defending += player.status.defending || 0; item.aerials += player.status.aerialSuccess || 0; item.ratingTotal += player.status.spRating || 0; candidates.set(key, item);
   }
-  const all = [...candidates.values()].map((x) => ({ ...x, rating: Math.round(x.ratingTotal / x.appearances * 100) / 100, score: x.ratingTotal / x.appearances + x.goals * .08 + x.assists * .06 }));
+  const all = [...candidates.values()].map((x) => {
+    const rating = x.ratingTotal / x.appearances;
+    const goalsPerGame = x.goals / x.appearances;
+    const assistsPerGame = x.assists / x.appearances;
+    const goalConversion = x.goals / Math.max(1, x.shots);
+    const effectiveShotRate = x.effectiveShots / Math.max(1, x.shots);
+    const defensiveActionsPerGame = (x.tackles + x.interceptions + x.blocks + x.defending) / x.appearances;
+    const aerialsPerGame = x.aerials / x.appearances;
+    const passAccuracy = x.passSuccess / Math.max(1, x.passTry);
+    const reliability = .9 + Math.min(x.appearances, 10) * .01;
+    const rawScore = x.position === 0
+      ? rating * .75 + defensiveActionsPerGame * .25 + aerialsPerGame * .08 + passAccuracy * .15
+      : x.position <= 8
+        ? rating * .65 + goalsPerGame * .5 + assistsPerGame * .6 + goalConversion * .25 + effectiveShotRate * .2 + defensiveActionsPerGame * .2 + aerialsPerGame * .08 + passAccuracy * .15
+        : x.position <= 19
+          ? rating * .6 + goalsPerGame + assistsPerGame + goalConversion * .55 + effectiveShotRate * .25 + defensiveActionsPerGame * .12 + aerialsPerGame * .05 + passAccuracy * .18
+          : rating * .55 + goalsPerGame * 1.5 + assistsPerGame + goalConversion * 1.2 + effectiveShotRate * .35 + defensiveActionsPerGame * .07 + aerialsPerGame * .05 + passAccuracy * .15;
+    const score = rawScore * reliability;
+    return { ...x, rating: Math.round(rating * 100) / 100, goalsPerGame, assistsPerGame, goalConversion, effectiveShotRate, defensiveActionsPerGame, passAccuracy, score };
+  });
   const take = (test: (position: number) => boolean, count: number) => {
-    const pool = all.filter((x) => test(x.position)).sort((a, b) => b.score - a.score || b.appearances - a.appearances);
-    const stable = pool.filter((x) => x.appearances >= 2).slice(0, count);
-    return [...stable, ...pool.filter((x) => !stable.includes(x)).slice(0, count - stable.length)];
+    return all.filter((x) => x.appearances >= 5 && test(x.position)).sort((a, b) => b.score - a.score || b.rating - a.rating).slice(0, count);
   };
   return [...take((p) => p === 0, 1), ...take((p) => p >= 1 && p <= 8, 4), ...take((p) => p >= 9 && p <= 19, 3), ...take((p) => p >= 20 && p <= 27, 3)];
 }
