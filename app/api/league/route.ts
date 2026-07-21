@@ -11,6 +11,7 @@ type MatchInfo = {
   shoot: { goalTotal: number; shootOutScore: number; shootTotal: number; effectiveShootTotal: number };
   pass: { passTry: number; passSuccess: number };
   shootDetail: Array<{ goalTime: number; x: number; y: number; result: number; inPenalty: boolean }>;
+  player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; spRating: number } }>;
 };
 
 type Match = { matchId: string; matchDate: string; matchType: number; matchInfo: MatchInfo[] };
@@ -45,8 +46,8 @@ function table(matches: Match[], includeShootout: boolean) {
     .map((r, index) => ({ ...r, rank: index + 1 }));
 }
 
-function analytics(matches: Match[]) {
-  const result = Object.fromEntries(NICKNAMES.map((name) => [name, { matches: 0, shots: 0, onTarget: 0, goals: 0, passTry: 0, passSuccess: 0, possession: 0, routes: [0, 0, 0], goalBuckets: [0, 0, 0, 0, 0, 0], shotMap: [] as Array<{ x: number; y: number; goal: boolean }> }]));
+function analytics(matches: Match[], names: Map<number, string>) {
+  const result = Object.fromEntries(NICKNAMES.map((name) => [name, { matches: 0, shots: 0, onTarget: 0, goals: 0, passTry: 0, passSuccess: 0, possession: 0, routes: [0, 0, 0], goalBuckets: [0, 0, 0, 0, 0, 0], shotMap: [] as Array<{ x: number; y: number; goal: boolean }>, squad: {} as Record<string, any> }]));
   for (const match of matches) for (const info of match.matchInfo) {
     const row = result[info.nickname];
     row.matches++; row.shots += info.shoot.shootTotal || 0; row.onTarget += info.shoot.effectiveShootTotal || 0;
@@ -61,8 +62,33 @@ function analytics(matches: Match[]) {
         row.goalBuckets[Math.min(5, Math.floor(seconds / 900))]++;
       }
     }
+    for (const player of info.player || []) {
+      if (player.spPosition === 28 || player.status.spRating <= 0) continue;
+      const key = `${player.spId}-${player.spGrade}`;
+      const item = row.squad[key] ||= { spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, shots: 0, passTry: 0, passSuccess: 0, tackles: 0, interceptions: 0, ratingTotal: 0 };
+      item.appearances++; item.goals += player.status.goal || 0; item.assists += player.status.assist || 0; item.shots += player.status.shoot || 0; item.passTry += player.status.passTry || 0; item.passSuccess += player.status.passSuccess || 0; item.tackles += player.status.tackle || 0; item.interceptions += player.status.intercept || 0; item.ratingTotal += player.status.spRating || 0;
+    }
   }
+  Object.values(result).forEach((row: any) => { row.squad = Object.values(row.squad).map((item: any) => ({ ...item, rating: Math.round(item.ratingTotal / Math.max(1, item.appearances) * 100) / 100 })).sort((a: any, b: any) => b.appearances - a.appearances || b.rating - a.rating); });
   return result;
+}
+
+function weeklyBest(matches: Match[], names: Map<number, string>) {
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const candidates = new Map<string, any>();
+  for (const match of matches.filter((m) => new Date(`${m.matchDate}+09:00`) >= since)) for (const info of match.matchInfo) for (const player of info.player || []) {
+    if (player.spPosition === 28 || player.status.spRating <= 0) continue;
+    const key = `${info.nickname}-${player.spId}-${player.spGrade}`;
+    const item = candidates.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, ratingTotal: 0 };
+    item.appearances++; item.goals += player.status.goal || 0; item.assists += player.status.assist || 0; item.ratingTotal += player.status.spRating || 0; candidates.set(key, item);
+  }
+  const all = [...candidates.values()].map((x) => ({ ...x, rating: Math.round(x.ratingTotal / x.appearances * 100) / 100, score: x.ratingTotal / x.appearances + x.goals * .08 + x.assists * .06 }));
+  const take = (test: (position: number) => boolean, count: number) => {
+    const pool = all.filter((x) => test(x.position)).sort((a, b) => b.score - a.score || b.appearances - a.appearances);
+    const stable = pool.filter((x) => x.appearances >= 2).slice(0, count);
+    return [...stable, ...pool.filter((x) => !stable.includes(x)).slice(0, count - stable.length)];
+  };
+  return [...take((p) => p === 0, 1), ...take((p) => p >= 1 && p <= 8, 4), ...take((p) => p >= 9 && p <= 19, 3), ...take((p) => p >= 20 && p <= 27, 3)];
 }
 
 export async function GET() {
@@ -93,13 +119,16 @@ export async function GET() {
     }
     const matches = details.filter((m) => new Date(`${m.matchDate}+09:00`) >= START && m.matchInfo.length === 2 && m.matchInfo.every((x) => ouids.has(x.ouid)))
       .sort((a, b) => b.matchDate.localeCompare(a.matchDate));
+    const playerMeta = await fetch("https://open.api.nexon.com/static/fconline/meta/spid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Array<{ id: number; name: string }>;
+    const playerNames = new Map(playerMeta.map((player) => [player.id, player.name]));
     return NextResponse.json({
       connected: true,
       updatedAt: new Date().toISOString(),
       playerCount: NICKNAMES.length,
       matchCount: matches.length,
       standings: { excludingShootout: table(matches, false), includingShootout: table(matches, true) },
-      analytics: analytics(matches),
+      analytics: analytics(matches, playerNames),
+      weeklyBest: weeklyBest(matches, playerNames),
       matches: matches.map((m) => ({
         id: m.matchId, date: m.matchDate, type: m.matchType,
         home: m.matchInfo[0].nickname, away: m.matchInfo[1].nickname,

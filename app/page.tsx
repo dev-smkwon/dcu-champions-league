@@ -56,7 +56,7 @@ export default function Home() {
           <p className="eyebrow">2026 SUMMER SEASON · 7월 1일 시작</p>
           <h1>우리의 경기,<br/><em>하나의 리그.</em></h1>
           <p className="lede">대구가톨릭대 친구들의 FC Online 기록을 모아<br/>순위부터 플레이 패턴까지 한눈에.</p>
-          <div className="hero-actions"><Link href="/matches">모든 경기 보기</Link><Link href="/players">선수 살펴보기</Link></div>
+          <div className="hero-actions"><Link href="/matches">모든 경기 보기</Link><Link href="/players">유저 살펴보기</Link></div>
         </div>
         <div className="hero-stats">
           <div><span>LEAGUE LEADER</span><strong>{table[0]?.name || "-"}</strong><small>{table[0]?.pts || 0} PTS</small></div>
@@ -99,10 +99,10 @@ export default function Home() {
       </section>
 
       <section className="analysis-section" id="analysis">
-        <div className="section-title"><div><p className="eyebrow">PLAYSTYLE LAB</p><h2>리그 플레이 패턴</h2></div><p>슈팅 좌표·경기 기록으로 계산한 추정 지표입니다.</p></div>
+        <div className="section-title"><div><p className="eyebrow">PLAYSTYLE LAB</p><h2>리그 플레이 패턴</h2></div><p>슈팅 좌표·경기 기록 기반 · <Link href="/analysis">상세 분석 보기 →</Link></p></div>
         <div className="analysis-grid">
           <article className="dark-card attack" id="player-analysis">
-            <div className="card-title"><div><span>01</span><h3>주 공격 루트</h3></div><select aria-label="분석 선수" value={selectedPlayer} onChange={(e) => setSelectedPlayer(e.target.value)}>{previewPlayers.map((player) => <option key={player.name}>{player.name}</option>)}</select></div>
+            <div className="card-title"><div><span>01</span><h3>주 공격 루트</h3></div><select aria-label="분석 유저" value={selectedPlayer} onChange={(e) => setSelectedPlayer(e.target.value)}>{previewPlayers.map((player) => <option key={player.name}>{player.name}</option>)}</select></div>
             <div className="pitch">
               <div className="halfway"/><div className="circle"/><div className="box left"/><div className="box right"/>
               {stats?.shotMap?.slice(-100).map((shot, i) => <i key={i} className={shot.goal ? "shot-dot goal" : "shot-dot"} style={{ left: `${shot.x * 100}%`, top: `${shot.y * 100}%` }} />)}

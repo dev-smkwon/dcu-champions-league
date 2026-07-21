@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 const items = [
   { href: "/", label: "홈" },
   { href: "/matches", label: "경기" },
-  { href: "/players", label: "선수" },
-  { href: "/#analysis", label: "분석" },
+  { href: "/players", label: "유저" },
+  { href: "/analysis", label: "분석" },
+  { href: "/best-eleven", label: "BEST 11" },
 ];
 
 export function FloatingNav() {
