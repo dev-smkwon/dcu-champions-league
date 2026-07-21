@@ -13,7 +13,7 @@ type MatchInfo = {
   shoot: { goalTotal: number; shootOutScore: number; shootTotal: number; effectiveShootTotal: number };
   pass: { passTry: number; passSuccess: number };
   shootDetail: Array<{ spId: number; goalTime: number; x: number; y: number; result: number; type: number; inPenalty: boolean }>;
-  player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; block: number; defending: number; aerialSuccess: number; dribbleTry: number; dribbleSuccess: number; yellowCards: number; redCards: number; spRating: number } }>;
+  player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; block: number; defending: number; aerialTry: number; aerialSuccess: number; dribbleTry: number; dribbleSuccess: number; yellowCards: number; redCards: number; spRating: number } }>;
 };
 
 type Match = { matchId: string; matchDate: string; matchType: number; matchInfo: MatchInfo[] };
@@ -87,8 +87,8 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
   for (const match of matches) for (const info of match.matchInfo) for (const player of info.player || []) {
     if (player.spPosition === 28 || player.status.spRating <= 0) continue;
     const key = `${info.nickname}-${player.spId}-${player.spGrade}`;
-    const item = candidates.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, shots: 0, effectiveShots: 0, passTry: 0, passSuccess: 0, tackles: 0, interceptions: 0, blocks: 0, defending: 0, aerials: 0, dribbleTry: 0, dribbleSuccess: 0, yellowCards: 0, redCards: 0, ratingTotal: 0 };
-    item.appearances++; item.goals += player.status.goal || 0; item.assists += player.status.assist || 0; item.shots += player.status.shoot || 0; item.effectiveShots += player.status.effectiveShoot || 0; item.passTry += player.status.passTry || 0; item.passSuccess += player.status.passSuccess || 0; item.tackles += player.status.tackle || 0; item.interceptions += player.status.intercept || 0; item.blocks += player.status.block || 0; item.defending += player.status.defending || 0; item.aerials += player.status.aerialSuccess || 0; item.dribbleTry += player.status.dribbleTry || 0; item.dribbleSuccess += player.status.dribbleSuccess || 0; item.yellowCards += player.status.yellowCards || 0; item.redCards += player.status.redCards || 0; item.ratingTotal += player.status.spRating || 0; candidates.set(key, item);
+    const item = candidates.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, shots: 0, effectiveShots: 0, passTry: 0, passSuccess: 0, tackles: 0, interceptions: 0, blocks: 0, defending: 0, aerialTry: 0, aerials: 0, dribbleTry: 0, dribbleSuccess: 0, yellowCards: 0, redCards: 0, ratingTotal: 0 };
+    item.appearances++; item.goals += player.status.goal || 0; item.assists += player.status.assist || 0; item.shots += player.status.shoot || 0; item.effectiveShots += player.status.effectiveShoot || 0; item.passTry += player.status.passTry || 0; item.passSuccess += player.status.passSuccess || 0; item.tackles += player.status.tackle || 0; item.interceptions += player.status.intercept || 0; item.blocks += player.status.block || 0; item.defending += player.status.defending || 0; item.aerialTry += player.status.aerialTry || 0; item.aerials += player.status.aerialSuccess || 0; item.dribbleTry += player.status.dribbleTry || 0; item.dribbleSuccess += player.status.dribbleSuccess || 0; item.yellowCards += player.status.yellowCards || 0; item.redCards += player.status.redCards || 0; item.ratingTotal += player.status.spRating || 0; candidates.set(key, item);
   }
   const all = [...candidates.values()].map((x) => {
     const rating = x.ratingTotal / x.appearances;
@@ -108,7 +108,7 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
           ? rating * .6 + goalsPerGame + assistsPerGame + goalConversion * .55 + effectiveShotRate * .25 + defensiveActionsPerGame * .12 + aerialsPerGame * .05 + passAccuracy * .18
           : rating * .55 + goalsPerGame * 1.5 + assistsPerGame + goalConversion * 1.2 + effectiveShotRate * .35 + defensiveActionsPerGame * .07 + aerialsPerGame * .05 + passAccuracy * .15;
     const score = rawScore * reliability;
-    return { ...x, rating: Math.round(rating * 100) / 100, goalsPerGame, assistsPerGame, goalConversion, effectiveShotRate, defensiveActionsPerGame, passAccuracy, dribbleSuccessRate: x.dribbleSuccess / Math.max(1, x.dribbleTry), score };
+    return { ...x, rating: Math.round(rating * 100) / 100, goalsPerGame, assistsPerGame, goalContributionsPerGame: (x.goals + x.assists) / x.appearances, goalConversion, effectiveShotRate, defensiveActionsPerGame, passAccuracy, aerialSuccessRate: x.aerials / Math.max(1, x.aerialTry), dribbleSuccessRate: x.dribbleSuccess / Math.max(1, x.dribbleTry), score };
   });
   const take = (test: (position: number) => boolean, count: number) => {
     return all.filter((x) => x.appearances >= minimumAppearances && test(x.position)).sort((a, b) => b.score - a.score || b.rating - a.rating).slice(0, count);
@@ -155,7 +155,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
   const investmentPlayers = players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, gradeEfficiency: x.score / Math.max(1, x.grade) }));
   const top = (key: string, minimum = 1, descending = true) => players.filter((x) => x.appearances >= minimum).sort((a, b) => (Number(b[key]) - Number(a[key])) * (descending ? 1 : -1)).slice(0, 10);
   const perGame = (key: string) => players.filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: Number(x[key] || 0) / x.appearances })).sort((a, b) => b.perGameValue - a.perGameValue).slice(0, 10);
-  return { shotAwards, boards: [
+  const boards = [
     { id: "dribble-rate", emoji: "🪩", title: "벗기기 선수", description: "50회 이상 시도한 카드의 돌파 성공률", value: "dribbleSuccessRate", percent: true, rows: players.filter((x) => x.dribbleTry >= 50).sort((a, b) => b.dribbleSuccessRate - a.dribbleSuccessRate).slice(0, 10) },
     { id: "goals", emoji: "👑", title: "득점왕", description: "가장 많은 골을 넣은 카드", value: "goals", rows: top("goals"), perGameRows: perGame("goals") },
     { id: "assists", emoji: "🎁", title: "도움왕", description: "동료를 가장 많이 빛낸 카드", value: "assists", rows: top("assists"), perGameRows: perGame("assists") },
@@ -177,7 +177,16 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     { id: "dribbles", emoji: "🕺", title: "돌파 대장", description: "드리블 성공 횟수", value: "dribbleSuccess", rows: top("dribbleSuccess"), perGameRows: perGame("dribbleSuccess") },
     { id: "trigger-happy", emoji: "🔫", title: "난사왕", description: "50회 이상 슈팅 중 골 전환율이 낮은 순", value: "goalConversion", percent: true, rows: players.filter((x) => x.shots >= 50).sort((a, b) => a.goalConversion - b.goalConversion || b.shots - a.shots).slice(0, 10) },
     { id: "body-block", emoji: "🛡️", title: "몸으로 말해요", description: "블록으로 슈팅을 막아낸 카드", value: "blocks", rows: top("blocks"), perGameRows: perGame("blocks") },
-  ] };
+    { id: "low-rating", emoji: "🫥", title: "평점 비상", description: "5경기 이상 출전 평균 평점 낮은 순", value: "rating", decimal: true, rows: [...players].filter((x) => x.appearances >= 5).sort((a, b) => a.rating - b.rating).slice(0, 10) },
+    { id: "off-target", emoji: "🛰️", title: "골대 탐색 중", description: "20회 이상 슈팅한 카드의 유효 슈팅률 낮은 순", value: "effectiveShotRate", percent: true, rows: [...players].filter((x) => x.shots >= 20).sort((a, b) => a.effectiveShotRate - b.effectiveShotRate || b.shots - a.shots).slice(0, 10) },
+    { id: "pass-lost", emoji: "🧭", title: "패스 길 잃음", description: "100회 이상 패스한 카드의 성공률 낮은 순", value: "passAccuracy", percent: true, rows: [...players].filter((x) => x.passTry >= 100).sort((a, b) => a.passAccuracy - b.passAccuracy || b.passTry - a.passTry).slice(0, 10) },
+    { id: "dribble-stopped", emoji: "🚧", title: "돌파 공사 중", description: "30회 이상 드리블한 카드의 성공률 낮은 순", value: "dribbleSuccessRate", percent: true, rows: [...players].filter((x) => x.dribbleTry >= 30).sort((a, b) => a.dribbleSuccessRate - b.dribbleSuccessRate || b.dribbleTry - a.dribbleTry).slice(0, 10) },
+    { id: "aerial-weak", emoji: "🪶", title: "공중볼 양보", description: "20회 이상 경합한 카드의 공중볼 성공률 낮은 순", value: "aerialSuccessRate", percent: true, rows: [...players].filter((x) => x.aerialTry >= 20).sort((a, b) => a.aerialSuccessRate - b.aerialSuccessRate || b.aerialTry - a.aerialTry).slice(0, 10) },
+    { id: "attack-silence", emoji: "🤐", title: "공격 포인트 가뭄", description: "10경기 이상 공격수의 경기당 골+도움 낮은 순", value: "goalContributionsPerGame", decimal: true, rows: [...players].filter((x) => x.appearances >= 10 && x.position >= 20).sort((a, b) => a.goalContributionsPerGame - b.goalContributionsPerGame || b.appearances - a.appearances).slice(0, 10) },
+    { id: "defence-walk", emoji: "🚶", title: "수비 산책", description: "10경기 이상 수비수의 경기당 수비 행동 낮은 순", value: "defensiveActionsPerGame", decimal: true, rows: [...players].filter((x) => x.appearances >= 10 && x.position >= 1 && x.position <= 8).sort((a, b) => a.defensiveActionsPerGame - b.defensiveActionsPerGame || b.appearances - a.appearances).slice(0, 10) },
+  ];
+  const negativeBoardIds = new Set(["oil-hands", "underperform", "yellow", "red", "fouls", "trigger-happy", "low-rating", "off-target", "pass-lost", "dribble-stopped", "aerial-weak", "attack-silence", "defence-walk"]);
+  return { shotAwards, boards: boards.map((board) => ({ ...board, sentiment: negativeBoardIds.has(board.id) ? "negative" : "positive" })) };
 }
 
 function squadClasses(info: MatchInfo, seasons: Map<number, string>) {

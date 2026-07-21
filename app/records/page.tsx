@@ -8,7 +8,7 @@ type Leader = { name: string; owner?: string; goals: number; attempts: number };
 type ShotRanking = Leader & { owner: string; spId: number; conversion: number };
 type ShotAward = { id: string; title: string; emoji: string; user: Leader | null; player: Leader | null; rankings: ShotRanking[] };
 type BoardRow = { owner: string; spId?: number; name: string; kind?: string; grade?: number; appearances: number; [key: string]: string | number | undefined };
-type Board = { id: string; emoji: string; title: string; description: string; value: string; percent?: boolean; decimal?: boolean; rows: BoardRow[]; perGameRows?: BoardRow[] };
+type Board = { id: string; emoji: string; title: string; description: string; value: string; sentiment?: "positive" | "negative"; percent?: boolean; decimal?: boolean; rows: BoardRow[]; perGameRows?: BoardRow[] };
 
 const displayValue = (board: Board, row: BoardRow) => {
   const value = Number(row[board.value] || 0);
