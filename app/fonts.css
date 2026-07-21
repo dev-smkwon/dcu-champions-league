@@ -1,0 +1,39 @@
+body,
+button,
+select {
+  font-family: "Noto Sans KR Variable", "Noto Sans KR", sans-serif;
+  font-optical-sizing: auto;
+  word-break: keep-all;
+}
+
+h1,
+h2,
+h3,
+.brand,
+.eyebrow,
+.hero-stats,
+table,
+.scoreline,
+.big-metric,
+.mini-metrics,
+.chart,
+footer {
+  font-family: "Barlow Condensed", "Noto Sans KR Variable", sans-serif;
+}
+
+.hero h1 {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.panel h2,
+.analysis-section h2 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+table,
+.scoreline,
+.mini-metrics {
+  font-variant-numeric: tabular-nums;
+}
