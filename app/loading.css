@@ -1,0 +1,32 @@
+.home-loading {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding-top: 0;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(62, 99, 221, 0.12), transparent 38%),
+    #f5f7fb;
+}
+
+.home-loading .loading-state {
+  min-height: auto;
+}
+
+.home-loading .empty-state {
+  display: flex;
+  min-height: auto;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  color: #111827;
+  text-align: center;
+}
+
+.home-loading .empty-state b {
+  font-size: 18px;
+}
+
+.home-loading .empty-state span {
+  color: #6b7280;
+  font-size: 14px;
+}

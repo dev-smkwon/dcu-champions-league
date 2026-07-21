@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { FloatingNav } from "./components/FloatingNav";
+import { LoadingState } from "./components/LoadingState";
 
 type PlayerRow = { rank: number; name: string; p: number; w: number; d: number; l: number; gf: number; ga: number; gd: number; pts: number; form: string[] };
 type ApiMatch = { id: string; date: string; type: number; home: string; away: string; homeGoals: number; awayGoals: number; homeShootout: number; awayShootout: number };
@@ -48,6 +49,28 @@ export default function Home() {
   const passAccuracy = stats ? Math.round(stats.passSuccess / Math.max(1, stats.passTry) * 100) : 87;
   const goalBuckets = stats?.goalBuckets || [22, 38, 62, 88, 55, 34];
   const bucketMax = Math.max(1, ...goalBuckets);
+
+  if (!live) {
+    return (
+      <main className="subpage home-loading">
+        <FloatingNav />
+        <LoadingState label="리그 기록을 불러오는 중" />
+      </main>
+    );
+  }
+
+  if (!live.connected) {
+    return (
+      <main className="subpage home-loading">
+        <FloatingNav />
+        <div className="empty-state">
+          <b>데이터를 불러오지 못했습니다.</b>
+          <span>잠시 후 새로고침해 주세요.</span>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main><FloatingNav />
 
