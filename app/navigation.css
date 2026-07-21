@@ -1,0 +1,66 @@
+#standings,
+#matches,
+#analysis,
+#player-analysis {
+  scroll-margin-top: 24px;
+}
+
+.topbar nav a {
+  position: relative;
+  padding: 29px 0 25px;
+  color: #aeb6d0;
+  font-family: "Noto Sans KR Variable", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.topbar nav a.active {
+  color: #fff;
+}
+
+.topbar nav a.active::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--lime);
+  content: "";
+}
+
+@media (max-width: 1000px) {
+  .topbar nav {
+    position: fixed;
+    z-index: 50;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    justify-content: space-around;
+    gap: 0;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid rgba(145, 172, 255, 0.25);
+    border-radius: 14px;
+    background: rgba(5, 10, 35, 0.92);
+    box-shadow: 0 12px 35px rgba(0, 0, 20, 0.35);
+    backdrop-filter: blur(18px);
+  }
+
+  .topbar nav a {
+    flex: 1;
+    padding: 15px 8px 13px;
+    text-align: center;
+  }
+
+  .topbar nav a.active::after {
+    right: 35%;
+    bottom: 5px;
+    left: 35%;
+  }
+
+  footer {
+    margin-bottom: 70px;
+  }
+}

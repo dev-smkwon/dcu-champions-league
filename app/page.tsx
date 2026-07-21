@@ -47,6 +47,7 @@ export default function Home() {
   const passAccuracy = stats ? Math.round(stats.passSuccess / Math.max(1, stats.passTry) * 100) : 87;
   const goalBuckets = stats?.goalBuckets || [22, 38, 62, 88, 55, 34];
   const bucketMax = Math.max(1, ...goalBuckets);
+  const navTargets: Record<string, string> = { "순위": "standings", "경기": "matches", "분석": "analysis", "선수": "player-analysis" };
 
   return (
     <main>
@@ -57,7 +58,7 @@ export default function Home() {
         </a>
         <nav aria-label="주 메뉴">
           {["순위", "경기", "분석", "선수"].map((item) => (
-            <button className={tab === item ? "active" : ""} onClick={() => setTab(item)} key={item}>{item}</button>
+            <a href={`#${navTargets[item]}`} className={tab === item ? "active" : ""} onClick={() => setTab(item)} key={item}>{item}</a>
           ))}
         </nav>
         <div className="sync"><i /> {live?.connected ? "실제 데이터" : "예시 데이터"} <span>{live?.connected ? "NEXON 연결됨" : "API 연결 전"}</span></div>
@@ -77,7 +78,7 @@ export default function Home() {
       </section>
 
       <section className="content-grid">
-        <article className="panel standings">
+        <article className="panel standings" id="standings">
           <div className="panel-head">
             <div><p className="eyebrow dark">LEAGUE TABLE</p><h2>리그 순위</h2></div>
             <label className="toggle-row">
@@ -100,7 +101,7 @@ export default function Home() {
           <p className="caption">동률 시 득실차 → 다득점 → 상대 전적 순으로 정렬 · {shootout ? "승부차기 결과 포함" : "승부차기 결과 제외"}</p>
         </article>
 
-        <aside className="panel recent">
+        <aside className="panel recent" id="matches">
           <div className="panel-head"><div><p className="eyebrow dark">RECENT</p><h2>최근 경기</h2></div><button className="link-btn">전체 보기 →</button></div>
           <div className="matches">{matchList.map((m) => <div className="match" key={`${m.date}-${m.home}`}>
             <div className="match-meta"><span>{m.date}</span><small>{m.note}</small></div>
@@ -109,10 +110,10 @@ export default function Home() {
         </aside>
       </section>
 
-      <section className="analysis-section">
+      <section className="analysis-section" id="analysis">
         <div className="section-title"><div><p className="eyebrow">PLAYSTYLE LAB</p><h2>리그 플레이 패턴</h2></div><p>슈팅 좌표·경기 기록으로 계산한 추정 지표입니다.</p></div>
         <div className="analysis-grid">
-          <article className="dark-card attack">
+          <article className="dark-card attack" id="player-analysis">
             <div className="card-title"><div><span>01</span><h3>주 공격 루트</h3></div><select aria-label="분석 선수" value={selectedPlayer} onChange={(e) => setSelectedPlayer(e.target.value)}>{previewPlayers.map((player) => <option key={player.name}>{player.name}</option>)}</select></div>
             <div className="pitch">
               <div className="halfway"/><div className="circle"/><div className="box left"/><div className="box right"/>
