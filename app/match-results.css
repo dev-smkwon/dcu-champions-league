@@ -5,7 +5,7 @@
 .match-row.result-win .match-side.home>b,.match-row.result-win .match-score strong:first-child { color:#087641; }
 .match-row.result-loss .match-side.home>b,.match-row.result-loss .match-score strong:first-child { color:#bd2436; }
 .match-row.result-draw .match-side.home>b,.match-row.result-draw .match-score strong:first-child { color:#525e70; }
-.result-badge { position:absolute; top:50%; left:10px; display:grid; width:22px; height:22px; place-items:center; border-radius:7px; color:#fff!important; font-size:9px!important; font-style:normal; font-weight:800; transform:translateY(-50%); }
+.result-badge { position:absolute; top:50%; left:10px; display:grid; width:22px; height:22px; place-items:center; border-radius:7px; color:#fff!important; font-size:11px!important; font-style:normal; font-weight:800; transform:translateY(-50%); }
 .result-win .result-badge { background:#138a50; box-shadow:0 3px 9px rgba(19,138,80,.28); }
 .result-loss .result-badge { background:#d73547; box-shadow:0 3px 9px rgba(215,53,71,.28); }
 .result-draw .result-badge { background:#778293; box-shadow:0 3px 9px rgba(80,92,110,.24); }

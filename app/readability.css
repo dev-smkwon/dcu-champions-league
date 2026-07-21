@@ -26,7 +26,7 @@ th,
 .best-table-head,
 .best-roster-head > span,
 .criteria-help aside small {
-  font-size: 9px;
+  font-size:11px;
   line-height: 1.4;
 }
 
@@ -42,18 +42,18 @@ th,
 .best-player-detail dt,
 .best-player-detail strong small,
 .best-player-detail > b small {
-  font-size: 9px;
+  font-size:11px;
   line-height: 1.35;
 }
 
 .best-card > b { font-size: 12px; }
-.best-card > small { font-size: 9px; }
-.best-card > em { font-size: 9px; }
+.best-card > small { font-size:11px; }
+.best-card > em { font-size:11px; }
 .criteria-help aside p { font-size: 11px; }
 .toolbar input,
 .toolbar span,
 .compact-matches > a { font-size: 12px; }
 
 @media (max-width: 620px) {
-  .best-card > b { font-size: 10px; }
+  .best-card > b { font-size:12px; }
 }

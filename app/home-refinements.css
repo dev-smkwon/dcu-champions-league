@@ -8,7 +8,7 @@
 .recent .match.recent-win:before { background:#159159; }
 .recent .match.recent-loss:before { background:#d83c4e; }
 .recent .match-meta { font-size:11px; }
-.recent .match-meta small { padding:3px 6px; border-radius:6px; background:#edf0f6; font-size:10px; }
+.recent .match-meta small { padding:3px 6px; border-radius:6px; background:#edf0f6; font-size:12px; }
 .recent .scoreline { grid-template-columns:1fr 74px 1fr; margin-top:12px; }
 .recent .scoreline b { overflow:hidden; font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
 .recent .scoreline strong { border-radius:9px; background:#0d1838; font-size:18px; }
@@ -16,13 +16,13 @@
 
 /* Remaining microcopy in the dark analysis cards. */
 .dark-card .card-title small { color:#aebbd6; font-size:12px; font-weight:650; }
-.dark-card .card-title div>span { font-size:10px; }
+.dark-card .card-title div>span { font-size:12px; }
 .dark-card .big-metric>span { color:#c0cae0; font-size:12px; line-height:1.45; }
 .dark-card .big-metric span b { color:#8fa0c2; font-size:11px; line-height:1.45; }
 .dark-card .mini-metrics div { font-size:12px; }
 .dark-card .mini-metrics b { font-size:17px; }
 .dark-card .route-bars>div { font-size:11px; }
-.dark-card .chart span { color:#a6b1ca; font-size:10px; }
+.dark-card .chart span { color:#a6b1ca; font-size:12px; }
 .dark-card .insight span,.dark-card .insight b { font-size:11px; line-height:1.45; }
 
 @media(max-width:650px){

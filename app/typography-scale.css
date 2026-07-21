@@ -2,10 +2,10 @@
 body { font-size:15px; line-height:1.5; }
 
 .island-nav>div a { font-size:13px; }
-.live-pill,.island-brand small { font-size:10px; }
+.live-pill,.island-brand small { font-size:12px; }
 .hero .lede { font-size:16px; }
 .hero-actions a { font-size:13px; }
-.hero-stats span,.hero-stats small { font-size:10px; }
+.hero-stats span,.hero-stats small { font-size:12px; }
 .eyebrow,.subhero>p,.card-heading>div>p { font-size:11px; }
 .subhero span { font-size:15px; }
 
@@ -19,7 +19,7 @@ th { font-size:11px; }
 .match-row time { font-size:12px; }
 .match-side b { font-size:16px; }
 .match-side small { font-size:11px; }
-.match-score small { font-size:10px; }
+.match-score small { font-size:12px; }
 .player-card>p,.player-card em,.player-record span { font-size:11px; }
 .player-record b { font-size:18px; }
 
@@ -27,21 +27,21 @@ th { font-size:11px; }
 .route-summary>div,.stat-stack span,.summary-list>div,.versus-stats span { font-size:11px; }
 .compact-matches>a { font-size:13px; }
 .squad-table>div,.comparison-table>div { font-size:12px; }
-.squad-table .squad-head,.comparison-table .comparison-head { font-size:10px; }
-.squad-table strong small { font-size:9px; }
+.squad-table .squad-head,.comparison-table .comparison-head { font-size:12px; }
+.squad-table strong small { font-size:11px; }
 
 .card-title h3 { font-size:17px; }
-.card-title small,.route-bars>div,.mini-metrics div,.chart span,.insight span,.insight b { font-size:10px; }
+.card-title small,.route-bars>div,.mini-metrics div,.chart span,.insight span,.insight b { font-size:12px; }
 .section-title>p { font-size:11px; }
-.analysis-kpis span,.analysis-kpis small,.map-legend span,.time-chart span,.time-chart small { font-size:10px; }
+.analysis-kpis span,.analysis-kpis small,.map-legend span,.time-chart span,.time-chart small { font-size:12px; }
 .class-matchups>div { font-size:12px; }
-.class-matchups .class-head,.class-disclaimer { font-size:10px; }
+.class-matchups .class-head,.class-disclaimer { font-size:12px; }
 
 .best-card>b { font-size:13px; }
-.best-card>small,.best-card>em { font-size:10px; }
-.best-table-head { font-size:9px; }
+.best-card>small,.best-card>em { font-size:12px; }
+.best-table-head { font-size:11px; }
 .best-roster>button>strong,.best-roster>button>span,.best-player-detail dd { font-size:12px; }
-.best-roster>button>strong small,.best-player-detail dt,.best-player-detail strong small,.best-player-detail>b small { font-size:10px; }
+.best-roster>button>strong small,.best-player-detail dt,.best-player-detail strong small,.best-player-detail>b small { font-size:12px; }
 .best-note p,.criteria-help aside p { font-size:12px; }
 
 .goal-timeline span b { font-size:13px; }
@@ -53,5 +53,5 @@ th { font-size:11px; }
   .island-nav>div a { font-size:11px; }
   .hero .lede { font-size:15px; }
   .best-card>b { font-size:11px; }
-  .best-card>small { font-size:9px; }
+  .best-card>small { font-size:11px; }
 }
