@@ -36,5 +36,12 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ko"><body>{children}</body></html>;
+  return (
+    <html lang="ko">
+      <body>
+        {children}
+        <div className="nexon-api-attribution">Data based on NEXON Open API</div>
+      </body>
+    </html>
+  );
 }
