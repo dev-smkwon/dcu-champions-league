@@ -12,7 +12,7 @@ type MatchInfo = {
   matchDetail: { matchResult: string; possession: number };
   shoot: { goalTotal: number; shootOutScore: number; shootTotal: number; effectiveShootTotal: number };
   pass: { passTry: number; passSuccess: number };
-  shootDetail: Array<{ goalTime: number; x: number; y: number; result: number; type: number; inPenalty: boolean }>;
+  shootDetail: Array<{ spId: number; goalTime: number; x: number; y: number; result: number; type: number; inPenalty: boolean }>;
   player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; block: number; defending: number; aerialSuccess: number; spRating: number } }>;
 };
 
@@ -117,6 +117,45 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
   return { picks, all: all.sort((a, b) => b.score - a.score || b.rating - a.rating) };
 }
 
+function recordBook(matches: Match[], names: Map<number, string>, players: any[]) {
+  const shotLabels: Record<number, { title: string; emoji: string }> = { 2: { title: "감아차기 예술가", emoji: "🌀" }, 3: { title: "공중의 지배자", emoji: "🛫" }, 5: { title: "발리 장인", emoji: "⚡" }, 6: { title: "프리킥 마법사", emoji: "🪄" }, 8: { title: "파워 슛 대장", emoji: "💥" } };
+  const userShots = new Map<string, { name: string; goals: number; attempts: number }>();
+  const playerShots = new Map<string, { owner: string; name: string; goals: number; attempts: number }>();
+  const goalkeepers = new Map<string, { owner: string; spId: number; name: string; grade: number; appearances: number; conceded: number; ratingTotal: number }>();
+  for (const match of matches) for (let sideIndex = 0; sideIndex < match.matchInfo.length; sideIndex++) {
+    const info = match.matchInfo[sideIndex]; const opponent = match.matchInfo[sideIndex === 0 ? 1 : 0];
+    for (const shot of info.shootDetail || []) {
+      const type = Number(shot.type); const goal = Number(shot.result) === 3; const playerName = names.get(Number(shot.spId)) || `선수 ${shot.spId}`;
+      for (const category of [String(type), shot.inPenalty ? "inside" : "outside"]) {
+        const userKey = `${category}|${info.nickname}`; const user = userShots.get(userKey) || { name: info.nickname, goals: 0, attempts: 0 }; user.attempts++; if (goal) user.goals++; userShots.set(userKey, user);
+        const playerKey = `${category}|${info.nickname}|${shot.spId}`; const player = playerShots.get(playerKey) || { owner: info.nickname, name: playerName, goals: 0, attempts: 0 }; player.attempts++; if (goal) player.goals++; playerShots.set(playerKey, player);
+      }
+    }
+    for (const player of info.player || []) if (player.spPosition === 0 && player.status.spRating > 0) {
+      const key = `${info.nickname}|${player.spId}|${player.spGrade}`; const keeper = goalkeepers.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, grade: player.spGrade, appearances: 0, conceded: 0, ratingTotal: 0 };
+      keeper.appearances++; keeper.conceded += Number(opponent.shoot.goalTotal || 0); keeper.ratingTotal += Number(player.status.spRating || 0); goalkeepers.set(key, keeper);
+    }
+  }
+  const leader = (source: Map<string, any>, category: string) => [...source.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => value).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts)[0] || null;
+  const shotAwards = [...Object.entries(shotLabels).map(([type, meta]) => ({ ...meta, user: leader(userShots, type), player: leader(playerShots, type) })), { title: "중거리 포병", emoji: "🚀", user: leader(userShots, "outside"), player: leader(playerShots, "outside") }];
+  const keepers = [...goalkeepers.values()].map((x) => ({ ...x, concededPerGame: x.conceded / x.appearances, rating: x.ratingTotal / x.appearances })).filter((x) => x.appearances >= 3);
+  const top = (key: string, minimum = 1, descending = true) => players.filter((x) => x.appearances >= minimum).sort((a, b) => (Number(b[key]) - Number(a[key])) * (descending ? 1 : -1)).slice(0, 10);
+  return { shotAwards, boards: [
+    { id: "goals", emoji: "👑", title: "득점왕", description: "가장 많은 골을 넣은 카드", value: "goals", rows: top("goals") },
+    { id: "assists", emoji: "🎁", title: "도움왕", description: "동료를 가장 많이 빛낸 카드", value: "assists", rows: top("assists") },
+    { id: "conversion", emoji: "🎯", title: "원샷 원킬", description: "10회 이상 슈팅한 카드의 골 전환율", value: "goalConversion", percent: true, rows: players.filter((x) => x.shots >= 10).sort((a, b) => b.goalConversion - a.goalConversion).slice(0, 10) },
+    { id: "rating", emoji: "⭐", title: "평점 괴물", description: "5경기 이상 출전 평균 평점", value: "rating", decimal: true, rows: top("rating", 5) },
+    { id: "ironman", emoji: "🦾", title: "철인", description: "가장 많이 출전한 카드", value: "appearances", rows: top("appearances") },
+    { id: "tackles", emoji: "🧹", title: "청소부", description: "태클 성공 누적 순위", value: "tackles", rows: top("tackles") },
+    { id: "interceptions", emoji: "🧱", title: "길목 차단", description: "가로채기 누적 순위", value: "interceptions", rows: top("interceptions") },
+    { id: "aerials", emoji: "🦅", title: "제공권 제왕", description: "공중볼 성공 누적 순위", value: "aerials", rows: top("aerials") },
+    { id: "passes", emoji: "🧠", title: "패스 마스터", description: "500회 이상 시도한 카드의 패스 성공률", value: "passAccuracy", percent: true, rows: players.filter((x) => x.passTry >= 500).sort((a, b) => b.passAccuracy - a.passAccuracy).slice(0, 10) },
+    { id: "busy", emoji: "🚨", title: "가장 바쁜 수비수", description: "5경기 이상 수비수의 경기당 수비 행동", value: "defensiveActionsPerGame", decimal: true, rows: players.filter((x) => x.appearances >= 5 && x.position >= 1 && x.position <= 8).sort((a, b) => b.defensiveActionsPerGame - a.defensiveActionsPerGame).slice(0, 10) },
+    { id: "oil-hands", emoji: "🧤", title: "기름손 주의보", description: "3경기 이상 GK 중 경기당 실점이 많은 순", value: "concededPerGame", decimal: true, rows: keepers.sort((a, b) => b.concededPerGame - a.concededPerGame).slice(0, 10) },
+    { id: "wall", emoji: "🔒", title: "철벽 수문장", description: "3경기 이상 GK 중 경기당 실점이 적은 순", value: "concededPerGame", decimal: true, rows: [...keepers].sort((a, b) => a.concededPerGame - b.concededPerGame).slice(0, 10) },
+  ] };
+}
+
 function squadClasses(info: MatchInfo, seasons: Map<number, string>) {
   const counts = new Map<number, number>();
   for (const player of info.player || []) {
@@ -179,6 +218,7 @@ export async function GET() {
       seasonBest: seasonSelection.picks,
       weeklyPlayers: weeklySelection.all,
       seasonPlayers: seasonSelection.all,
+      records: recordBook(matches, playerNames, seasonSelection.all),
       matches: matches.map((m) => ({
         id: m.matchId, date: m.matchDate, type: m.matchType,
         home: m.matchInfo[0].nickname, away: m.matchInfo[1].nickname,

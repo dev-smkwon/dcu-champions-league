@@ -13,6 +13,7 @@
 .recent .scoreline b { overflow:hidden; font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
 .recent .scoreline strong { border-radius:9px; background:#0d1838; font-size:18px; }
 .recent-arrow { position:absolute; top:50%; right:13px; color:#9aa5b8; font-size:21px; font-style:normal; transform:translateY(-50%); }
+.ranking-controls{display:flex;align-items:center;gap:15px}.ranking-mode{display:flex;padding:4px;border:1px solid #dfe5f1;border-radius:12px;background:#f4f6fa}.ranking-mode button{padding:7px 11px;border:0;border-radius:9px;background:transparent;color:#7d879b;font-size:12px;font-weight:750}.ranking-mode button.active{background:#0b1944;color:#fff;box-shadow:0 4px 10px rgba(11,25,68,.18)}.adjusted-score{display:block;color:#315efb;font:700 17px "Barlow Condensed"}.rank-confidence{display:block;margin-top:2px;color:#98a2b3;font-size:10px;white-space:nowrap}
 
 /* Remaining microcopy in the dark analysis cards. */
 .dark-card .card-title small { color:#aebbd6; font-size:12px; font-weight:650; }
@@ -26,6 +27,7 @@
 .dark-card .insight span,.dark-card .insight b { font-size:11px; line-height:1.45; }
 
 @media(max-width:650px){
+  .standings .panel-head{align-items:flex-start;gap:15px;flex-direction:column}.ranking-controls{width:100%;align-items:flex-start;justify-content:space-between;gap:8px}.ranking-mode button{padding:7px 9px}
   .recent .match { padding-right:28px; }
   .recent .scoreline { grid-template-columns:1fr 64px 1fr; }
 }

@@ -9,6 +9,7 @@ const items = [
   { href: "/players", label: "유저" },
   { href: "/analysis", label: "분석" },
   { href: "/best-eleven", label: "BEST 11" },
+  { href: "/records", label: "기록실" },
 ];
 
 export function FloatingNav() {

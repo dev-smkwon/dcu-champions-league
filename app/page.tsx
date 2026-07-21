@@ -7,6 +7,7 @@ import { LoadingState } from "./components/LoadingState";
 import { useTriSort } from "./hooks/useTriSort";
 
 type PlayerRow = { rank: number; name: string; p: number; w: number; d: number; l: number; gf: number; ga: number; gd: number; pts: number; form: string[] };
+type RankedRow = PlayerRow & { adjustedPpg: number; confidence: number };
 type ApiMatch = { id: string; date: string; type: number; home: string; away: string; homeGoals: number; awayGoals: number; homeShootout: number; awayShootout: number };
 type PlayerAnalytics = { matches: number; shots: number; onTarget: number; goals: number; passTry: number; passSuccess: number; routes: number[]; goalBuckets: number[]; shotMap: Array<{ x: number; y: number; goal: boolean }> };
 type LeagueData = { connected: boolean; playerCount?: number; matchCount?: number; matches?: ApiMatch[]; standings?: { excludingShootout: PlayerRow[]; includingShootout: PlayerRow[] }; analytics?: Record<string, PlayerAnalytics> };
@@ -30,12 +31,24 @@ const previewMatches = [
 
 export default function Home() {
   const [shootout, setShootout] = useState(false);
+  const [adjustedRanking, setAdjustedRanking] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState("씅민쓰");
   const [live, setLive] = useState<LeagueData | null>(null);
   useEffect(() => { fetch("/api/league").then((r) => r.json()).then(setLive).catch(() => setLive({ connected: false })); }, []);
-  const table = useMemo(() => live?.connected
-    ? (shootout ? live.standings!.includingShootout : live.standings!.excludingShootout)
-    : previewPlayers.map((x) => ({ ...x, pts: x.w * 3 + x.d, gd: x.gf - x.ga })), [live, shootout]);
+  const table = useMemo<RankedRow[]>(() => {
+    const base = live?.connected
+      ? (shootout ? live.standings!.includingShootout : live.standings!.excludingShootout)
+      : previewPlayers.map((x) => ({ ...x, pts: x.w * 3 + x.d, gd: x.gf - x.ga }));
+    const played = base.filter((row) => row.p > 0);
+    const leaguePpg = played.reduce((sum, row) => sum + row.pts, 0) / Math.max(1, played.reduce((sum, row) => sum + row.p, 0));
+    const rows = base.map((row) => {
+      const weight = row.p / (row.p + 5);
+      const adjustedPpg = row.p ? weight * (row.pts / row.p) + (1 - weight) * leaguePpg : -1;
+      return { ...row, adjustedPpg, confidence: weight };
+    });
+    if (!adjustedRanking) return rows;
+    return rows.sort((a, b) => b.adjustedPpg - a.adjustedPpg || b.gd / Math.max(1, b.p) - a.gd / Math.max(1, a.p)).map((row, index) => ({ ...row, rank: row.p ? index + 1 : 0 }));
+  }, [live, shootout, adjustedRanking]);
   const sortedTable = useTriSort(table);
   const matchList = live?.connected ? live.matches!.slice(0, 3).map((m) => ({
     id: m.id,
@@ -96,24 +109,20 @@ export default function Home() {
         <article className="panel standings" id="standings">
           <div className="panel-head">
             <div><p className="eyebrow dark">LEAGUE TABLE</p><h2>리그 순위</h2></div>
-            <label className="toggle-row">
-              <span>승부차기 포함</span>
-              <input type="checkbox" checked={shootout} onChange={(e) => setShootout(e.target.checked)} />
-              <i />
-            </label>
+            <div className="ranking-controls"><div className="ranking-mode"><button className={!adjustedRanking ? "active" : ""} onClick={() => setAdjustedRanking(false)}>공식 순위</button><button className={adjustedRanking ? "active" : ""} onClick={() => setAdjustedRanking(true)}>보정 순위</button></div><label className="toggle-row"><span>승부차기 포함</span><input type="checkbox" checked={shootout} onChange={(e) => setShootout(e.target.checked)} /><i /></label></div>
           </div>
           <div className="table-wrap">
             <table>
-              <thead><tr>{([['rank','#'],['name','감독명'],['p','경기'],['w','승'],['d','무'],['l','패'],['gf','득점'],['ga','실점'],['gd','득실차'],['pts','승점']] as Array<[keyof PlayerRow,string]>).map(([key,label]) => <th key={key}><button className="sort-head" onClick={() => sortedTable.toggle(key)}>{label}<i>{sortedTable.indicator(key)}</i></button></th>)}<th>최근 5경기</th></tr></thead>
+              <thead><tr>{([['rank','#'],['name','감독명'],['p','경기'],['w','승'],['d','무'],['l','패'],['gf','득점'],['ga','실점'],['gd','득실차'],['pts','승점'],...(adjustedRanking ? [['adjustedPpg','보정 PPG'] as [keyof RankedRow,string]] : [])] as Array<[keyof RankedRow,string]>).map(([key,label]) => <th key={key}><button className="sort-head" onClick={() => sortedTable.toggle(key)}>{label}<i>{sortedTable.indicator(key)}</i></button></th>)}<th>최근 5경기</th></tr></thead>
               <tbody>{sortedTable.rows.map((x) => <tr key={x.name}>
-                <td><b className={`rank r${x.rank}`}>{x.rank}</b></td>
+                <td><b className={`rank r${x.rank}`}>{x.rank || "–"}</b></td>
                 <td><div className="manager"><span>{x.name.slice(0,1)}</span><b>{x.name}</b>{x.rank === 1 && <small>LEADER</small>}</div></td>
-                <td>{x.p}</td><td>{x.w}</td><td>{x.d}</td><td>{x.l}</td><td>{x.gf}</td><td>{x.ga}</td><td className={x.gd > 0 ? "positive" : "negative"}>{x.gd > 0 ? "+" : ""}{x.gd}</td><td><strong className="points">{x.pts}</strong></td>
+                <td>{x.p}</td><td>{x.w}</td><td>{x.d}</td><td>{x.l}</td><td>{x.gf}</td><td>{x.ga}</td><td className={x.gd > 0 ? "positive" : "negative"}>{x.gd > 0 ? "+" : ""}{x.gd}</td><td><strong className="points">{x.pts}</strong></td>{adjustedRanking && <td><strong className="adjusted-score">{x.p ? x.adjustedPpg.toFixed(2) : "–"}</strong><small className="rank-confidence">신뢰도 {Math.round(x.confidence * 100)}%</small></td>}
                 <td><div className="form">{x.form.map((f, i) => <i className={f} key={i}>{f}</i>)}</div></td>
               </tr>)}</tbody>
             </table>
           </div>
-          <p className="caption">동률 시 득실차 → 다득점 → 상대 전적 순으로 정렬 · {shootout ? "승부차기 결과 포함" : "승부차기 결과 제외"}</p>
+          <p className="caption">{adjustedRanking ? "보정 PPG = 경기당 승점에 리그 평균을 5경기 기준으로 혼합 · 적은 경기의 과대·과소평가를 완화 · 0경기는 순위 제외" : "공식 순위 · 동률 시 득실차 → 다득점 → 상대 전적 순으로 정렬"} · {shootout ? "승부차기 결과 포함" : "승부차기 결과 제외"}</p>
         </article>
 
         <aside className="panel recent" id="matches">
