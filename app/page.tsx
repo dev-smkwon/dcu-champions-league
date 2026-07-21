@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { FloatingNav } from "./components/FloatingNav";
 
 type PlayerRow = { rank: number; name: string; p: number; w: number; d: number; l: number; gf: number; ga: number; gd: number; pts: number; form: string[] };
 type ApiMatch = { id: string; date: string; type: number; home: string; away: string; homeGoals: number; awayGoals: number; homeShootout: number; awayShootout: number };
-type PlayerAnalytics = { matches: number; shots: number; onTarget: number; goals: number; passTry: number; passSuccess: number; routes: number[]; goalBuckets: number[] };
+type PlayerAnalytics = { matches: number; shots: number; onTarget: number; goals: number; passTry: number; passSuccess: number; routes: number[]; goalBuckets: number[]; shotMap: Array<{ x: number; y: number; goal: boolean }> };
 type LeagueData = { connected: boolean; playerCount?: number; matchCount?: number; matches?: ApiMatch[]; standings?: { excludingShootout: PlayerRow[]; includingShootout: PlayerRow[] }; analytics?: Record<string, PlayerAnalytics> };
 
 const previewPlayers = [
@@ -26,7 +28,6 @@ const previewMatches = [
 
 export default function Home() {
   const [shootout, setShootout] = useState(false);
-  const [tab, setTab] = useState("순위");
   const [selectedPlayer, setSelectedPlayer] = useState("씅민쓰");
   const [live, setLive] = useState<LeagueData | null>(null);
   useEffect(() => { fetch("/api/league").then((r) => r.json()).then(setLive).catch(() => setLive({ connected: false })); }, []);
@@ -47,28 +48,15 @@ export default function Home() {
   const passAccuracy = stats ? Math.round(stats.passSuccess / Math.max(1, stats.passTry) * 100) : 87;
   const goalBuckets = stats?.goalBuckets || [22, 38, 62, 88, 55, 34];
   const bucketMax = Math.max(1, ...goalBuckets);
-  const navTargets: Record<string, string> = { "순위": "standings", "경기": "matches", "분석": "analysis", "선수": "player-analysis" };
-
   return (
-    <main>
-      <header className="topbar">
-        <a className="brand" href="#top" aria-label="DCU Champions League 홈">
-          <span className="crest">D</span>
-          <span><b>DCU</b><small>CHAMPIONS LEAGUE</small></span>
-        </a>
-        <nav aria-label="주 메뉴">
-          {["순위", "경기", "분석", "선수"].map((item) => (
-            <a href={`#${navTargets[item]}`} className={tab === item ? "active" : ""} onClick={() => setTab(item)} key={item}>{item}</a>
-          ))}
-        </nav>
-        <div className="sync"><i /> {live?.connected ? "실제 데이터" : "예시 데이터"} <span>{live?.connected ? "NEXON 연결됨" : "API 연결 전"}</span></div>
-      </header>
+    <main><FloatingNav />
 
       <section className="hero" id="top">
         <div>
           <p className="eyebrow">2026 SUMMER SEASON · 7월 1일 시작</p>
           <h1>우리의 경기,<br/><em>하나의 리그.</em></h1>
           <p className="lede">대구가톨릭대 친구들의 FC Online 기록을 모아<br/>순위부터 플레이 패턴까지 한눈에.</p>
+          <div className="hero-actions"><Link href="/matches">모든 경기 보기</Link><Link href="/players">선수 살펴보기</Link></div>
         </div>
         <div className="hero-stats">
           <div><span>LEAGUE LEADER</span><strong>{table[0]?.name || "-"}</strong><small>{table[0]?.pts || 0} PTS</small></div>
@@ -117,7 +105,7 @@ export default function Home() {
             <div className="card-title"><div><span>01</span><h3>주 공격 루트</h3></div><select aria-label="분석 선수" value={selectedPlayer} onChange={(e) => setSelectedPlayer(e.target.value)}>{previewPlayers.map((player) => <option key={player.name}>{player.name}</option>)}</select></div>
             <div className="pitch">
               <div className="halfway"/><div className="circle"/><div className="box left"/><div className="box right"/>
-              <i className="hot h1"/><i className="hot h2"/><i className="hot h3"/>
+              {stats?.shotMap?.slice(-100).map((shot, i) => <i key={i} className={shot.goal ? "shot-dot goal" : "shot-dot"} style={{ left: `${shot.x * 100}%`, top: `${shot.y * 100}%` }} />)}
             </div>
             <div className="route-bars"><div><span>왼쪽</span><i><b style={{width:`${routes[0]}%`}}/></i><strong>{routes[0]}%</strong></div><div><span>중앙</span><i><b style={{width:`${routes[1]}%`}}/></i><strong>{routes[1]}%</strong></div><div><span>오른쪽</span><i><b style={{width:`${routes[2]}%`}}/></i><strong>{routes[2]}%</strong></div></div>
           </article>

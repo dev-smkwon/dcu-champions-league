@@ -46,14 +46,15 @@ function table(matches: Match[], includeShootout: boolean) {
 }
 
 function analytics(matches: Match[]) {
-  const result = Object.fromEntries(NICKNAMES.map((name) => [name, { matches: 0, shots: 0, onTarget: 0, goals: 0, passTry: 0, passSuccess: 0, routes: [0, 0, 0], goalBuckets: [0, 0, 0, 0, 0, 0] }]));
+  const result = Object.fromEntries(NICKNAMES.map((name) => [name, { matches: 0, shots: 0, onTarget: 0, goals: 0, passTry: 0, passSuccess: 0, possession: 0, routes: [0, 0, 0], goalBuckets: [0, 0, 0, 0, 0, 0], shotMap: [] as Array<{ x: number; y: number; goal: boolean }> }]));
   for (const match of matches) for (const info of match.matchInfo) {
     const row = result[info.nickname];
     row.matches++; row.shots += info.shoot.shootTotal || 0; row.onTarget += info.shoot.effectiveShootTotal || 0;
-    row.goals += info.shoot.goalTotal || 0; row.passTry += info.pass.passTry || 0; row.passSuccess += info.pass.passSuccess || 0;
+    row.goals += info.shoot.goalTotal || 0; row.passTry += info.pass.passTry || 0; row.passSuccess += info.pass.passSuccess || 0; row.possession += info.matchDetail.possession || 0;
     for (const shot of info.shootDetail || []) {
       const y = Math.max(0, Math.min(1, Number(shot.y || 0)));
       row.routes[y < .33 ? 0 : y < .66 ? 1 : 2]++;
+      row.shotMap.push({ x: Math.max(0, Math.min(1, Number(shot.x || 0))), y, goal: Number(shot.result) === 3 });
       if (Number(shot.result) === 3) {
         const raw = Number(shot.goalTime || 0); const period = Math.floor(raw / 2 ** 24);
         const seconds = raw - period * 2 ** 24 + [0, 45, 90, 105, 120][Math.min(period, 4)] * 60;
@@ -74,11 +75,11 @@ export async function GET() {
       return { nickname, ouid: result.ouid };
     }));
     const ouids = new Set(identities.map((x) => x.ouid));
-    const matchTypes = (process.env.NEXON_MATCH_TYPES || "40,50").split(",").map(Number).filter(Boolean);
+    const matchTypes = [40];
     const playerLists = await Promise.all(identities.map(async ({ ouid }) => {
       const lists = [] as string[][];
       for (const type of matchTypes) {
-        lists.push(await nexon<string[]>(`/user/match?ouid=${ouid}&matchtype=${type}&offset=0&limit=40`, key));
+        lists.push(await nexon<string[]>(`/user/match?ouid=${ouid}&matchtype=${type}&offset=0&limit=100`, key));
       }
       return [...new Set(lists.flat())];
     }));
@@ -99,11 +100,13 @@ export async function GET() {
       matchCount: matches.length,
       standings: { excludingShootout: table(matches, false), includingShootout: table(matches, true) },
       analytics: analytics(matches),
-      matches: matches.slice(0, 20).map((m) => ({
+      matches: matches.map((m) => ({
         id: m.matchId, date: m.matchDate, type: m.matchType,
         home: m.matchInfo[0].nickname, away: m.matchInfo[1].nickname,
         homeGoals: m.matchInfo[0].shoot.goalTotal, awayGoals: m.matchInfo[1].shoot.goalTotal,
         homeShootout: m.matchInfo[0].shoot.shootOutScore || 0, awayShootout: m.matchInfo[1].shoot.shootOutScore || 0,
+        homePossession: m.matchInfo[0].matchDetail.possession || 0, awayPossession: m.matchInfo[1].matchDetail.possession || 0,
+        homeShots: m.matchInfo[0].shoot.shootTotal || 0, awayShots: m.matchInfo[1].shoot.shootTotal || 0,
       })),
     });
   } catch (error) {
