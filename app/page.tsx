@@ -77,11 +77,11 @@ export default function Home() {
           </div>
           <div className="table-wrap">
             <table>
-              <thead><tr><th>#</th><th>감독명</th><th>경기</th><th>승</th><th>무</th><th>패</th><th>득실</th><th>승점</th><th>최근 5경기</th></tr></thead>
+              <thead><tr><th>#</th><th>감독명</th><th>경기</th><th>승</th><th>무</th><th>패</th><th>득점</th><th>실점</th><th>득실차</th><th>승점</th><th>최근 5경기</th></tr></thead>
               <tbody>{table.map((x) => <tr key={x.name}>
                 <td><b className={`rank r${x.rank}`}>{x.rank}</b></td>
                 <td><div className="manager"><span>{x.name.slice(0,1)}</span><b>{x.name}</b>{x.rank === 1 && <small>LEADER</small>}</div></td>
-                <td>{x.p}</td><td>{x.w}</td><td>{x.d}</td><td>{x.l}</td><td className={x.gd > 0 ? "positive" : "negative"}>{x.gd > 0 ? "+" : ""}{x.gd}</td><td><strong className="points">{x.pts}</strong></td>
+                <td>{x.p}</td><td>{x.w}</td><td>{x.d}</td><td>{x.l}</td><td>{x.gf}</td><td>{x.ga}</td><td className={x.gd > 0 ? "positive" : "negative"}>{x.gd > 0 ? "+" : ""}{x.gd}</td><td><strong className="points">{x.pts}</strong></td>
                 <td><div className="form">{x.form.map((f, i) => <i className={f} key={i}>{f}</i>)}</div></td>
               </tr>)}</tbody>
             </table>

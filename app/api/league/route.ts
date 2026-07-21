@@ -11,7 +11,7 @@ type MatchInfo = {
   shoot: { goalTotal: number; shootOutScore: number; shootTotal: number; effectiveShootTotal: number };
   pass: { passTry: number; passSuccess: number };
   shootDetail: Array<{ goalTime: number; x: number; y: number; result: number; inPenalty: boolean }>;
-  player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; spRating: number } }>;
+  player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; block: number; defending: number; aerialSuccess: number; spRating: number } }>;
 };
 
 type Match = { matchId: string; matchDate: string; matchType: number; matchInfo: MatchInfo[] };
@@ -79,8 +79,8 @@ function weeklyBest(matches: Match[], names: Map<number, string>) {
   for (const match of matches.filter((m) => new Date(`${m.matchDate}+09:00`) >= since)) for (const info of match.matchInfo) for (const player of info.player || []) {
     if (player.spPosition === 28 || player.status.spRating <= 0) continue;
     const key = `${info.nickname}-${player.spId}-${player.spGrade}`;
-    const item = candidates.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, ratingTotal: 0 };
-    item.appearances++; item.goals += player.status.goal || 0; item.assists += player.status.assist || 0; item.ratingTotal += player.status.spRating || 0; candidates.set(key, item);
+    const item = candidates.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, position: player.spPosition, grade: player.spGrade, appearances: 0, goals: 0, assists: 0, shots: 0, effectiveShots: 0, passTry: 0, passSuccess: 0, tackles: 0, interceptions: 0, blocks: 0, defending: 0, aerials: 0, ratingTotal: 0 };
+    item.appearances++; item.goals += player.status.goal || 0; item.assists += player.status.assist || 0; item.shots += player.status.shoot || 0; item.effectiveShots += player.status.effectiveShoot || 0; item.passTry += player.status.passTry || 0; item.passSuccess += player.status.passSuccess || 0; item.tackles += player.status.tackle || 0; item.interceptions += player.status.intercept || 0; item.blocks += player.status.block || 0; item.defending += player.status.defending || 0; item.aerials += player.status.aerialSuccess || 0; item.ratingTotal += player.status.spRating || 0; candidates.set(key, item);
   }
   const all = [...candidates.values()].map((x) => ({ ...x, rating: Math.round(x.ratingTotal / x.appearances * 100) / 100, score: x.ratingTotal / x.appearances + x.goals * .08 + x.assists * .06 }));
   const take = (test: (position: number) => boolean, count: number) => {
@@ -105,7 +105,11 @@ export async function GET() {
     const playerLists = await Promise.all(identities.map(async ({ ouid }) => {
       const lists = [] as string[][];
       for (const type of matchTypes) {
-        lists.push(await nexon<string[]>(`/user/match?ouid=${ouid}&matchtype=${type}&offset=0&limit=100`, key));
+        for (let offset = 0; offset <= 400; offset += 100) {
+          const page = await nexon<string[]>(`/user/match?ouid=${ouid}&matchtype=${type}&offset=${offset}&limit=100`, key);
+          lists.push(page);
+          if (page.length < 100) break;
+        }
       }
       return [...new Set(lists.flat())];
     }));
