@@ -165,7 +165,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     { id: "red", emoji: "🟥", title: "퇴장 본능", description: "레드카드를 가장 많이 받은 카드", value: "redCards", rows: top("redCards"), perGameRows: perGame("redCards") },
     { id: "fouls", emoji: "📣", title: "파울 장인", description: "유저별 반칙 횟수", value: "fouls", rows: [...users].sort((a, b) => b.fouls - a.fouls), perGameRows: users.filter((x) => x.appearances >= 5).map((x) => ({ ...x, perGameValue: x.fouls / x.appearances })).sort((a, b) => b.perGameValue - a.perGameValue) },
     { id: "dribbles", emoji: "🕺", title: "돌파 대장", description: "드리블 성공 횟수", value: "dribbleSuccess", rows: top("dribbleSuccess"), perGameRows: perGame("dribbleSuccess") },
-    { id: "dribble-rate", emoji: "🪩", title: "드리블러", description: "50회 이상 시도한 카드의 돌파 성공률", value: "dribbleSuccessRate", percent: true, rows: players.filter((x) => x.dribbleTry >= 50).sort((a, b) => b.dribbleSuccessRate - a.dribbleSuccessRate).slice(0, 10) },
+    { id: "dribble-rate", emoji: "🪩", title: "벗기기 전문가", description: "50회 이상 시도한 카드의 돌파 성공률", value: "dribbleSuccessRate", percent: true, rows: players.filter((x) => x.dribbleTry >= 50).sort((a, b) => b.dribbleSuccessRate - a.dribbleSuccessRate).slice(0, 10) },
   ] };
 }
 
