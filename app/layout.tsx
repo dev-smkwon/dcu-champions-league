@@ -12,6 +12,7 @@ import "./loading.css";
 import "./readability.css";
 import "./pitch-theme.css";
 import "./match-detail.css";
+import "./match-results.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),

@@ -1,0 +1,12 @@
+.match-row { position:relative; border-left:4px solid transparent; }
+.match-row.result-win { border-left-color:#24a66a; background:linear-gradient(90deg,rgba(36,166,106,.07),transparent 25%); }
+.match-row.result-loss { border-left-color:#e15461; background:linear-gradient(90deg,rgba(225,84,97,.07),transparent 25%); }
+.match-row.result-draw { border-left-color:#9aa3b2; background:linear-gradient(90deg,rgba(125,136,153,.07),transparent 25%); }
+.match-row.result-win .match-side.home>b,.match-row.result-win .match-score strong:first-child { color:#148454; }
+.match-row.result-loss .match-side.home>b,.match-row.result-loss .match-score strong:first-child { color:#cf3f4e; }
+.match-row.result-draw .match-side.home>b,.match-row.result-draw .match-score strong:first-child { color:#687386; }
+.result-badge { position:absolute; top:50%; left:10px; display:grid; width:22px; height:22px; place-items:center; border-radius:7px; color:#fff!important; font-size:9px!important; font-style:normal; font-weight:800; transform:translateY(-50%); }
+.result-win .result-badge { background:#24a66a; }
+.result-loss .result-badge { background:#e15461; }
+.result-draw .result-badge { background:#8b95a5; }
+@media(max-width:600px){.result-badge{left:6px;width:19px;height:19px}.match-row{padding-left:28px}}
