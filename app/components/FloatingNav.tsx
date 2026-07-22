@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const items = [
   { href: "/", label: "홈" },
+  { href: "/monthly", label: "월간" },
   { href: "/matches", label: "경기" },
   { href: "/players", label: "유저" },
   { href: "/analysis", label: "분석" },

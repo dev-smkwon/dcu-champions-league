@@ -10,7 +10,8 @@ type PlayerRow = { rank: number; name: string; p: number; w: number; d: number; 
 type RankedRow = PlayerRow & { adjustedPpg: number; confidence: number };
 type ApiMatch = { id: string; date: string; type: number; home: string; away: string; homeGoals: number; awayGoals: number; homeShootout: number; awayShootout: number };
 type PlayerAnalytics = { matches: number; shots: number; onTarget: number; goals: number; passTry: number; passSuccess: number; routes: number[]; goalBuckets: number[]; shotMap: Array<{ x: number; y: number; goal: boolean }> };
-type LeagueData = { connected: boolean; playerCount?: number; matchCount?: number; matches?: ApiMatch[]; standings?: { excludingShootout: PlayerRow[]; includingShootout: PlayerRow[] }; analytics?: Record<string, PlayerAnalytics> };
+type MonthData = { key: string; label: string; matchCount: number; coverage: "partial" | "ongoing" | "complete"; from: string | null; to: string | null; standings: { excludingShootout: PlayerRow[]; includingShootout: PlayerRow[] }; analytics?: Record<string, PlayerAnalytics> };
+type LeagueData = { connected: boolean; playerCount?: number; matchCount?: number; matches?: ApiMatch[]; standings?: { excludingShootout: PlayerRow[]; includingShootout: PlayerRow[] }; analytics?: Record<string, PlayerAnalytics>; monthly?: MonthData[]; currentMonth?: MonthData };
 
 const previewPlayers = [
   { rank: 1, name: "씅민쓰", p: 12, w: 8, d: 2, l: 2, gf: 29, ga: 15, form: ["W", "W", "D", "W", "W"] },
@@ -37,7 +38,7 @@ export default function Home() {
   useEffect(() => { fetch("/api/league").then((r) => r.json()).then(setLive).catch(() => setLive({ connected: false })); }, []);
   const table = useMemo<RankedRow[]>(() => {
     const base = live?.connected
-      ? (shootout ? live.standings!.includingShootout : live.standings!.excludingShootout)
+      ? (shootout ? live.currentMonth!.standings.includingShootout : live.currentMonth!.standings.excludingShootout)
       : previewPlayers.map((x) => ({ ...x, pts: x.w * 3 + x.d, gd: x.gf - x.ga }));
     const played = base.filter((row) => row.p > 0);
     const leaguePpg = played.reduce((sum, row) => sum + row.pts, 0) / Math.max(1, played.reduce((sum, row) => sum + row.p, 0));
@@ -57,7 +58,7 @@ export default function Home() {
     note: `${m.type === 50 ? "공식경기" : "친선경기"}${m.homeShootout || m.awayShootout ? ` · 승부차기 ${m.homeShootout}:${m.awayShootout}` : ""}`,
     result: m.homeGoals > m.awayGoals ? "win" : m.homeGoals < m.awayGoals ? "loss" : "draw",
   })) : previewMatches;
-  const stats = live?.analytics?.[selectedPlayer];
+  const stats = live?.currentMonth?.analytics?.[selectedPlayer];
   const routeTotal = stats?.routes.reduce((sum, value) => sum + value, 0) || 0;
   const routes = stats ? stats.routes.map((value) => Math.round(value / Math.max(1, routeTotal) * 100)) : [31, 48, 21];
   const shotAccuracy = stats ? Math.round(stats.onTarget / Math.max(1, stats.shots) * 1000) / 10 : 42.8;
@@ -93,14 +94,14 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div>
-          <p className="eyebrow">2026 SUMMER SEASON · ALL AVAILABLE MATCHES</p>
+          <p className="eyebrow">2026 SUMMER SEASON · {live.currentMonth?.label || "이번 달"} MONTHLY LEAGUE</p>
           <h1>우리의 경기,<br/><em>하나의 리그.</em></h1>
           <p className="lede">대구가톨릭대 친구들의 FC Online 기록을 모아<br/>순위부터 플레이 패턴까지 한눈에.</p>
           <div className="hero-actions"><Link href="/matches">모든 경기 보기</Link><Link href="/players">유저 살펴보기</Link></div>
         </div>
         <div className="hero-stats">
           <div><span>LEAGUE LEADER</span><strong>{table[0]?.name || "-"}</strong><small>{table[0]?.pts || 0} PTS</small></div>
-          <div><span>TOTAL MATCHES</span><strong>{live?.connected ? live.matchCount : 41}</strong><small>8 PLAYERS</small></div>
+          <div><span>MONTHLY MATCHES</span><strong>{live.currentMonth?.matchCount || 0}</strong><small>{live.currentMonth?.coverage === "partial" ? "부분 집계" : "이번 달"} · 8 PLAYERS</small></div>
           <div><span>LAST UPDATED</span><strong>2시간 전</strong><small>NEXON OPEN API</small></div>
         </div>
       </section>
@@ -108,7 +109,7 @@ export default function Home() {
       <section className="content-grid">
         <article className="panel standings" id="standings">
           <div className="panel-head">
-            <div><p className="eyebrow dark">LEAGUE TABLE</p><h2>리그 순위</h2></div>
+            <div><p className="eyebrow dark">MONTHLY LEAGUE TABLE</p><h2>{live.currentMonth?.label || "이번 달"} 월간 순위</h2></div>
             <div className="ranking-controls"><div className="ranking-mode"><button className={!adjustedRanking ? "active" : ""} onClick={() => setAdjustedRanking(false)}>공식 순위</button><button className={adjustedRanking ? "active" : ""} onClick={() => setAdjustedRanking(true)}>보정 순위</button></div><label className="toggle-row"><span>승부차기 포함</span><input type="checkbox" checked={shootout} onChange={(e) => setShootout(e.target.checked)} /><i /></label></div>
           </div>
           <div className="table-wrap">

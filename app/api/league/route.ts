@@ -238,6 +238,22 @@ export async function GET() {
     }
     const matches = details.filter((m) => m.matchInfo.length === 2 && m.matchInfo.every((x) => ouids.has(x.ouid)))
       .sort((a, b) => b.matchDate.localeCompare(a.matchDate));
+    const monthKeys = [...new Set(matches.map((match) => match.matchDate.slice(0, 7)))].sort((a, b) => b.localeCompare(a));
+    const monthly = monthKeys.map((key) => {
+      const monthMatches = matches.filter((match) => match.matchDate.startsWith(key));
+      const dates = monthMatches.map((match) => match.matchDate).sort();
+      const firstDay = Number(dates[0]?.slice(8, 10) || 1);
+      const isCurrent = key === new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 7);
+      return {
+        key,
+        label: `${Number(key.slice(5, 7))}월`,
+        matchCount: monthMatches.length,
+        coverage: firstDay > 1 ? "partial" : isCurrent ? "ongoing" : "complete",
+        from: dates[0] || null,
+        to: dates.at(-1) || null,
+        standings: { excludingShootout: table(monthMatches, false), includingShootout: table(monthMatches, true) },
+      };
+    });
     const [playerMeta, seasonMeta] = await Promise.all([
       fetch("https://open.api.nexon.com/static/fconline/meta/spid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Promise<Array<{ id: number; name: string }>>,
       fetch("https://open.api.nexon.com/static/fconline/meta/seasonid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Promise<Array<{ seasonId: number; className: string }>>,
@@ -245,6 +261,7 @@ export async function GET() {
     const playerNames = new Map(playerMeta.map((player) => [player.id, player.name]));
     const seasonNames = new Map(seasonMeta.map((season) => [season.seasonId, season.className]));
     const weeklyMatches = matches.filter((m) => new Date(`${m.matchDate}+09:00`) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    const currentMonthMatches = matches.filter((match) => match.matchDate.startsWith(monthKeys[0] || ""));
     const weeklySelection = bestEleven(weeklyMatches, playerNames, 5);
     const seasonSelection = bestEleven(matches, playerNames, 10);
     return NextResponse.json({
@@ -252,7 +269,10 @@ export async function GET() {
       updatedAt: new Date().toISOString(),
       playerCount: NICKNAMES.length,
       matchCount: matches.length,
+      dateRange: { from: matches.at(-1)?.matchDate || null, to: matches[0]?.matchDate || null },
       standings: { excludingShootout: table(matches, false), includingShootout: table(matches, true) },
+      monthly,
+      currentMonth: monthly[0] ? { ...monthly[0], analytics: analytics(currentMonthMatches, playerNames) } : null,
       analytics: analytics(matches, playerNames),
       weeklyBest: weeklySelection.picks,
       seasonBest: seasonSelection.picks,

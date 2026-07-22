@@ -17,6 +17,7 @@ import "./typography-scale.css";
 import "./home-refinements.css";
 import "./sortable-tables.css";
 import "./records.css";
+import "./monthly.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
