@@ -4,7 +4,6 @@ export const maxDuration = 300;
 
 const API = "https://open.api.nexon.com/fconline/v1";
 const NICKNAMES = ["씅민쓰", "6년제", "따이민", "그냥강혜중", "대가대다님", "박수환", "빅수환", "6w91oap5jy"];
-const START = new Date("2026-07-01T00:00:00+09:00");
 
 type MatchInfo = {
   ouid: string;
@@ -221,7 +220,7 @@ export async function GET() {
     const playerLists = await Promise.all(identities.map(async ({ ouid }) => {
       const lists = [] as string[][];
       for (const type of matchTypes) {
-        for (let offset = 0; offset <= 400; offset += 100) {
+        for (let offset = 0; offset < 10000; offset += 100) {
           const page = await nexon<string[]>(`/user/match?ouid=${ouid}&matchtype=${type}&offset=${offset}&limit=100`, key, 7200);
           lists.push(page);
           if (page.length < 100) break;
@@ -237,7 +236,7 @@ export async function GET() {
       const batch = await Promise.all(ids.slice(i, i + 5).map((id) => nexon<Match>(`/match-detail?matchid=${id}`, key, false)));
       details.push(...batch);
     }
-    const matches = details.filter((m) => new Date(`${m.matchDate}+09:00`) >= START && m.matchInfo.length === 2 && m.matchInfo.every((x) => ouids.has(x.ouid)))
+    const matches = details.filter((m) => m.matchInfo.length === 2 && m.matchInfo.every((x) => ouids.has(x.ouid)))
       .sort((a, b) => b.matchDate.localeCompare(a.matchDate));
     const [playerMeta, seasonMeta] = await Promise.all([
       fetch("https://open.api.nexon.com/static/fconline/meta/spid.json", { next: { revalidate: 86400 } }).then((r) => r.json()) as Promise<Array<{ id: number; name: string }>>,

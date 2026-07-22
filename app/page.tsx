@@ -93,7 +93,7 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div>
-          <p className="eyebrow">2026 SUMMER SEASON · 7월 1일 시작</p>
+          <p className="eyebrow">2026 SUMMER SEASON · ALL AVAILABLE MATCHES</p>
           <h1>우리의 경기,<br/><em>하나의 리그.</em></h1>
           <p className="lede">대구가톨릭대 친구들의 FC Online 기록을 모아<br/>순위부터 플레이 패턴까지 한눈에.</p>
           <div className="hero-actions"><Link href="/matches">모든 경기 보기</Link><Link href="/players">유저 살펴보기</Link></div>
@@ -147,7 +147,7 @@ export default function Home() {
           </article>
           <article className="dark-card efficiency">
             <div className="card-title"><div><span>02</span><h3>공격 효율</h3></div><small>최근 10경기</small></div>
-            <div className="big-metric"><strong>{shotAccuracy}<sup>%</sup></strong><span>유효 슈팅률<b>{selectedPlayer} · 7월 1일 이후</b></span></div>
+            <div className="big-metric"><strong>{shotAccuracy}<sup>%</sup></strong><span>유효 슈팅률<b>{selectedPlayer} · API 제공 전체 기간</b></span></div>
             <div className="mini-metrics"><div><span>경기당 슈팅</span><b>{shotsPerGame}</b></div><div><span>경기당 득점</span><b>{goalsPerGame}</b></div><div><span>패스 성공률</span><b>{passAccuracy}%</b></div></div>
           </article>
           <article className="dark-card timing">
