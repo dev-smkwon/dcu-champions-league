@@ -1,98 +1,57 @@
-# vinext-starter
+# DCU Champions League
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+대구가톨릭대 친구들의 FC Online 경기 기록을 하나의 월간 리그로 보여주는 웹 서비스입니다. 리그 멤버끼리 치른 공식경기만 집계하며 월간·누적 순위, 경기 상세, 유저 분석, BEST 11과 재미있는 기록실을 제공합니다.
 
-## Prerequisites
+- Production: <https://dcu-champions-league.vercel.app/>
+- Data: NEXON Open API
+- Framework: Next.js, React, TypeScript
 
-- Node.js `>=22.13.0`
+## Start developing
 
-## Quick Start
+Requirements: Node.js 22.13 or later.
 
 ```bash
 npm install
+```
+
+Create `.env.local`:
+
+```env
+NEXON_API_KEY=your_nexon_service_api_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+Then run:
+
+```bash
+npm run dev
+```
+
+Open <http://localhost:3000/>.
+
+## Commands
+
+```bash
 npm run dev
 npm run build
+npm test
+npm run lint
 ```
 
-This starter does not use `wrangler.jsonc`.
+## Working with Codex
 
-## Included Shape
+Codex reads [`AGENTS.md`](./AGENTS.md) automatically. That file routes each new session to the durable project context:
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+- [`docs/PROJECT_CONTEXT.md`](./docs/PROJECT_CONTEXT.md): current features, data scope and architecture
+- [`docs/DECISIONS.md`](./docs/DECISIONS.md): product rules and reasons behind non-obvious metrics
+- [`docs/BACKLOG.md`](./docs/BACKLOG.md): next work and known limitations
 
-## Workspace Auth Headers
+On another computer, clone or pull the repository, open its root in Codex, and ask:
 
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
+> AGENTS.md의 절차에 따라 프로젝트 맥락과 최근 커밋을 확인하고 이어서 작업해줘.
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+Do not commit `.env.local` or expose `NEXON_API_KEY` in client-side code.
 
-Treat the full name as optional and fall back to email when it is absent:
+## Deployment
 
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
-```
-
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+The GitHub `main` branch is connected to Vercel. Pushing an intentional commit to `main` triggers a production deployment. Verify the deployed behavior after rollout.
