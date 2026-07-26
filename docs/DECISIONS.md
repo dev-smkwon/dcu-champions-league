@@ -67,3 +67,9 @@ The Mojiri bracket prioritizes an at-a-glance tree: four opening series, two sem
 Desktop bracket connectors merge each pair of series with orthogonal horizontal/vertical paths (`4→2→1`). Mobile keeps the simpler stacked layout without connector graphics.
 
 Advancing losers are emphasized with the reverse-tournament red accent. Gold is reserved exclusively for the final advancing loser—the monthly Mojiri—matching the gold navigation treatment.
+
+Mojiri lineups invert conventional naming: `BEST 11` selects the lowest-performing eligible players (closest to Mojiri), while `WORST 11` selects the highest-performing players (farthest from Mojiri). Both use a 4-3-3 and require at least two appearances; the monthly snapshot is persisted in tournament JSON.
+
+Only Mojiri BEST 11 applies sample-size shrinkage: raw performance is blended with the tournament's position-group average using a three-match prior. This prevents a small personal appearance sample from dominating selection. WORST 11 remains unadjusted.
+
+Mojiri BEST 11 additionally requires the player's owner to have advanced as a series loser at least once. First-round winners who escaped after two games are excluded from BEST 11, while substitutes on eligible squads can qualify with two personal appearances. WORST 11 continues to use the full participant pool.

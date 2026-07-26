@@ -6,7 +6,8 @@ type Game = { matchId: string; startedAt: string; home: string; away: string; ho
 type Series = { id: string; label: string; bestOf: number; participants: string[]; seriesScore: Record<string, number>; seriesWinner: string | null; advancingLoser: string; note?: string; games: Game[] };
 type Round = { id: string; name: string; series: Series[] };
 type FootballRecord = { id: string; title: string; icon: string; owner: string; player: string; spId?: number; value: number; unit: string; proxy?: boolean };
-type Tournament = { id: string; title: string; status: string; participants: string[]; excludedMembers: string[]; rounds: Round[]; footballRecords: FootballRecord[]; negativeFootballRecords: FootballRecord[]; mojiri: string };
+type ElevenPlayer = { owner: string; spId: number; name: string; position: number; grade: number; appearances: number; goals: number; assists: number; rating: number };
+type Tournament = { id: string; title: string; status: string; participants: string[]; excludedMembers: string[]; rounds: Round[]; mojiriEleven: { best: ElevenPlayer[]; worst: ElevenPlayer[] }; footballRecords: FootballRecord[]; negativeFootballRecords: FootballRecord[]; mojiri: string };
 type MojiriStat = { name: string; played: number; wins: number; losses: number; goalsFor: number; goalsAgainst: number; scoreless: number; biggestDefeat: number; maxLosingStreak: number; forfeits: number; titles: number };
 
 const tournaments = tournamentData.tournaments as Tournament[];
@@ -65,6 +66,11 @@ function BracketConnector({ from }: { from: 4 | 2 }) {
   return <div className="bracket-connector" aria-hidden="true"><svg viewBox="0 0 100 100" preserveAspectRatio="none">{paths.map((path) => <path d={path} vectorEffect="non-scaling-stroke" key={path} />)}</svg></div>;
 }
 
+function MojiriLineup({ title, subtitle, players, best }: { title: string; subtitle: string; players: ElevenPlayer[]; best: boolean }) {
+  const rows = [[...players.filter((player) => player.position >= 20)], [...players.filter((player) => player.position >= 9 && player.position < 20)], [...players.filter((player) => player.position > 0 && player.position < 9)], [...players.filter((player) => player.position === 0)]];
+  return <article className={`mojiri-lineup ${best ? "is-best" : "is-worst"}`}><header><span>{best ? "CLOSE TO MOJIRI" : "FAR FROM MOJIRI"}</span><h3>{title}</h3><p>{subtitle}</p></header><div className="mojiri-lineup-pitch"><i className="pitch-half"/><i className="pitch-circle"/>{rows.map((row, rowIndex) => <div className={`lineup-row row-${rowIndex}`} key={rowIndex}>{row.map((player) => <div className="lineup-player" key={`${player.owner}-${player.spId}`}><b>{player.name}</b><span>{player.owner} · +{player.grade}</span><small>{player.appearances}경기 · {player.goals}골 {player.assists}도움 · <em>{player.rating.toFixed(2)}</em></small></div>)}</div>)}</div></article>;
+}
+
 function SeriesCard({ series, final = false }: { series: Series; final?: boolean }) {
   return <article className={`mojiri-series ${final ? "is-final" : ""}`}>
     <header><div><span>{series.label}</span><b>{series.bestOf ? `${series.bestOf}판 ${Math.ceil(series.bestOf / 2)}선승` : "부전패"}</b></div>{final && <i>FINAL</i>}</header>
@@ -76,6 +82,7 @@ function SeriesCard({ series, final = false }: { series: Series; final?: boolean
 
 export default function MojiriPage() {
   const [opening, semifinal, finalRound] = tournament.rounds;
+  const tournamentGames = tournament.rounds.flatMap((round) => round.series.flatMap((series) => series.games.map((game, index) => ({ ...game, round: round.name, series: series.label, gameNumber: index + 1 })))).sort((a, b) => a.startedAt.localeCompare(b.startedAt));
   return <main className="subpage mojiri-page"><FloatingNav />
     <header className="subhero mojiri-hero"><div><p>REVERSE TOURNAMENT · {tournament.id}</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span></div><div className="mojiri-crown"><i>🤡</i><span>7월의 모지리</span><strong>{tournament.mojiri}</strong></div></header>
     <section className="page-shell mojiri-shell">
@@ -88,6 +95,7 @@ export default function MojiriPage() {
       </div>
       <aside className="mojiri-result"><span>JULY 2026 · HALL OF SHAME</span><div><i>🤡</i><strong>{tournament.mojiri}</strong><p>최종전 1승 3패<br/>초대 이달의 모지리 등극</p></div></aside>
       <section className="mojiri-records"><header><div><span>MOJIRI ARCHIVE</span><h2>모지리 기록실</h2></div><p>저장된 모든 모지리 대회 누적 · 공동 기록은 함께 수상</p></header>
+        <section className="mojiri-eleven"><header><div><span>REVERSE BEST ELEVEN · 4-3-3</span><h2>모지리 베스트 & 워스트 11</h2></div><p>BEST 11: 패자 진출 경험 필수 · 선수 최소 2경기</p></header><div><MojiriLineup title="모지리 BEST 11" subtitle="패배하며 살아남은 스쿼드만 후보" players={tournament.mojiriEleven.best} best/><MojiriLineup title="모지리 WORST 11" subtitle="너무 잘해서 탈락 · 전체 참가자 대상" players={tournament.mojiriEleven.worst} best={false}/></div><aside><b>BEST 11 후보 조건</b><span>소속 유저가 최소 한 번 패자로 다음 라운드에 진출해야 하며, 선수는 2경기 이상 출전해야 합니다. 이후 포지션 평균 3경기분을 섞어 표본을 보정합니다. WORST 11은 전체 참가자를 대상으로 기존 기준을 유지합니다.</span></aside></section>
         <h3 className="football-title">기본 축구 기록 <small>7월 대회 · API 기록 보관</small></h3><div className="mojiri-football-grid">{tournament.footballRecords.map((record) => <FootballRecordCard record={record} key={record.id} />)}</div>
         <h3>그래도 잘한 것들</h3><div className="mojiri-record-grid positive-grid">
           <RecordCard icon="🏃" title="탈출왕" copy="가장 적은 경기만 치르고 빠르게 탈출" result={leaders((stat) => stat.played, "min")} unit="경기" />
@@ -106,6 +114,7 @@ export default function MojiriPage() {
           <RecordCard negative icon="🕳️" title="골득실 블랙홀" copy="넣은 골보다 먹힌 골이 가장 많았던 사람" result={leaders((stat) => stat.goalsAgainst - stat.goalsFor)} unit="골" />
         </div>
         <details className="mojiri-extra-records"><summary><span>선수·경기 세부 흑역사</span><b>{tournament.negativeFootballRecords.length}개 기록 펼쳐보기 ↓</b></summary><div className="mojiri-football-grid negative-football-grid">{tournament.negativeFootballRecords.map((record) => <FootballRecordCard record={record} negative key={record.id} />)}</div><p>비율 기록은 최소 2경기 및 항목별 최소 시도 조건을 적용했습니다. `추정` 표시는 API가 사건 간 직접 연결을 제공하지 않아 근사값으로 계산한 기록입니다.</p></details>
+        <section className="mojiri-match-archive"><header><div><span>FULL MATCH TIMELINE</span><h3>모든 경기</h3></div><p>전체 {tournamentGames.length}경기 · 한국시간 · 오래된 경기순</p></header><div>{tournamentGames.map((game) => <Link href={`/matches/${game.matchId}`} className={game.note ? "is-forfeit" : ""} key={game.matchId}><time>{timeLabel(game.startedAt)}</time><span>{game.round}<small>{game.series} · G{game.gameNumber}</small></span><strong>{game.home}</strong><b>{game.homeGoals}<i>:</i>{game.awayGoals}</b><strong>{game.away}</strong><em>{game.note || "상세 보기 ›"}</em></Link>)}</div></section>
       </section>
     </section>
   </main>;

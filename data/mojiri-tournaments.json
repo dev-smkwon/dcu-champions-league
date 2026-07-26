@@ -126,6 +126,35 @@
           ]
         }
       ],
+      "mojiriEleven": {
+        "bestAdjustment": { "method": "position-average-shrinkage", "priorMatches": 3, "minimumAppearances": 2, "requiresAdvancingLoss": true },
+        "best": [
+          { "owner": "대가대다님", "spId": 856235840, "name": "M. 디 그레고리오", "position": 0, "grade": 10, "appearances": 5, "goals": 0, "assists": 0, "rating": 5.9 },
+          { "owner": "대가대다님", "spId": 846210514, "name": "주앙 칸셀루", "position": 3, "grade": 8, "appearances": 5, "goals": 0, "assists": 0, "rating": 5.38 },
+          { "owner": "대가대다님", "spId": 291258648, "name": "카를루스 아우구스투", "position": 7, "grade": 11, "appearances": 5, "goals": 0, "assists": 0, "rating": 5.62 },
+          { "owner": "6w91oap5jy", "spId": 863222501, "name": "티모시 카스타뉴", "position": 3, "grade": 9, "appearances": 8, "goals": 0, "assists": 0, "rating": 6.2 },
+          { "owner": "그냥강혜중", "spId": 851224656, "name": "올라 에이나", "position": 3, "grade": 8, "appearances": 4, "goals": 0, "assists": 0, "rating": 5.25 },
+          { "owner": "대가대다님", "spId": 848184941, "name": "알렉시스 산체스", "position": 16, "grade": 8, "appearances": 5, "goals": 0, "assists": 0, "rating": 5.4 },
+          { "owner": "그냥강혜중", "spId": 861000027, "name": "조 콜", "position": 12, "grade": 8, "appearances": 4, "goals": 0, "assists": 0, "rating": 5.73 },
+          { "owner": "대가대다님", "spId": 827005589, "name": "루이스 피구", "position": 12, "grade": 9, "appearances": 5, "goals": 0, "assists": 1, "rating": 5.7 },
+          { "owner": "6w91oap5jy", "spId": 848251470, "name": "샤를 드케텔라르", "position": 27, "grade": 9, "appearances": 8, "goals": 2, "assists": 2, "rating": 6.9 },
+          { "owner": "6w91oap5jy", "spId": 827183277, "name": "에덴 아자르", "position": 23, "grade": 9, "appearances": 8, "goals": 1, "assists": 8, "rating": 7.28 },
+          { "owner": "대가대다님", "spId": 848231478, "name": "라우타로", "position": 26, "grade": 9, "appearances": 5, "goals": 3, "assists": 1, "rating": 7.18 }
+        ],
+        "worst": [
+          { "owner": "따이민", "spId": 863202811, "name": "에미 마르티네스", "position": 0, "grade": 8, "appearances": 4, "goals": 0, "assists": 0, "rating": 7.0 },
+          { "owner": "6년제", "spId": 852278046, "name": "파우 쿠바르시", "position": 4, "grade": 8, "appearances": 2, "goals": 0, "assists": 0, "rating": 7.25 },
+          { "owner": "6년제", "spId": 852253163, "name": "R. 아라우호", "position": 6, "grade": 8, "appearances": 2, "goals": 0, "assists": 1, "rating": 7.0 },
+          { "owner": "박수환", "spId": 845204963, "name": "카르바할", "position": 3, "grade": 11, "appearances": 2, "goals": 0, "assists": 1, "rating": 7.0 },
+          { "owner": "씅민쓰", "spId": 856203574, "name": "존 스톤스", "position": 4, "grade": 8, "appearances": 2, "goals": 0, "assists": 0, "rating": 7.0 },
+          { "owner": "6년제", "spId": 852233419, "name": "하피냐", "position": 18, "grade": 8, "appearances": 2, "goals": 3, "assists": 1, "rating": 8.65 },
+          { "owner": "씅민쓰", "spId": 851254243, "name": "엘리엇 앤더슨", "position": 13, "grade": 8, "appearances": 2, "goals": 2, "assists": 1, "rating": 8.25 },
+          { "owner": "박수환", "spId": 825138449, "name": "카카", "position": 18, "grade": 8, "appearances": 2, "goals": 1, "assists": 2, "rating": 7.75 },
+          { "owner": "박수환", "spId": 828020801, "name": "크리스티아누 호날두", "position": 26, "grade": 8, "appearances": 2, "goals": 6, "assists": 0, "rating": 9.85 },
+          { "owner": "씅민쓰", "spId": 866202126, "name": "해리 케인", "position": 21, "grade": 5, "appearances": 2, "goals": 3, "assists": 2, "rating": 9.05 },
+          { "owner": "그냥강혜중", "spId": 827031432, "name": "디디에 드로그바", "position": 25, "grade": 11, "appearances": 4, "goals": 7, "assists": 1, "rating": 8.47 }
+        ]
+      },
       "footballRecords": [
         { "id": "goals", "title": "득점왕", "icon": "⚽", "owner": "6w91oap5jy", "player": "로멜루 루카쿠", "spId": 846192505, "value": 8, "unit": "골" },
         { "id": "assists", "title": "어시왕", "icon": "🎯", "owner": "6w91oap5jy", "player": "에덴 아자르", "spId": 827183277, "value": 8, "unit": "도움" },
