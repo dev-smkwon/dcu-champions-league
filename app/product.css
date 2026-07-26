@@ -7,6 +7,8 @@ body { background:var(--soft); color:var(--text); }
 .island-nav>div { display:flex; gap:3px; padding:3px; border-radius:14px; background:rgba(255,255,255,.07); }
 .island-nav>div a { padding:8px 15px; border-radius:11px; color:#aeb9d5; font-size:12px; font-weight:650; text-decoration:none; transition:.2s; }
 .island-nav>div a:hover,.island-nav>div a.active { background:rgba(255,255,255,.13); color:#fff; }
+.island-nav>div a.mojiri-link{color:#f4c95d;font-weight:800;text-shadow:0 0 16px rgba(244,201,93,.22)}
+.island-nav>div a.mojiri-link:hover,.island-nav>div a.mojiri-link.active{background:rgba(244,201,93,.16);color:#ffd86f;box-shadow:inset 0 0 0 1px rgba(244,201,93,.22)}
 .live-pill { display:flex; align-items:center; gap:6px; padding:8px 10px; border-radius:12px; background:rgba(255,255,255,.08); color:#bbc5df; font:600 11px "Barlow Condensed"; letter-spacing:.12em; }
 .live-pill i { width:6px; height:6px; border-radius:50%; background:#45d483; box-shadow:0 0 0 4px rgba(69,212,131,.12); }
 .hero { min-height:600px; padding-top:155px; border-radius:0 0 38px 38px; background:radial-gradient(circle at 70% 20%,#284fc5 0,#101f61 33%,#071331 68%,#040a1e 100%); }

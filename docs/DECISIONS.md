@@ -55,3 +55,15 @@ Local implementation and verification do not automatically authorize deployment.
 Monthly reverse-tournament brackets are stored in `data/mojiri-tournaments.json`, including participants, series scores, raw UTC start times and FC Online match IDs. The loser advances; early rounds are best-of-three and the final is best-of-five. JSON is the durable source because upstream match details may expire.
 
 Network-disconnection forfeits count as official tournament games. Preserve the awarded score and label the forfeit reason in the saved game entry.
+
+Positive Mojiri records must not reward staying in the reverse tournament longer. `탈출왕` uses the fewest games played, while scoring and defensive awards use per-game rates rather than raw totals.
+
+Tournament player awards are snapshotted into the monthly JSON while NEXON match details are available. This preserves the player name, owner and value after upstream match history expires.
+
+Detailed negative tournament awards require at least two appearances and category-specific minimum attempts for rate metrics. Event-chain metrics that NEXON does not directly expose are marked as estimates, and categories with no occurrence remain visible as `기록 없음` rather than assigning a false winner.
+
+The Mojiri bracket prioritizes an at-a-glance tree: four opening series, two semifinals and one final are vertically centered by round. Individual match rows remain collapsed and repeated advancement footers are omitted.
+
+Desktop bracket connectors merge each pair of series with orthogonal horizontal/vertical paths (`4→2→1`). Mobile keeps the simpler stacked layout without connector graphics.
+
+Advancing losers are emphasized with the reverse-tournament red accent. Gold is reserved exclusively for the final advancing loser—the monthly Mojiri—matching the gold navigation treatment.

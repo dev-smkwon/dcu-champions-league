@@ -46,7 +46,7 @@ New members must be added to the member constants used by both league aggregatio
 - `/analysis`: deeper user analysis, head-to-head comparison, team-color combinations and goal-type analysis.
 - `/best-eleven`: weekly and cumulative 4-3-3 selections plus sortable player statistics.
 - `/records`: specialty shot awards and positive/negative novelty rankings.
-- `/mojiri`: JSON-backed monthly reverse tournament where each series loser advances and the final loser becomes that month's 모지리.
+- `/mojiri`: JSON-backed monthly reverse tournament where each series loser advances and the final loser becomes that month's 모지리. The page also computes a cumulative, humorous tournament-only record room from every saved bracket.
 
 ## Record-book behavior
 

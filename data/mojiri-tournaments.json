@@ -126,6 +126,37 @@
           ]
         }
       ],
+      "footballRecords": [
+        { "id": "goals", "title": "득점왕", "icon": "⚽", "owner": "6w91oap5jy", "player": "로멜루 루카쿠", "spId": 846192505, "value": 8, "unit": "골" },
+        { "id": "assists", "title": "어시왕", "icon": "🎯", "owner": "6w91oap5jy", "player": "에덴 아자르", "spId": 827183277, "value": 8, "unit": "도움" },
+        { "id": "rating", "title": "평점왕", "icon": "⭐", "owner": "박수환", "player": "크리스티아누 호날두", "spId": 828020801, "value": 9.85, "unit": "평점" },
+        { "id": "tackles", "title": "태클왕", "icon": "🧱", "owner": "6w91oap5jy", "player": "아르튀르 테아트", "spId": 851257278, "value": 14, "unit": "태클" },
+        { "id": "conceded", "title": "실점왕", "icon": "🥅", "owner": "6w91oap5jy", "player": "티보 쿠르투아", "spId": 856192119, "value": 22, "unit": "실점" }
+      ],
+      "negativeFootballRecords": [
+        { "id": "spray", "title": "난사왕", "icon": "🔫", "owner": "6w91oap5jy", "player": "샤를 드케텔라르", "spId": 848251470, "value": 25, "unit": "% 골 전환율" },
+        { "id": "weak-shot", "title": "소녀슛 장인", "icon": "🫧", "owner": "6w91oap5jy", "player": "샤를 드케텔라르", "spId": 848251470, "value": 50, "unit": "% 유효슛" },
+        { "id": "pass-donor", "title": "패스 기부천사", "icon": "🎁", "owner": "그냥강혜중", "player": "케빈 더브라위너", "spId": 846192985, "value": 3.75, "unit": "실패/경기" },
+        { "id": "turnover", "title": "볼 소유권 반납왕", "icon": "🫴", "owner": "그냥강혜중", "player": "조 콜", "spId": 861000027, "value": 68.75, "unit": "% 드리블 성공" },
+        { "id": "miss-tackle", "title": "태클 헛발왕", "icon": "🦶", "owner": "대가대다님", "player": "카를루스 아우구스투", "spId": 291258648, "value": 0, "unit": "% 태클 성공" },
+        { "id": "air", "title": "허공의 지배자", "icon": "🛫", "owner": "그냥강혜중", "player": "칼리두 쿨리발리", "spId": 845201024, "value": 0, "unit": "% 공중볼 성공" },
+        { "id": "low-rating", "title": "평점 바닥공사", "icon": "🕳️", "owner": "그냥강혜중", "player": "올라 에이나", "spId": 851224656, "value": 5.25, "unit": "평점" },
+        { "id": "striker", "title": "공격수 맞아요?", "icon": "❓", "owner": "박수환", "player": "카림 벤제마", "spId": 846165153, "value": 0, "unit": "골/경기" },
+        { "id": "island", "title": "도움 없는 섬", "icon": "🏝️", "owner": "6w91oap5jy", "player": "샤를 드케텔라르", "spId": 848251470, "value": 0.5, "unit": "G+A/경기" },
+        { "id": "yellow", "title": "옐로카펫", "icon": "🟨", "owner": "대가대다님", "player": "밀란 슈크리니아르", "spId": 848232363, "value": 1, "unit": "장" },
+        { "id": "red", "title": "퇴근 본능", "icon": "🟥", "owner": "-", "player": "기록 없음", "value": 0, "unit": "장" },
+        { "id": "foul", "title": "반칙 머신", "icon": "🚨", "owner": "그냥강혜중", "player": "그냥강혜중", "value": 1, "unit": "회/경기" },
+        { "id": "offside", "title": "옵사이드 산책", "icon": "🚶", "owner": "따이민", "player": "따이민", "value": 1, "unit": "회/경기" },
+        { "id": "post", "title": "골대와 원수", "icon": "🥅", "owner": "6년제", "player": "하피냐", "spId": 852233419, "value": 1, "unit": "회" },
+        { "id": "corner", "title": "코너킥 낭비왕", "icon": "🚩", "owner": "대가대다님", "player": "대가대다님", "value": 1.14, "unit": "코너/골", "proxy": true },
+        { "id": "second-half", "title": "후반 삭제", "icon": "🫥", "owner": "박수환", "player": "박수환", "value": 37.5, "unit": "% 후반골" },
+        { "id": "early-concede", "title": "시작하자마자 실점", "icon": "⏰", "owner": "씅민쓰", "player": "씅민쓰", "value": 4, "unit": "분" },
+        { "id": "comeback-loss", "title": "문 닫기 실패", "icon": "🚪", "owner": "-", "player": "기록 없음", "value": 0, "unit": "경기" },
+        { "id": "empty-possession", "title": "영양가 제로", "icon": "🍽️", "owner": "-", "player": "기록 없음", "value": 0, "unit": "경기" },
+        { "id": "gk-ga", "title": "버스 놓친 골키퍼", "icon": "🚌", "owner": "씅민쓰", "player": "닉 포프", "spId": 856203841, "value": 3, "unit": "실점/경기" },
+        { "id": "butter", "title": "손에 버터", "icon": "🧈", "owner": "대가대다님", "player": "M. 디 그레고리오", "spId": 856235840, "value": 5.9, "unit": "평점" },
+        { "id": "spectator", "title": "수비 구경꾼", "icon": "👀", "owner": "씅민쓰", "player": "카일 워커", "spId": 256188377, "value": 0, "unit": "태클/경기" }
+      ],
       "mojiri": "대가대다님"
     }
   ]
