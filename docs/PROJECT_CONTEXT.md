@@ -46,6 +46,7 @@ New members must be added to the member constants used by both league aggregatio
 - `/analysis`: deeper user analysis, head-to-head comparison, team-color combinations and goal-type analysis.
 - `/best-eleven`: weekly and cumulative 4-3-3 selections plus sortable player statistics.
 - `/records`: specialty shot awards and positive/negative novelty rankings.
+- `/mojiri`: JSON-backed monthly reverse tournament where each series loser advances and the final loser becomes that month's 모지리.
 
 ## Record-book behavior
 
@@ -88,4 +89,4 @@ Open <http://localhost:3000/>.
 - The API provides aggregate pass categories but no exact cross location or pass-to-goal event chain.
 - It does not provide a reliable per-event dribble location or “dribble directly caused goal” link.
 - Older months can be partial. Do not label them complete unless data starts at the beginning of that month.
-
+- Mojiri tournament history is stored in `data/mojiri-tournaments.json` so it survives upstream match-history expiration. Match IDs link the saved bracket back to available detail pages.

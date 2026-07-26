@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "tournaments": [
+    {
+      "id": "2026-07",
+      "year": 2026,
+      "month": 7,
+      "title": "7월 모지리 토너먼트",
+      "status": "completed",
+      "playedAt": "2026-07-25",
+      "excludedMembers": ["빅수환"],
+      "participants": ["6년제", "그냥강혜중", "씅민쓰", "6w91oap5jy", "박수환", "따이민", "대가대다님"],
+      "format": {
+        "description": "각 시리즈의 패자가 다음 라운드로 진출하는 역토너먼트",
+        "earlyRoundsBestOf": 3,
+        "finalBestOf": 5
+      },
+      "rounds": [
+        {
+          "id": "round-1",
+          "name": "1라운드",
+          "series": [
+            {
+              "id": "A",
+              "label": "A조",
+              "bestOf": 3,
+              "participants": ["6년제", "그냥강혜중"],
+              "seriesScore": { "6년제": 2, "그냥강혜중": 0 },
+              "seriesWinner": "6년제",
+              "advancingLoser": "그냥강혜중",
+              "games": [
+                { "matchId": "6a64c561204a52916006ca93", "startedAt": "2026-07-25T14:26:52Z", "home": "그냥강혜중", "away": "6년제", "homeGoals": 1, "awayGoals": 2 },
+                { "matchId": "6a64c7cf1a7f631381baaf60", "startedAt": "2026-07-25T14:37:35Z", "home": "그냥강혜중", "away": "6년제", "homeGoals": 1, "awayGoals": 5 }
+              ]
+            },
+            {
+              "id": "B",
+              "label": "B조",
+              "bestOf": 3,
+              "participants": ["씅민쓰", "6w91oap5jy"],
+              "seriesScore": { "씅민쓰": 2, "6w91oap5jy": 0 },
+              "seriesWinner": "씅민쓰",
+              "advancingLoser": "6w91oap5jy",
+              "games": [
+                { "matchId": "6a64c9a3644a4c6c38c7b64e", "startedAt": "2026-07-25T14:46:02Z", "home": "씅민쓰", "away": "6w91oap5jy", "homeGoals": 5, "awayGoals": 4 },
+                { "matchId": "6a64cc4d58db0470e92842d8", "startedAt": "2026-07-25T14:56:43Z", "home": "씅민쓰", "away": "6w91oap5jy", "homeGoals": 4, "awayGoals": 2 }
+              ]
+            },
+            {
+              "id": "C",
+              "label": "C조",
+              "bestOf": 3,
+              "participants": ["박수환", "따이민"],
+              "seriesScore": { "박수환": 2, "따이민": 0 },
+              "seriesWinner": "박수환",
+              "advancingLoser": "따이민",
+              "games": [
+                { "matchId": "6a64c56182d50ade62213eed", "startedAt": "2026-07-25T14:27:23Z", "home": "박수환", "away": "따이민", "homeGoals": 3, "awayGoals": 2 },
+                { "matchId": "6a64c7d571e9ca755f29aac2", "startedAt": "2026-07-25T14:38:12Z", "home": "박수환", "away": "따이민", "homeGoals": 5, "awayGoals": 1 }
+              ]
+            },
+            {
+              "id": "D",
+              "label": "D조",
+              "bestOf": 0,
+              "participants": ["대가대다님"],
+              "seriesScore": { "대가대다님": 0 },
+              "seriesWinner": null,
+              "advancingLoser": "대가대다님",
+              "note": "상대 없이 부전패로 준결승 진출",
+              "games": []
+            }
+          ]
+        },
+        {
+          "id": "semifinal",
+          "name": "패자 준결승",
+          "series": [
+            {
+              "id": "AB",
+              "label": "A·B조 패자전",
+              "bestOf": 3,
+              "participants": ["그냥강혜중", "6w91oap5jy"],
+              "seriesScore": { "그냥강혜중": 2, "6w91oap5jy": 0 },
+              "seriesWinner": "그냥강혜중",
+              "advancingLoser": "6w91oap5jy",
+              "games": [
+                { "matchId": "6a64cf260ed2b5c7e60bf1e2", "startedAt": "2026-07-25T15:13:03Z", "home": "그냥강혜중", "away": "6w91oap5jy", "homeGoals": 3, "awayGoals": 2 },
+                { "matchId": "6a64d29959428dbc6118bee0", "startedAt": "2026-07-25T15:23:29Z", "home": "그냥강혜중", "away": "6w91oap5jy", "homeGoals": 3, "awayGoals": 2 }
+              ]
+            },
+            {
+              "id": "CD",
+              "label": "C·D조 패자전",
+              "bestOf": 3,
+              "participants": ["따이민", "대가대다님"],
+              "seriesScore": { "따이민": 2, "대가대다님": 0 },
+              "seriesWinner": "따이민",
+              "advancingLoser": "대가대다님",
+              "games": [
+                { "matchId": "6a64ccd271d3a1cffa00d8b8", "startedAt": "2026-07-25T14:58:16Z", "home": "대가대다님", "away": "따이민", "homeGoals": 0, "awayGoals": 2 },
+                { "matchId": "6a64cf1e662a147b762386c9", "startedAt": "2026-07-25T15:09:27Z", "home": "대가대다님", "away": "따이민", "homeGoals": 0, "awayGoals": 4 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "final",
+          "name": "최종 모지리 결정전",
+          "series": [
+            {
+              "id": "FINAL",
+              "label": "최종 라운드",
+              "bestOf": 5,
+              "participants": ["6w91oap5jy", "대가대다님"],
+              "seriesScore": { "6w91oap5jy": 3, "대가대다님": 1 },
+              "seriesWinner": "6w91oap5jy",
+              "advancingLoser": "대가대다님",
+              "games": [
+                { "matchId": "6a64d526067586b77c7143ec", "startedAt": "2026-07-25T15:34:23Z", "home": "대가대다님", "away": "6w91oap5jy", "homeGoals": 1, "awayGoals": 4 },
+                { "matchId": "6a64d79e14e652c3c8400a58", "startedAt": "2026-07-25T15:45:16Z", "home": "대가대다님", "away": "6w91oap5jy", "homeGoals": 3, "awayGoals": 1 },
+                { "matchId": "6a64da2a8e56026e4b52a619", "startedAt": "2026-07-25T15:55:06Z", "home": "대가대다님", "away": "6w91oap5jy", "homeGoals": 0, "awayGoals": 3, "note": "네트워크 끊김에 따른 몰수패 · 정식 경기 인정" },
+                { "matchId": "6a64de8926676e3f381e3a0c", "startedAt": "2026-07-25T16:18:25Z", "home": "대가대다님", "away": "6w91oap5jy", "homeGoals": 3, "awayGoals": 4 }
+              ]
+            }
+          ]
+        }
+      ],
+      "mojiri": "대가대다님"
+    }
+  ]
+}

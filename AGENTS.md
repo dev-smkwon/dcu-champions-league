@@ -32,5 +32,6 @@
 - Home monthly view: `app/page.tsx`
 - Monthly/cumulative view: `app/monthly/page.tsx`
 - Record-book rankings: `app/records/page.tsx`
+- Mojiri tournament source: `data/mojiri-tournaments.json`
+- Mojiri bracket UI: `app/mojiri/page.tsx`
 - Shared styles: `app/*.css`
-

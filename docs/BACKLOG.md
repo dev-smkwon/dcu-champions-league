@@ -14,6 +14,7 @@
 - [ ] Add monthly head-to-head and team-color matchup summaries.
 - [ ] Provide shareable result/award cards for the group chat.
 - [ ] Add a clear formula popover for every inferred novelty metric.
+- [ ] Add a lightweight editor or validation script for future monthly Mojiri tournament JSON entries.
 
 ## Known limitations to revisit
 
@@ -28,4 +29,3 @@
 - [ ] When changing a formula, update `docs/DECISIONS.md` and visible explanatory copy.
 - [ ] When adding a route, update navigation, responsive layout, and `docs/PROJECT_CONTEXT.md`.
 - [ ] Before production deployment, run the build and verify the changed behavior on the production URL.
-

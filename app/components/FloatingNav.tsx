@@ -11,6 +11,7 @@ const items = [
   { href: "/analysis", label: "분석" },
   { href: "/best-eleven", label: "BEST 11" },
   { href: "/records", label: "기록실" },
+  { href: "/mojiri", label: "모지리" },
 ];
 
 export function FloatingNav() {

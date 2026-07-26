@@ -50,3 +50,8 @@ The product combines a European Champions League atmosphere with Apple/Toss-like
 
 Local implementation and verification do not automatically authorize deployment. Push to `main` only when the user explicitly asks to deploy. Vercel then deploys automatically; verify the production behavior rather than assuming the push completed the rollout.
 
+## D-009 — Mojiri tournament persistence
+
+Monthly reverse-tournament brackets are stored in `data/mojiri-tournaments.json`, including participants, series scores, raw UTC start times and FC Online match IDs. The loser advances; early rounds are best-of-three and the final is best-of-five. JSON is the durable source because upstream match details may expire.
+
+Network-disconnection forfeits count as official tournament games. Preserve the awarded score and label the forfeit reason in the saved game entry.
