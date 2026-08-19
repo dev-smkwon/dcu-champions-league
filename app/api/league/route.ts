@@ -11,7 +11,7 @@ type MatchInfo = {
   matchDetail: { matchResult: string; possession: number; foul: number; yellowCards: number; redCards: number; dribble: number };
   shoot: { goalTotal: number; shootOutScore: number; shootTotal: number; effectiveShootTotal: number };
   pass: { passTry: number; passSuccess: number; longPassTry: number; longPassSuccess: number; bouncingLobPassTry: number; bouncingLobPassSuccess: number; lobbedThroughPassTry: number; lobbedThroughPassSuccess: number };
-  shootDetail: Array<{ spId: number; goalTime: number; x: number; y: number; result: number; type: number; inPenalty: boolean }>;
+  shootDetail: Array<{ spId: number; goalTime: number; x: number; y: number; result: number; type: number; inPenalty: boolean; assist?: boolean; assistSpId?: number; assistX?: number; assistY?: number }>;
   player: Array<{ spId: number; spPosition: number; spGrade: number; status: { shoot: number; effectiveShoot: number; assist: number; goal: number; passTry: number; passSuccess: number; tackle: number; intercept: number; block: number; defending: number; aerialTry: number; aerialSuccess: number; dribbleTry: number; dribbleSuccess: number; yellowCards: number; redCards: number; spRating: number } }>;
 };
 
@@ -131,6 +131,21 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
   const playerShots = new Map<string, { owner: string; spId: number; name: string; goals: number; attempts: number }>();
   const goalkeepers = new Map<string, { owner: string; spId: number; name: string; grade: number; appearances: number; conceded: number; ratingTotal: number }>();
   const discipline = new Map<string, { owner: string; name: string; kind: string; appearances: number; fouls: number; yellowCards: number; redCards: number; aerialPassTry: number; aerialPassSuccess: number }>();
+  type ActionPlayer = { owner: string; spId: number; name: string; count: number };
+  type ActionUser = { name: string; count: number; appearances: number; opponents: Set<string>; matches: Set<string> };
+  type ActionPair = { owner: string; passer: string; scorer: string; count: number };
+  const killerPassers = new Map<string, ActionPlayer>(); const killerScorers = new Map<string, ActionPlayer>();
+  const cutbackPassers = new Map<string, ActionPlayer>(); const cutbackScorers = new Map<string, ActionPlayer>();
+  const killerPairs = new Map<string, ActionPair>(); const cutbackPairs = new Map<string, ActionPair>();
+  const killerUsers = new Map<string, ActionUser>(); const cutbackUsers = new Map<string, ActionUser>();
+  const killerConceded = new Map<string, ActionUser>(); const cutbackConceded = new Map<string, ActionUser>();
+  const cutbackLeftUsers = new Map<string, ActionUser>(); const cutbackRightUsers = new Map<string, ActionUser>();
+  const cutbackLeftConceded = new Map<string, ActionUser>(); const cutbackRightConceded = new Map<string, ActionUser>();
+  let longestKiller: { owner: string; passer: string; scorer: string; distance: number } | null = null;
+  const killerDeliveries: Array<{ owner: string; passer: string; scorer: string; distance: number }> = [];
+  const addPlayerAction = (target: Map<string, ActionPlayer>, owner: string, spId: number) => { const key = `${owner}|${spId}`; const row = target.get(key) || { owner, spId, name: names.get(spId) || `선수 ${spId}`, count: 0 }; row.count++; target.set(key, row); };
+  const addUserAction = (target: Map<string, ActionUser>, name: string, opponent: string, matchId: string) => { const appearances = 0; const row = target.get(name) || { name, count: 0, appearances, opponents: new Set<string>(), matches: new Set<string>() }; row.count++; row.opponents.add(opponent); row.matches.add(matchId); target.set(name, row); };
+  const addPairAction = (target: Map<string, ActionPair>, owner: string, passerId: number, scorerId: number) => { const key = `${owner}|${passerId}|${scorerId}`; const row = target.get(key) || { owner, passer: names.get(passerId) || `선수 ${passerId}`, scorer: names.get(scorerId) || `선수 ${scorerId}`, count: 0 }; row.count++; target.set(key, row); };
   for (const match of matches) for (let sideIndex = 0; sideIndex < match.matchInfo.length; sideIndex++) {
     const info = match.matchInfo[sideIndex]; const opponent = match.matchInfo[sideIndex === 0 ? 1 : 0];
     const userDiscipline = discipline.get(info.nickname) || { owner: info.nickname, name: info.nickname, kind: "user", appearances: 0, fouls: 0, yellowCards: 0, redCards: 0, aerialPassTry: 0, aerialPassSuccess: 0 };
@@ -145,12 +160,81 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
         const userKey = `${category}|${info.nickname}`; const user = userShots.get(userKey) || { name: info.nickname, goals: 0, attempts: 0 }; user.attempts++; if (goal) user.goals++; userShots.set(userKey, user);
         const playerKey = `${category}|${info.nickname}|${shot.spId}`; const player = playerShots.get(playerKey) || { owner: info.nickname, spId: Number(shot.spId), name: playerName, goals: 0, attempts: 0 }; player.attempts++; if (goal) player.goals++; playerShots.set(playerKey, player);
       }
+      if (goal && shot.assist && Number(shot.assistSpId) > 0) {
+        const sx = Number(shot.x); const sy = Number(shot.y); const ax = Number(shot.assistX); const ay = Number(shot.assistY);
+        const dx = sx - ax; const normalizedDistance = Math.hypot(dx, sy - ay); const distance = Math.hypot(dx * 105, (sy - ay) * 68);
+        const shotNearBox = sx >= .68 && sy >= .12 && sy <= .88;
+        const assistFromWideByline = ax >= .82 && (ay <= .25 || ay >= .75);
+        const movesInward = Math.abs(.5 - ay) - Math.abs(.5 - sy);
+        const isCutback = assistFromWideByline && shotNearBox && sy >= .25 && sy <= .75 && movesInward >= .12 && sx <= ax + .05;
+        const isKiller = !isCutback && shotNearBox && dx >= .10 && normalizedDistance >= .16 && distance <= 55 && !(ax >= .80 && (ay <= .22 || ay >= .78));
+        const passerId = Number(shot.assistSpId); const scorerId = Number(shot.spId);
+        if (isCutback) {
+          addPlayerAction(cutbackPassers, info.nickname, passerId); addPlayerAction(cutbackScorers, info.nickname, scorerId); addPairAction(cutbackPairs, info.nickname, passerId, scorerId);
+          addUserAction(cutbackUsers, info.nickname, opponent.nickname, match.matchId); addUserAction(cutbackConceded, opponent.nickname, info.nickname, match.matchId);
+          addUserAction(ay < .5 ? cutbackLeftUsers : cutbackRightUsers, info.nickname, opponent.nickname, match.matchId);
+          addUserAction(ay < .5 ? cutbackLeftConceded : cutbackRightConceded, opponent.nickname, info.nickname, match.matchId);
+        } else if (isKiller) {
+          addPlayerAction(killerPassers, info.nickname, passerId); addPlayerAction(killerScorers, info.nickname, scorerId); addPairAction(killerPairs, info.nickname, passerId, scorerId);
+          addUserAction(killerUsers, info.nickname, opponent.nickname, match.matchId); addUserAction(killerConceded, opponent.nickname, info.nickname, match.matchId);
+          const delivery = { owner: info.nickname, passer: names.get(passerId) || `선수 ${passerId}`, scorer: names.get(scorerId) || `선수 ${scorerId}`, distance }; killerDeliveries.push(delivery);
+          if (!longestKiller || distance > longestKiller.distance) longestKiller = delivery;
+        }
+      }
     }
     for (const player of info.player || []) if (player.spPosition === 0 && player.status.spRating > 0) {
       const key = `${info.nickname}|${player.spId}|${player.spGrade}`; const keeper = goalkeepers.get(key) || { owner: info.nickname, spId: player.spId, name: names.get(player.spId) || `선수 ${player.spId}`, grade: player.spGrade, appearances: 0, conceded: 0, ratingTotal: 0 };
       keeper.appearances++; keeper.conceded += Number(opponent.shoot.goalTotal || 0); keeper.ratingTotal += Number(player.status.spRating || 0); goalkeepers.set(key, keeper);
     }
   }
+  const appearances = new Map([...discipline.values()].map((row) => [row.name, row.appearances]));
+  for (const source of [killerUsers, cutbackUsers, killerConceded, cutbackConceded, cutbackLeftUsers, cutbackRightUsers, cutbackLeftConceded, cutbackRightConceded]) for (const row of source.values()) row.appearances = appearances.get(row.name) || 0;
+  const playerLeader = (source: Map<string, ActionPlayer>) => [...source.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "ko"))[0] || null;
+  const userLeader = (source: Map<string, ActionUser>, mode: "total" | "perGame" | "matches" | "opponents" = "total") => [...source.values()].filter((row) => mode !== "perGame" || row.appearances >= 5).sort((a, b) => {
+    const av = mode === "perGame" ? a.count / a.appearances : mode === "matches" ? a.matches.size : mode === "opponents" ? a.opponents.size : a.count;
+    const bv = mode === "perGame" ? b.count / b.appearances : mode === "matches" ? b.matches.size : mode === "opponents" ? b.opponents.size : b.count;
+    return bv - av || b.count - a.count;
+  })[0] || null;
+  const pairLeader = (source: Map<string, ActionPair>) => [...source.values()].sort((a, b) => b.count - a.count)[0] || null;
+  type ActionRanking = { name: string; meta: string; value: number };
+  const playerRankings = (source: Map<string, ActionPlayer>): ActionRanking[] => [...source.values()].sort((a, b) => b.count - a.count).slice(0, 10).map((row) => ({ name: row.name, meta: row.owner, value: row.count }));
+  const userRankings = (source: Map<string, ActionUser>, mode: "total" | "perGame" | "matches" | "opponents" = "total"): ActionRanking[] => [...source.values()].filter((row) => mode !== "perGame" || row.appearances >= 5).map((row) => ({ name: row.name, meta: `${row.appearances}경기`, value: mode === "perGame" ? row.count / row.appearances : mode === "matches" ? row.matches.size : mode === "opponents" ? row.opponents.size : row.count })).sort((a, b) => b.value - a.value).slice(0, 10);
+  const pairRankings = (source: Map<string, ActionPair>): ActionRanking[] => [...source.values()].sort((a, b) => b.count - a.count).slice(0, 10).map((row) => ({ name: `${row.passer} → ${row.scorer}`, meta: row.owner, value: row.count }));
+  const card = (id: string, emoji: string, title: string, description: string, subject: string, meta: string, value: number, unit: string, rankings: ActionRanking[] = []) => ({ id, emoji, title, description, subject, meta, value: Math.round(value * 100) / 100, unit, proxy: true, rankings: rankings.map((row) => ({ ...row, value: Math.round(row.value * 100) / 100 })) });
+  const playerCard = (id: string, emoji: string, title: string, description: string, row: ActionPlayer | null, source: Map<string, ActionPlayer>) => card(id, emoji, title, description, row?.name || "기록 없음", row ? `${row.owner} 소속` : "조건 충족 기록 없음", row?.count || 0, "회", playerRankings(source));
+  const userCard = (id: string, emoji: string, title: string, description: string, row: ActionUser | null, source: Map<string, ActionUser>, mode: "total" | "perGame" | "matches" | "opponents" = "total") => card(id, emoji, title, description, row?.name || "기록 없음", row ? `${row.appearances}경기 표본` : "조건 충족 기록 없음", row ? (mode === "perGame" ? row.count / row.appearances : mode === "matches" ? row.matches.size : mode === "opponents" ? row.opponents.size : row.count) : 0, mode === "perGame" ? "회/경기" : mode === "opponents" ? "명" : mode === "matches" ? "경기" : "골", userRankings(source, mode));
+  const killerPair = pairLeader(killerPairs); const cutbackPair = pairLeader(cutbackPairs);
+  const fullCourse = [...NICKNAMES].map((name) => { const killerMatches = killerConceded.get(name)?.matches || new Set<string>(); const cutbackMatches = cutbackConceded.get(name)?.matches || new Set<string>(); const shared = new Set([...killerMatches].filter((id) => cutbackMatches.has(id))); return { name, count: shared.size, appearances: appearances.get(name) || 0, opponents: new Set<string>(), matches: shared }; }).sort((a, b) => b.count - a.count)[0];
+  const playmakingGroups = [
+    { id: "killer", tone: "killer", eyebrow: "LINE BREAKING", title: "킬패스 공격 기록", description: "도움 좌표에서 전진해 수비 뒷공간을 공략한 득점을 추정합니다.", records: [
+      playerCard("killer-passer", "🗝️", "킬패스 장인", "뒷공간 득점을 가장 많이 배달한 선수", playerLeader(killerPassers), killerPassers),
+      playerCard("killer-scorer", "🏃", "뒷빵 장인", "킬패스를 받아 가장 많이 득점한 선수", playerLeader(killerScorers), killerScorers),
+      card("killer-longest", "📦", "택배 기사", "가장 긴 전진 킬패스 한 방", longestKiller?.passer || "기록 없음", longestKiller ? `${longestKiller.owner} · → ${longestKiller.scorer}` : "조건 충족 기록 없음", longestKiller?.distance || 0, "m", [...killerDeliveries].sort((a, b) => b.distance - a.distance).slice(0, 10).map((row) => ({ name: row.passer, meta: `${row.owner} · → ${row.scorer}`, value: row.distance }))),
+      card("killer-duo", "🤝", "침투 듀오", "가장 많이 합작한 패서와 득점자", killerPair ? `${killerPair.passer} → ${killerPair.scorer}` : "기록 없음", killerPair?.owner || "조건 충족 기록 없음", killerPair?.count || 0, "골", pairRankings(killerPairs)),
+      userCard("killer-user", "🏭", "뒷공간 공장", "킬패스 득점을 가장 많이 만든 유저", userLeader(killerUsers), killerUsers),
+      userCard("killer-rate", "📈", "경기당 킬패스", "5경기 이상 유저의 경기당 킬패스 득점", userLeader(killerUsers, "perGame"), killerUsers, "perGame"),
+    ] },
+    { id: "cutback", tone: "cutback", eyebrow: "BYLINE CREATION", title: "컷백 공격 기록", description: "측면 골라인 부근에서 중앙으로 되돌린 도움 좌표를 별도로 추정합니다.", records: [
+      playerCard("cutback-passer", "↩️", "컷백 장인", "컷백 도움을 가장 많이 만든 선수", playerLeader(cutbackPassers), cutbackPassers),
+      playerCard("cutback-scorer", "🍽️", "받아먹기 장인", "컷백을 받아 가장 많이 마무리한 선수", playerLeader(cutbackScorers), cutbackScorers),
+      userCard("cutback-user", "🏭", "컷백 공장", "컷백 득점을 가장 많이 만든 유저", userLeader(cutbackUsers), cutbackUsers),
+      card("cutback-duo", "🫱🏻‍🫲🏻", "컷백 듀오", "가장 많이 합작한 패서와 득점자", cutbackPair ? `${cutbackPair.passer} → ${cutbackPair.scorer}` : "기록 없음", cutbackPair?.owner || "조건 충족 기록 없음", cutbackPair?.count || 0, "골", pairRankings(cutbackPairs)),
+      userCard("cutback-left", "⬅️", "왼쪽 맛집", "좌측에서 시작한 컷백 득점 최다 유저", userLeader(cutbackLeftUsers), cutbackLeftUsers),
+      userCard("cutback-right", "➡️", "오른쪽 맛집", "우측에서 시작한 컷백 득점 최다 유저", userLeader(cutbackRightUsers), cutbackRightUsers),
+      userCard("cutback-rate", "📊", "경기당 컷백", "5경기 이상 유저의 경기당 컷백 득점", userLeader(cutbackUsers, "perGame"), cutbackUsers, "perGame"),
+    ] },
+    { id: "defence", tone: "negative", eyebrow: "DEFENSIVE LOWLIGHTS", title: "뒷공간·컷백 허용 기록", description: "상대 득점 이벤트를 기준으로 허용한 유저에게 귀속합니다.", records: [
+      userCard("open-backdoor", "🚪", "뒷문 개방", "킬패스 득점을 가장 많이 허용한 유저", userLeader(killerConceded), killerConceded),
+      userCard("offside-broken", "🚩", "오프사이드 트랩 고장", "5경기 이상 · 경기당 킬패스 허용", userLeader(killerConceded, "perGame"), killerConceded, "perGame"),
+      userCard("run-in-shop", "🏪", "침투 맛집", "킬패스 득점을 허용한 상대가 가장 다양한 유저", userLeader(killerConceded, "opponents"), killerConceded, "opponents"),
+      userCard("cutback-subscription", "🔁", "컷백 정기구독", "컷백 득점을 가장 많이 허용한 유저", userLeader(cutbackConceded), cutbackConceded),
+      userCard("frozen-defence", "😵‍💫", "어버버 수비", "5경기 이상 · 경기당 컷백 허용", userLeader(cutbackConceded, "perGame"), cutbackConceded, "perGame"),
+      userCard("side-door", "🛣️", "사이드문 활짝", "컷백을 허용한 경기 수가 가장 많은 유저", userLeader(cutbackConceded, "matches"), cutbackConceded, "matches"),
+      userCard("left-unlocked", "⬅️", "왼쪽 문단속 실패", "좌측 기점 컷백 허용 최다 유저", userLeader(cutbackLeftConceded), cutbackLeftConceded),
+      userCard("right-unlocked", "➡️", "오른쪽 문단속 실패", "우측 기점 컷백 허용 최다 유저", userLeader(cutbackRightConceded), cutbackRightConceded),
+      userCard("full-course", "🍱", "환장의 풀코스", "한 경기에서 킬패스와 컷백을 모두 허용", fullCourse.count ? fullCourse : null, new Map([...NICKNAMES].map((name) => { const killerMatches = killerConceded.get(name)?.matches || new Set<string>(); const cutbackMatches = cutbackConceded.get(name)?.matches || new Set<string>(); const shared = new Set([...killerMatches].filter((id) => cutbackMatches.has(id))); return [name, { name, count: shared.size, appearances: appearances.get(name) || 0, opponents: new Set<string>(), matches: shared }]; })), "matches"),
+    ] },
+  ];
   const leader = (source: Map<string, any>, category: string) => [...source.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => value).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts)[0] || null;
   const award = (category: string, title: string, emoji: string) => { const user = leader(userShots, category); const rankings = [...playerShots.entries()].filter(([key]) => key.startsWith(`${category}|`)).map(([, value]) => ({ ...value, conversion: value.goals / Math.max(1, value.attempts) })).sort((a, b) => b.goals - a.goals || b.attempts - a.attempts); const player = rankings.find((value) => value.owner === user?.name) || null; return { id: category, title, emoji, user, player, rankings: rankings.slice(0, 10) }; };
   const shotAwards = [...shotAwardsConfig.map((config) => award(config.id, config.title, config.emoji)), award("outside", "중거리 포병", "🚀")];
@@ -192,7 +276,7 @@ function recordBook(matches: Match[], names: Map<number, string>, players: any[]
     { id: "defence-walk", emoji: "🚶", title: "수비 산책", description: "10경기 이상 수비수의 경기당 수비 행동 낮은 순", value: "defensiveActionsPerGame", decimal: true, rows: [...players].filter((x) => x.appearances >= 10 && x.position >= 1 && x.position <= 8).sort((a, b) => a.defensiveActionsPerGame - b.defensiveActionsPerGame || b.appearances - a.appearances).slice(0, 10) },
   ];
   const negativeBoardIds = new Set(["oil-hands", "underperform", "yellow", "red", "fouls", "trigger-happy", "low-rating", "off-target", "pass-lost", "dribble-stopped", "aerial-weak", "attack-silence", "defence-walk"]);
-  return { shotAwards, boards: boards.map((board) => ({ ...board, sentiment: negativeBoardIds.has(board.id) ? "negative" : "positive" })) };
+  return { shotAwards, playmakingGroups, boards: boards.map((board) => ({ ...board, sentiment: negativeBoardIds.has(board.id) ? "negative" : "positive" })) };
 }
 
 function squadClasses(info: MatchInfo, seasons: Map<number, string>) {

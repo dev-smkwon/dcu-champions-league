@@ -77,3 +77,13 @@ Mojiri BEST 11 additionally requires the player's owner to have advanced as a se
 ## D-010 — Shot-detail type validation
 
 Do not assign meanings to `shootDetail.type` values from memory alone. Use the current official match-detail YAML schema and, when possible, cross-check it against aggregate fields over a representative real-match sample. In a 120-match validation, type `8` exactly matched `shootFreekick`/`goalFreekick` totals (50 attempts, 6 goals). Type `6` is a low shot; power shot is type `12`.
+
+## D-011 — Killer-pass and cutback inference
+
+NEXON exposes the scorer and assister IDs plus their normalized coordinates for assisted goals, but does not provide official killer-pass or cutback labels. The records page therefore treats both as coordinate-based estimates and keeps them mutually exclusive.
+
+- Cutback: the assist starts near either wide byline, moves materially toward the center, and ends with a goal in or near the box.
+- Killer pass: excluding cutbacks, the assist advances at least 10% of pitch length into a box-adjacent shot, spans a meaningful distance, and is capped at 55 metres to reject anomalous event coordinates.
+- Only goals with an API-recorded assist can be classified. Missed-shot chance creation cannot be linked and is excluded.
+- Conceded metrics belong to the defending user, not an individual defender. Left/right labels use the API's normalized coordinate orientation.
+- Per-match leaders require at least five league appearances.

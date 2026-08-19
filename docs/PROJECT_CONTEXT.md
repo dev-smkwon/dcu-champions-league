@@ -45,7 +45,7 @@ New members must be added to the member constants used by both league aggregatio
 - `/players/[nickname]`: user detail, activity, matches, squad and player-card records.
 - `/analysis`: deeper user analysis, head-to-head comparison, team-color combinations and goal-type analysis.
 - `/best-eleven`: weekly and cumulative 4-3-3 selections plus sortable player statistics.
-- `/records`: specialty shot awards and positive/negative novelty rankings.
+- `/records`: specialty shot awards, inferred killer-pass/cutback records, defensive lowlights and positive/negative novelty rankings.
 - `/mojiri`: JSON-backed monthly reverse tournament where each series loser advances and the final loser becomes that month's 모지리. Its record room starts with inverted BEST/WORST 4-3-3 lineups, includes cumulative novelty awards, and ends with a chronological list of every saved tournament match.
 
 ## Record-book behavior
@@ -57,6 +57,7 @@ New members must be added to the member constants used by both league aggregatio
 - Cross rankings are explicitly proxy metrics based on long/lofted pass data; the API does not identify an exact cross-to-goal chain.
 - Positive rankings use blue accents; negative rankings use red accents.
 - Ranking boards show up to ten entries.
+- Killer-pass and cutback cards use scorer/assister coordinates from assisted goals. They are labeled as estimates, exclude missed chances, and group attack records before user-level defensive concessions.
 
 ## Local setup
 
@@ -86,7 +87,7 @@ Open <http://localhost:3000/>.
 - Vercel filesystem writes are not persistent, so JSON written at runtime is not archival storage.
 - A cold full refresh can make many match-detail calls; caching is important.
 - `shootDetail.type` includes undocumented/extended values. Validate real response distributions before changing labels.
-- The API provides aggregate pass categories but no exact cross location or pass-to-goal event chain.
+- The API provides aggregate pass categories and assisted-goal endpoints, but no complete pass-event stream. It cannot measure exact crosses or chances that do not end in a goal.
 - It does not provide a reliable per-event dribble location or “dribble directly caused goal” link.
 - Older months can be partial. Do not label them complete unless data starts at the beginning of that month.
 - Mojiri tournament history is stored in `data/mojiri-tournaments.json` so it survives upstream match-history expiration. Match IDs link the saved bracket back to available detail pages.
