@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { FloatingNav } from "../../components/FloatingNav";
 import { LoadingState } from "../../components/LoadingState";
 
-const shotTypes: Record<number, string> = { 1: "일반 슛", 2: "감아차기", 3: "헤더", 4: "로빙 슛", 5: "발리 슛", 6: "프리킥", 7: "페널티킥", 8: "강력한 슛" };
-const shotResults: Record<number, string> = { 1: "빗나감", 2: "유효 슈팅", 3: "골" };
+const shotTypes: Record<number, string> = { 1: "일반 슛", 2: "감아차기", 3: "헤더", 4: "로빙 슛", 5: "플레어 슛", 6: "낮은 슛", 7: "발리 슛", 8: "프리킥", 9: "페널티킥", 10: "무회전 슛", 11: "바이시클킥", 12: "파워 슛" };
+const shotResults: Record<number, string> = { 1: "유효 슈팅", 2: "빗나감", 3: "골" };
 function matchMinute(value: number) {
   const block = 2 ** 24;
   const period = Math.floor(value / block);

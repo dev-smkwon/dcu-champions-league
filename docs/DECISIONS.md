@@ -33,7 +33,7 @@ When the API lacks exact event relationships, the UI uses clearly labeled proxie
 
 ## D-006 — Shot-type grouping
 
-Shot type `5` was not present in sampled current API data. Volley awards group the extended volley-like types observed in responses. Header grouping also includes the extended diving-header type. Any future remapping must be validated against real raw responses before deployment.
+Use the current official FC Online match-detail schema: `1` normal, `2` finesse, `3` header, `4` lob, `5` flare, `6` low, `7` volley, `8` free kick, `9` penalty, `10` knuckle, `11` bicycle, and `12` power shot. Values not documented by the current schema must remain unknown rather than being guessed into an award category. Shot result `1` is on-target, `2` is off-target, and `3` is a goal.
 
 ## D-007 — Visual language
 
@@ -73,3 +73,7 @@ Mojiri lineups invert conventional naming: `BEST 11` selects the lowest-performi
 Only Mojiri BEST 11 applies sample-size shrinkage: raw performance is blended with the tournament's position-group average using a three-match prior. This prevents a small personal appearance sample from dominating selection. WORST 11 remains unadjusted.
 
 Mojiri BEST 11 additionally requires the player's owner to have advanced as a series loser at least once. First-round winners who escaped after two games are excluded from BEST 11, while substitutes on eligible squads can qualify with two personal appearances. WORST 11 continues to use the full participant pool.
+
+## D-010 — Shot-detail type validation
+
+Do not assign meanings to `shootDetail.type` values from memory alone. Use the current official match-detail YAML schema and, when possible, cross-check it against aggregate fields over a representative real-match sample. In a 120-match validation, type `8` exactly matched `shootFreekick`/`goalFreekick` totals (50 attempts, 6 goals). Type `6` is a low shot; power shot is type `12`.

@@ -48,7 +48,7 @@ function table(matches: Match[], includeShootout: boolean) {
 }
 
 function analytics(matches: Match[], names: Map<number, string>) {
-  const shotTypeNames: Record<number, string> = { 1: "일반 슛", 2: "감아차기", 3: "헤더", 4: "로빙 슛", 6: "프리킥", 7: "페널티킥", 8: "파워 슛", 9: "발리 슛", 12: "오버헤드킥", 13: "다이빙 헤더", 14: "발리 슛" };
+  const shotTypeNames: Record<number, string> = { 1: "일반 슛", 2: "감아차기", 3: "헤더", 4: "로빙 슛", 5: "플레어 슛", 6: "낮은 슛", 7: "발리 슛", 8: "프리킥", 9: "페널티킥", 10: "무회전 슛", 11: "바이시클킥", 12: "파워 슛" };
   const result = Object.fromEntries(NICKNAMES.map((name) => [name, { matches: 0, shots: 0, onTarget: 0, goals: 0, passTry: 0, passSuccess: 0, possession: 0, routes: [0, 0, 0], goalBuckets: [0, 0, 0, 0, 0, 0], shotMap: [] as Array<{ x: number; y: number; goal: boolean }>, goalBreakdown: { types: {} as Record<string, { attempts: number; goals: number }>, locations: { inside: { attempts: 0, goals: 0 }, outside: { attempts: 0, goals: 0 } } }, squad: {} as Record<string, any> }]));
   for (const match of matches) for (const info of match.matchInfo) {
     const row = result[info.nickname];
@@ -122,11 +122,10 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
 function recordBook(matches: Match[], names: Map<number, string>, players: any[]) {
   const shotAwardsConfig = [
     { id: "2", types: [2], title: "감아차기 예술가", emoji: "🌀" },
-    { id: "header", types: [3, 13], title: "공중의 지배자", emoji: "🛫" },
-    // FC Online의 발리 계열은 예전 단일 코드(5)가 아니라 확장 슛 코드로 내려온다.
-    { id: "volley", types: [9, 12, 14], title: "발리 장인", emoji: "⚡" },
-    { id: "6", types: [6], title: "프리킥 마법사", emoji: "🪄" },
-    { id: "8", types: [8], title: "파워 슛 대장", emoji: "💥" },
+    { id: "header", types: [3], title: "공중의 지배자", emoji: "🛫" },
+    { id: "volley", types: [7], title: "발리 장인", emoji: "⚡" },
+    { id: "8", types: [8], title: "프리킥 마법사", emoji: "🪄" },
+    { id: "12", types: [12], title: "파워 슛 대장", emoji: "💥" },
   ];
   const userShots = new Map<string, { name: string; goals: number; attempts: number }>();
   const playerShots = new Map<string, { owner: string; spId: number; name: string; goals: number; attempts: number }>();
