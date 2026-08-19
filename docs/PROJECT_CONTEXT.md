@@ -45,19 +45,20 @@ New members must be added to the member constants used by both league aggregatio
 - `/players/[nickname]`: user detail, activity, matches, squad and player-card records.
 - `/analysis`: deeper user analysis, head-to-head comparison, team-color combinations and goal-type analysis.
 - `/best-eleven`: weekly and cumulative 4-3-3 selections plus sortable player statistics.
-- `/records`: specialty shot awards, inferred killer-pass/cutback records, defensive lowlights and positive/negative novelty rankings.
+- `/records`: specialty shot awards and one unified novelty-ranking grid containing inferred killer-pass/cutback records, defensive lowlights and other positive/negative metrics.
 - `/mojiri`: JSON-backed monthly reverse tournament where each series loser advances and the final loser becomes that month's 모지리. Its record room starts with inverted BEST/WORST 4-3-3 lineups, includes cumulative novelty awards, and ends with a chronological list of every saved tournament match.
 
 ## Record-book behavior
 
 - Specialty shot cards open a collapsible top-10 player ranking.
+- The specialty grid covers all 12 official shot-detail types; the location-based long-range award remains an additional card.
 - Volley is grouped from the extended shot types used by current API responses rather than obsolete type `5` alone.
 - `벗기기 선수` is a proxy index using dribble frequency, success rate and scoring impact.
 - `돌파 대장` is pure cumulative dribble successes.
 - Cross rankings are explicitly proxy metrics based on long/lofted pass data; the API does not identify an exact cross-to-goal chain.
 - Positive rankings use blue accents; negative rankings use red accents.
 - Ranking boards show up to ten entries.
-- Killer-pass and cutback cards use scorer/assister coordinates from assisted goals. They are labeled as estimates, exclude missed chances, and group attack records before user-level defensive concessions.
+- Killer-pass and cutback cards use scorer/assister coordinates from assisted goals. They are labeled as estimates, exclude missed chances, and live inside the same `별별 랭킹` grid as the other novelty metrics.
 
 ## Local setup
 

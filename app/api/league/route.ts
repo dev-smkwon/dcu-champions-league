@@ -121,10 +121,17 @@ function bestEleven(matches: Match[], names: Map<number, string>, minimumAppeara
 
 function recordBook(matches: Match[], names: Map<number, string>, players: any[]) {
   const shotAwardsConfig = [
+    { id: "1", types: [1], title: "정석 슈터", emoji: "⚽" },
     { id: "2", types: [2], title: "감아차기 예술가", emoji: "🌀" },
     { id: "header", types: [3], title: "공중의 지배자", emoji: "🛫" },
+    { id: "4", types: [4], title: "로빙 슛 도사", emoji: "🌈" },
+    { id: "5", types: [5], title: "플레어 쇼맨", emoji: "✨" },
+    { id: "6", types: [6], title: "낮은 슛 장인", emoji: "🕳️" },
     { id: "volley", types: [7], title: "발리 장인", emoji: "⚡" },
     { id: "8", types: [8], title: "프리킥 마법사", emoji: "🪄" },
+    { id: "9", types: [9], title: "PK 해결사", emoji: "🥅" },
+    { id: "10", types: [10], title: "무회전 폭격기", emoji: "🧨" },
+    { id: "11", types: [11], title: "바이시클 곡예사", emoji: "🤸" },
     { id: "12", types: [12], title: "파워 슛 대장", emoji: "💥" },
   ];
   const userShots = new Map<string, { name: string; goals: number; attempts: number }>();
