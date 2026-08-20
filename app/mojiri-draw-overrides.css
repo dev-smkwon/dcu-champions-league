@@ -90,6 +90,8 @@
   font-size: 13px;
 }
 
+.host-seed-picker{display:grid;gap:10px;margin:18px 0;padding:15px;border:1px solid rgba(239,198,93,.42);border-radius:15px;background:linear-gradient(145deg,rgba(239,198,93,.12),rgba(49,94,251,.06))}.host-seed-picker>span{color:#efc65d;font:800 12px "Barlow Condensed";letter-spacing:.14em}.host-seed-picker>strong{font-size:14px}.host-seed-picker>div{display:flex;flex-wrap:wrap;gap:6px}.host-seed-picker button{padding:8px 10px;border:1px solid #354d83;border-radius:9px;background:#0a1737;color:#aebcdb;font-size:12px;font-weight:800}.host-seed-picker button.selected{border-color:#efc65d;background:#4e3b14;color:#fff2bf;box-shadow:0 0 18px rgba(239,198,93,.18)}.host-seed-picker>p{margin:0;color:#d8c27d;font-size:12px}.host-seed-live{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin-bottom:12px;padding:12px;border:1px solid rgba(239,198,93,.48);border-radius:12px;background:rgba(239,198,93,.09)}.host-seed-live span{color:#efc65d;font:800 12px "Barlow Condensed";letter-spacing:.1em}.host-seed-live strong{grid-row:1/3;grid-column:2;align-self:center;color:#fff0b3;font-size:15px}.host-seed-live small{color:#9cabc9;font-size:11px}.draw-order .host-seeded{border-color:rgba(239,198,93,.65);background:rgba(239,198,93,.08);color:#ffe596}.draw-order .host-seeded span{background:#b98522}
+
 @media (max-width: 720px) {
   .draw-hero span,
   .draw-stage header p,

@@ -90,11 +90,11 @@ NEXON exposes the scorer and assister IDs plus their normalized coordinates for 
 
 ## D-012 — Stateless Mojiri draw certificates
 
-The monthly draw ceremony remains database-free. One broadcaster selects seven participants, then opens all seven balls in fixed slot order: `A1`, `B1`, `C1`, `A2`, `B2`, `C2`, `D1`. The final ball receives a distinct gold reveal because its participant enters by automatic forfeit.
+The monthly draw ceremony remains database-free. One broadcaster selects seven participants and names the previous month's Mojiri as the `A1` host seed. The other six capsules are opened in fixed slot order: `B1`, `C1`, `A2`, `B2`, `C2`, `D1`. The final capsule receives a distinct gold reveal because its participant enters by automatic forfeit.
 
 - A draft, including the hidden randomized ball assignment, is recoverable only from that browser's `localStorage`.
 - A draw ID is created and shown when the participant list is locked. Restarting creates a new ID.
-- Each ball receives a stable, distinct color and number when the draw starts. The broadcaster can reshuffle the remaining balls visually at any time; the colored balls visibly travel to exchanged screen positions while their sealed participants remain unchanged.
+- The remaining participants are sealed into identical unnumbered capsules. Mixing is a visual ceremony only and never changes the participant already sealed into each capsule.
 - Completion sends the final seven-slot payload to a server-only HMAC signer using `MOJIRI_DRAW_SECRET`. The encoded payload and signature form the result URL; no result row or file is stored server-side.
 - The signature proves that URL data has not changed since issuance. It does not authenticate the broadcaster or independently prove randomness, so the UI calls it a signed result rather than an official organizer certificate.
 - Completed results can be copied and exported as PNG or JSON. The secret must remain stable or old URLs can no longer be verified.

@@ -7,10 +7,10 @@ import { DrawBowl3D } from "./draw-bowl-3d";
 const MEMBERS = ["씅민쓰", "6년제", "따이민", "그냥강혜중", "대가대다님", "박수환", "빅수환", "6w91oap5jy"];
 const DRAW_SLOTS = ["A1", "B1", "C1", "A2", "B2", "C2", "D1"] as const;
 type DrawBall = { id: string; name: string; revealed: boolean; tone: number };
-type Draft = { drawId: string | null; title: string; tournamentMonth: string; participants: string[]; balls: DrawBall[]; assignments: Record<string, string>; started: boolean; complete: boolean };
+type Draft = { drawId: string | null; title: string; tournamentMonth: string; participants: string[]; hostSeed: string | null; balls: DrawBall[]; assignments: Record<string, string>; started: boolean; complete: boolean };
 const STORAGE_KEY = "dcu-mojiri-draw-draft-v1";
 const month = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit" }).format(new Date()).slice(0, 7);
-const initialDraft = (): Draft => ({ drawId: null, title: `${Number(month.slice(5))}월 모지리컵 조 추첨`, tournamentMonth: month, participants: [], balls: [], assignments: {}, started: false, complete: false });
+const initialDraft = (): Draft => ({ drawId: null, title: `${Number(month.slice(5))}월 모지리컵 조 추첨`, tournamentMonth: month, participants: [], hostSeed: null, balls: [], assignments: {}, started: false, complete: false });
 
 function shuffle<T>(items: T[]) {
   const result = [...items];
@@ -25,17 +25,22 @@ export function DrawClient() {
   const router = useRouter();
   const [draft, setDraft] = useState<Draft>(initialDraft);
   const [ready, setReady] = useState(false); const [openingId, setOpeningId] = useState<string | null>(null); const [error, setError] = useState(""); const [signing, setSigning] = useState(false); const [shuffling, setShuffling] = useState(false); const [byeCelebration, setByeCelebration] = useState("");
-  useEffect(() => { try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { const parsed = JSON.parse(saved) as Draft; setDraft({ ...parsed, balls: parsed.balls.map((ball, index) => ({ ...ball, tone: ball.tone ?? index })) }); } } catch {} setReady(true); }, []);
+  useEffect(() => { try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { const parsed = JSON.parse(saved) as Draft; setDraft({ ...parsed, hostSeed: parsed.hostSeed ?? null, balls: parsed.balls.map((ball, index) => ({ ...ball, tone: ball.tone ?? index })) }); } } catch {} setReady(true); }, []);
   useEffect(() => { if (ready) localStorage.setItem(STORAGE_KEY, JSON.stringify(draft)); }, [draft, ready]);
   const nextSlot = DRAW_SLOTS[Object.keys(draft.assignments).length];
   const remainingBalls = draft.balls.filter((ball) => !ball.revealed);
   const groups = useMemo(() => ([{ id: "A", one: draft.assignments.A1, two: draft.assignments.A2 }, { id: "B", one: draft.assignments.B1, two: draft.assignments.B2 }, { id: "C", one: draft.assignments.C1, two: draft.assignments.C2 }, { id: "D", one: draft.assignments.D1, two: "부전패" }]), [draft.assignments]);
-  const toggleParticipant = (name: string) => setDraft((current) => ({ ...current, participants: current.participants.includes(name) ? current.participants.filter((item) => item !== name) : current.participants.length < 7 ? [...current.participants, name] : current.participants }));
+  const toggleParticipant = (name: string) => setDraft((current) => {
+    const removing = current.participants.includes(name);
+    const participants = removing ? current.participants.filter((item) => item !== name) : current.participants.length < 7 ? [...current.participants, name] : current.participants;
+    return { ...current, participants, hostSeed: removing && current.hostSeed === name ? null : current.hostSeed };
+  });
   const start = () => {
     if (draft.participants.length !== 7) return setError("참가자 7명을 선택해 주세요.");
+    if (!draft.hostSeed || !draft.participants.includes(draft.hostSeed)) return setError("전 대회 모지리에게 A1 개최국 시드를 배정해 주세요.");
     if (draft.title.trim().length < 2 || !/^\d{4}-\d{2}$/.test(draft.tournamentMonth)) return setError("대회명과 개최 월을 확인해 주세요.");
-    const balls = shuffle(draft.participants).map((name, tone) => ({ id: crypto.randomUUID(), name, revealed: false, tone }));
-    setDraft((current) => ({ ...current, drawId: crypto.randomUUID(), balls, assignments: {}, started: true, complete: false })); setError("");
+    const balls = shuffle(draft.participants.filter((name) => name !== draft.hostSeed)).map((name, tone) => ({ id: crypto.randomUUID(), name, revealed: false, tone }));
+    setDraft((current) => ({ ...current, drawId: crypto.randomUUID(), balls, assignments: { A1: current.hostSeed! }, started: true, complete: false })); setError("");
   };
   const reveal = (ball: DrawBall) => {
     if (!nextSlot || openingId || shuffling) return;
@@ -71,7 +76,7 @@ export function DrawClient() {
   return <div className="draw-layout">
     <aside className="draw-setup">
       <span>DRAW CONTROL</span><h2>{draft.started ? "추첨 진행 현황" : "참가자 설정"}</h2>
-      {!draft.started ? <><label>대회명<input value={draft.title} maxLength={40} onChange={(event) => setDraft({ ...draft, title: event.target.value })}/></label><label>개최 월<input type="month" value={draft.tournamentMonth} onChange={(event) => setDraft({ ...draft, tournamentMonth: event.target.value })}/></label><div className="participant-picks">{MEMBERS.map((name) => <button type="button" className={draft.participants.includes(name) ? "selected" : ""} onClick={() => toggleParticipant(name)} key={name}><i>{name.slice(0, 1)}</i><b>{name}</b><span>{draft.participants.includes(name) ? "참가" : "대기"}</span></button>)}</div><p>{draft.participants.length}/7명 선택 · 선택되지 않은 유저는 불참</p><button className="draw-primary" type="button" onClick={start}>명단 잠금 · 추첨 시작</button></> : <><code className="live-draw-id">DRAW ID · {draft.drawId}</code><div className="draw-order">{DRAW_SLOTS.map((slot, index) => <div className={draft.assignments[slot] ? "done" : slot === nextSlot ? "current" : ""} key={slot}><span>{index + 1}</span><b>{slot}</b><strong>{draft.assignments[slot] || (slot === "D1" ? "마지막 공 직접 추첨" : "추첨 대기")}</strong></div>)}</div><button className="draw-reset" type="button" onClick={reset}>새 추첨 시작</button></>}
+      {!draft.started ? <><label>대회명<input value={draft.title} maxLength={40} onChange={(event) => setDraft({ ...draft, title: event.target.value })}/></label><label>개최 월<input type="month" value={draft.tournamentMonth} onChange={(event) => setDraft({ ...draft, tournamentMonth: event.target.value })}/></label><div className="participant-picks">{MEMBERS.map((name) => <button type="button" className={draft.participants.includes(name) ? "selected" : ""} onClick={() => toggleParticipant(name)} key={name}><i>{name.slice(0, 1)}</i><b>{name}</b><span>{draft.participants.includes(name) ? "참가" : "대기"}</span></button>)}</div><p>{draft.participants.length}/7명 선택 · 선택되지 않은 유저는 불참</p><div className="host-seed-picker"><span>HOST SEED · 전 대회 모지리</span><strong>A1 개최국 시드를 받을 참가자</strong><div>{draft.participants.map((name) => <button type="button" className={draft.hostSeed === name ? "selected" : ""} onClick={() => setDraft((current) => ({ ...current, hostSeed: name }))} key={name}>{name}</button>)}</div><p>{draft.hostSeed ? `${draft.hostSeed} · A1 자동 배정` : "참가자 중 한 명을 선택해 주세요."}</p></div><button className="draw-primary" type="button" onClick={start}>명단 잠금 · 추첨 시작</button></> : <><code className="live-draw-id">DRAW ID · {draft.drawId}</code>{draft.hostSeed && <div className="host-seed-live"><span>🏟 HOST SEED</span><strong>{draft.hostSeed}</strong><small>A1 개최국 시드 자동 배정</small></div>}<div className="draw-order">{DRAW_SLOTS.map((slot, index) => <div className={`${draft.assignments[slot] ? "done" : slot === nextSlot ? "current" : ""} ${slot === "A1" && draft.hostSeed ? "host-seeded" : ""}`} key={slot}><span>{index + 1}</span><b>{slot}</b><strong>{draft.assignments[slot] || (slot === "D1" ? "마지막 공 직접 추첨" : "추첨 대기")}</strong></div>)}</div><button className="draw-reset" type="button" onClick={reset}>새 추첨 시작</button></>}
       {error && <p className="draw-error">{error}</p>}
     </aside>
     <section className={`draw-stage ${nextSlot === "D1" ? "bye-round" : ""}`}>
