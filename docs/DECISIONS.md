@@ -90,7 +90,7 @@ NEXON exposes the scorer and assister IDs plus their normalized coordinates for 
 
 ## D-012 — Stateless Mojiri draw certificates
 
-The monthly draw ceremony remains database-free. One broadcaster selects seven participants and names the previous month's Mojiri as the `A1` host seed. The other six capsules are opened in fixed slot order: `B1`, `C1`, `A2`, `B2`, `C2`, `D1`. The final capsule receives a distinct gold reveal because its participant enters by automatic forfeit.
+The monthly draw ceremony remains database-free. One broadcaster selects seven participants and gives the previous month's Mojiri the `A1` benefit. The other six capsules are opened in fixed slot order: `B1`, `C1`, `A2`, `B2`, `C2`, `D1`. The final capsule receives a distinct gold reveal because its participant enters by automatic forfeit.
 
 - A draft, including the hidden randomized ball assignment, is recoverable only from that browser's `localStorage`.
 - A draw ID is created and shown when the participant list is locked. Restarting creates a new ID.
