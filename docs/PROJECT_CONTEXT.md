@@ -47,6 +47,7 @@ New members must be added to the member constants used by both league aggregatio
 - `/best-eleven`: weekly and cumulative 4-3-3 selections plus sortable player statistics.
 - `/records`: specialty shot awards and one unified novelty-ranking grid containing inferred killer-pass/cutback records, defensive lowlights and other positive/negative metrics.
 - `/mojiri`: JSON-backed monthly reverse tournament where each series loser advances and the final loser becomes that month's 모지리. Its record room starts with inverted BEST/WORST 4-3-3 lineups, includes cumulative novelty awards, and ends with a chronological list of every saved tournament match.
+- `/mojiri/draw`: one-use draw ceremony for seven selected members. Balls fill `A1 → B1 → C1 → A2 → B2 → C2 → D1`; the final ball gets a special forfeit reveal. Every ball has a persistent color and number, and reshuffling visibly exchanges their positions without changing sealed identities. Completed draws produce a signed, shareable result URL without a database.
 
 ## Record-book behavior
 
@@ -73,6 +74,7 @@ Create `.env.local` without committing it:
 ```env
 NEXON_API_KEY=your_service_key
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+MOJIRI_DRAW_SECRET=replace_with_a_long_random_secret
 ```
 
 Run:
@@ -92,3 +94,4 @@ Open <http://localhost:3000/>.
 - It does not provide a reliable per-event dribble location or “dribble directly caused goal” link.
 - Older months can be partial. Do not label them complete unless data starts at the beginning of that month.
 - Mojiri tournament history is stored in `data/mojiri-tournaments.json` so it survives upstream match-history expiration. Match IDs link the saved bracket back to available detail pages.
+- Draw drafts exist only in the broadcaster browser's `localStorage`. A completed result is encoded into its URL and protected with an HMAC signature; losing the URL, PNG and JSON means the site cannot list or recover that draw.

@@ -1,0 +1,103 @@
+.draw-bowl::after {
+  display: none !important;
+}
+
+.draw-bowl-3d {
+  overflow: visible;
+  border-radius: 50%;
+}
+
+/* Draw ceremony readability baseline: avoid sub-12px interface copy. */
+.draw-hero p,
+.draw-setup > span,
+.draw-bracket-preview > span,
+.draw-stage header span,
+.draw-result-page > header > p {
+  font-size: 13px;
+}
+
+.draw-hero span,
+.draw-hero > a,
+.draw-setup label,
+.draw-stage header p,
+.draw-result-page > header > span {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.draw-setup input {
+  min-height: 44px;
+  font-size: 15px;
+}
+
+.participant-picks button {
+  min-height: 49px;
+}
+
+.participant-picks button b {
+  font-size: 15px;
+}
+
+.participant-picks button span,
+.draw-setup > p,
+.draw-order span,
+.verified-mark small,
+.result-bracket small,
+.draw-proof p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.draw-primary,
+.draw-finalize,
+.draw-reset,
+.shuffle-balls,
+.result-actions button,
+.result-actions a {
+  font-size: 14px;
+}
+
+.draw-order b,
+.draw-order strong,
+.draw-bracket-preview article > b,
+.draw-bracket-preview strong,
+.draw-bracket-preview article i,
+.result-bracket i,
+.draw-proof > span,
+.draw-proof code,
+.verified-mark b {
+  font-size: 13px;
+}
+
+.draw-order strong,
+.draw-bracket-preview strong {
+  line-height: 1.4;
+}
+
+.live-draw-id {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.empty-bowl strong,
+.bowl-caption,
+.three-ball-reveal span,
+.draw-bowl.shuffling::after {
+  font-size: 12px;
+}
+
+.result-bracket article > span {
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .draw-hero span,
+  .draw-stage header p,
+  .draw-setup label {
+    font-size: 14px;
+  }
+
+  .draw-stage h1 {
+    font-size: 34px;
+  }
+}

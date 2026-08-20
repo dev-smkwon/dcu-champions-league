@@ -87,3 +87,14 @@ NEXON exposes the scorer and assister IDs plus their normalized coordinates for 
 - Only goals with an API-recorded assist can be classified. Missed-shot chance creation cannot be linked and is excluded.
 - Conceded metrics belong to the defending user, not an individual defender. Left/right labels use the API's normalized coordinate orientation.
 - Per-match leaders require at least five league appearances.
+
+## D-012 — Stateless Mojiri draw certificates
+
+The monthly draw ceremony remains database-free. One broadcaster selects seven participants, then opens all seven balls in fixed slot order: `A1`, `B1`, `C1`, `A2`, `B2`, `C2`, `D1`. The final ball receives a distinct gold reveal because its participant enters by automatic forfeit.
+
+- A draft, including the hidden randomized ball assignment, is recoverable only from that browser's `localStorage`.
+- A draw ID is created and shown when the participant list is locked. Restarting creates a new ID.
+- Each ball receives a stable, distinct color and number when the draw starts. The broadcaster can reshuffle the remaining balls visually at any time; the colored balls visibly travel to exchanged screen positions while their sealed participants remain unchanged.
+- Completion sends the final seven-slot payload to a server-only HMAC signer using `MOJIRI_DRAW_SECRET`. The encoded payload and signature form the result URL; no result row or file is stored server-side.
+- The signature proves that URL data has not changed since issuance. It does not authenticate the broadcaster or independently prove randomness, so the UI calls it a signed result rather than an official organizer certificate.
+- Completed results can be copied and exported as PNG or JSON. The secret must remain stable or old URLs can no longer be verified.

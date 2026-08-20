@@ -15,6 +15,7 @@
 - [ ] Provide shareable result/award cards for the group chat.
 - [ ] Add a clear formula popover for every inferred novelty metric.
 - [ ] Add a lightweight editor or validation script for future monthly Mojiri tournament JSON entries.
+- [ ] Optionally import a signed Mojiri draw JSON into the monthly tournament archive after the event.
 
 ## Known limitations to revisit
 

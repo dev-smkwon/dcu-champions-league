@@ -19,6 +19,8 @@ import "./sortable-tables.css";
 import "./records.css";
 import "./monthly.css";
 import "./mojiri.css";
+import "./mojiri-draw.css";
+import "./mojiri-draw-overrides.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
