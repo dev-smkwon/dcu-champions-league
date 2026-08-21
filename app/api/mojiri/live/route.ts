@@ -4,6 +4,7 @@ export const maxDuration = 120;
 
 const API = "https://open.api.nexon.com/fconline/v1";
 const START_AT = "2026-08-21T21:30:00";
+const REVEAL_AT = "2026-08-22T09:00:00+09:00";
 const MEMBERS = ["대가대다님", "6w91oap5jy", "씅민쓰", "그냥강혜중", "박수환", "6년제", "따이민"];
 const OPENING = [
   { id: "A", label: "A조", participants: ["대가대다님", "6w91oap5jy"] },
@@ -67,6 +68,7 @@ function resolvePreviewSeries(id: string, label: string, participants: string[] 
 const finishedAt = (series: LiveSeries) => series.complete && series.games.length ? series.games.at(-1)!.startedAt : null;
 
 export async function GET(request: Request) {
+  if (Date.now() < new Date(REVEAL_AT).getTime()) return NextResponse.json({ connected: true, locked: true, updatedAt: new Date().toISOString(), startsAt: `${START_AT}+09:00`, revealAt: REVEAL_AT, status: "scheduled", matchedGames: 0, mojiri: null }, { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120" } });
   const key = process.env.NEXON_API_KEY;
   if (!key) return NextResponse.json({ connected: false, reason: "NEXON_API_KEY가 설정되지 않았습니다." }, { status: 503 });
   try {
