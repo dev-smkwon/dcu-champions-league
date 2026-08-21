@@ -84,7 +84,7 @@ export default function MojiriPage() {
   const [opening, semifinal, finalRound] = tournament.rounds;
   const tournamentGames = tournament.rounds.flatMap((round) => round.series.flatMap((series) => series.games.map((game, index) => ({ ...game, round: round.name, series: series.label, gameNumber: index + 1 })))).sort((a, b) => a.startedAt.localeCompare(b.startedAt));
   return <main className="subpage mojiri-page"><FloatingNav />
-    <header className="subhero mojiri-hero"><div><p>REVERSE TOURNAMENT · {tournament.id}</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span><Link className="mojiri-draw-link" href="/mojiri/live">8월 LIVE 보기 →</Link><Link className="mojiri-draw-link" href="/mojiri/draw">조 추첨식 열기 →</Link></div><div className="mojiri-crown"><i>🤡</i><span>7월의 모지리</span><strong>{tournament.mojiri}</strong></div></header>
+    <header className="subhero mojiri-hero"><div><p>REVERSE TOURNAMENT · {tournament.id}</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span><Link className="mojiri-draw-link" href="/mojiri/preview">8월 가상 결과 미리보기 →</Link><Link className="mojiri-draw-link" href="/mojiri/live">8월 자동 판정 보기 →</Link><Link className="mojiri-draw-link" href="/mojiri/draw">조 추첨식 열기 →</Link></div><div className="mojiri-crown"><i>🤡</i><span>7월의 모지리</span><strong>{tournament.mojiri}</strong></div></header>
     <section className="page-shell mojiri-shell">
       <div className="reverse-bracket">
         <section><header><span>ROUND 01</span><h2>{opening.name}</h2></header><div>{opening.series.map((series) => <SeriesCard series={series} key={series.id} />)}</div></section>
