@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { FloatingNav } from "../components/FloatingNav";
 import tournamentData from "../../data/mojiri-tournaments.json";
+import { MojiriLiveClient } from "./live/live-client";
+import { MojiriMonthSelect } from "./month-select";
 
 type Game = { matchId: string; startedAt: string; home: string; away: string; homeGoals: number; awayGoals: number; note?: string };
 type Series = { id: string; label: string; bestOf: number; participants: string[]; seriesScore: Record<string, number>; seriesWinner: string | null; advancingLoser: string; note?: string; games: Game[] };
@@ -80,11 +82,15 @@ function SeriesCard({ series, final = false }: { series: Series; final?: boolean
   </article>;
 }
 
-export default function MojiriPage() {
+export default async function MojiriPage({ searchParams }: { searchParams: Promise<{ month?: string }> }) {
+  const requestedMonth = (await searchParams).month;
+  const augustRevealed = Date.now() >= new Date("2026-08-22T05:00:00+09:00").getTime();
+  const selectedMonth = requestedMonth === "2026-07" || requestedMonth === "2026-08" ? requestedMonth : augustRevealed ? "2026-08" : "2026-07";
+  if (selectedMonth === "2026-08") return <main className="subpage mojiri-page mojiri-live-page"><FloatingNav/><header className="subhero mojiri-hero live-hero"><div><p>REVERSE TOURNAMENT · 2026-08</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span></div><MojiriMonthSelect value={selectedMonth}/></header><section className="page-shell mojiri-shell"><MojiriLiveClient/></section></main>;
   const [opening, semifinal, finalRound] = tournament.rounds;
   const tournamentGames = tournament.rounds.flatMap((round) => round.series.flatMap((series) => series.games.map((game, index) => ({ ...game, round: round.name, series: series.label, gameNumber: index + 1 })))).sort((a, b) => a.startedAt.localeCompare(b.startedAt));
   return <main className="subpage mojiri-page"><FloatingNav />
-    <header className="subhero mojiri-hero"><div><p>REVERSE TOURNAMENT · {tournament.id}</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span><Link className="mojiri-draw-link" href="/mojiri/live">8월 결과 · 내일 09:00 공개 →</Link><Link className="mojiri-draw-link" href="/mojiri/draw">조 추첨식 열기 →</Link></div><div className="mojiri-crown"><i>🤡</i><span>7월의 모지리</span><strong>{tournament.mojiri}</strong></div></header>
+    <header className="subhero mojiri-hero"><div><p>REVERSE TOURNAMENT · {tournament.id}</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span><Link className="mojiri-draw-link" href="/mojiri/draw">조 추첨식 열기 →</Link></div><div><MojiriMonthSelect value={selectedMonth}/><div className="mojiri-crown"><i>🤡</i><span>7월의 모지리</span><strong>{tournament.mojiri}</strong></div></div></header>
     <section className="page-shell mojiri-shell">
       <div className="reverse-bracket">
         <section><header><span>ROUND 01</span><h2>{opening.name}</h2></header><div>{opening.series.map((series) => <SeriesCard series={series} key={series.id} />)}</div></section>
