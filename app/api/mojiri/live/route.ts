@@ -4,6 +4,7 @@ export const maxDuration = 120;
 
 const API = "https://open.api.nexon.com/fconline/v1";
 const START_AT = "2026-08-21T21:30:00";
+const END_AT = "2026-08-22T05:00:00";
 const REVEAL_AT = "2026-08-22T05:00:00+09:00";
 const MEMBERS = ["대가대다님", "6w91oap5jy", "씅민쓰", "그냥강혜중", "박수환", "6년제", "따이민"];
 const OPENING = [
@@ -81,7 +82,7 @@ export async function GET(request: Request) {
     const details: NexonMatch[] = [];
     for (let index = 0; index < ids.length; index += 8) details.push(...await Promise.all(ids.slice(index, index + 8).map((id) => nexon<NexonMatch>(`/match-detail?matchid=${id}`, key, false))));
     const memberSet = new Set(MEMBERS);
-    const matches: LiveGame[] = details.filter((match) => (preview || match.matchDate >= START_AT) && match.matchInfo.length === 2 && match.matchInfo.every((info) => memberSet.has(info.nickname))).map((match) => ({
+    const matches: LiveGame[] = details.filter((match) => (preview || (match.matchDate >= START_AT && match.matchDate < END_AT)) && match.matchInfo.length === 2 && match.matchInfo.every((info) => memberSet.has(info.nickname))).map((match) => ({
       matchId: match.matchId, startedAt: match.matchDate, home: match.matchInfo[0].nickname, away: match.matchInfo[1].nickname,
       homeGoals: Number(match.matchInfo[0].shoot.goalTotal || 0), awayGoals: Number(match.matchInfo[1].shoot.goalTotal || 0),
       homeShootout: Number(match.matchInfo[0].shoot.shootOutScore || 0), awayShootout: Number(match.matchInfo[1].shoot.shootOutScore || 0),
