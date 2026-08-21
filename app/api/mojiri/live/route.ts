@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const maxDuration = 120;
 
 const API = "https://open.api.nexon.com/fconline/v1";
-const START_AT = "2026-08-21T21:30:00";
+const START_AT = "2026-08-21T21:20:00";
 const END_AT = "2026-08-22T05:00:00";
 const REVEAL_AT = "2026-08-22T05:00:00+09:00";
 const MEMBERS = ["대가대다님", "6w91oap5jy", "씅민쓰", "그냥강혜중", "박수환", "6년제", "따이민"];
