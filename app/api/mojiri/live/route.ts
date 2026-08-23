@@ -3,8 +3,10 @@ import { NextResponse } from "next/server";
 export const maxDuration = 120;
 
 const API = "https://open.api.nexon.com/fconline/v1";
-const START_AT = "2026-08-21T21:20:00";
-const END_AT = "2026-08-22T05:00:00";
+// NEXON matchDate is a timezone-less UTC timestamp.
+const START_AT = "2026-08-21T12:20:00"; // 21:20 KST
+const END_AT = "2026-08-21T20:00:00"; // 05:00 KST next day
+const START_AT_KST = "2026-08-21T21:20:00+09:00";
 const REVEAL_AT = "2026-08-22T05:00:00+09:00";
 const MEMBERS = ["대가대다님", "6w91oap5jy", "씅민쓰", "그냥강혜중", "박수환", "6년제", "따이민"];
 const OPENING = [
@@ -82,7 +84,8 @@ export async function GET(request: Request) {
     const details: NexonMatch[] = [];
     for (let index = 0; index < ids.length; index += 8) details.push(...await Promise.all(ids.slice(index, index + 8).map((id) => nexon<NexonMatch>(`/match-detail?matchid=${id}`, key, false))));
     const memberSet = new Set(MEMBERS);
-    const matches: LiveGame[] = details.filter((match) => (preview || (match.matchDate >= START_AT && match.matchDate < END_AT)) && match.matchInfo.length === 2 && match.matchInfo.every((info) => memberSet.has(info.nickname))).map((match) => ({
+    const inWindow = details.filter((match) => preview || (match.matchDate >= START_AT && match.matchDate < END_AT));
+    const matches: LiveGame[] = inWindow.filter((match) => match.matchInfo.length === 2 && match.matchInfo.every((info) => memberSet.has(info.nickname))).map((match) => ({
       matchId: match.matchId, startedAt: match.matchDate, home: match.matchInfo[0].nickname, away: match.matchInfo[1].nickname,
       homeGoals: Number(match.matchInfo[0].shoot.goalTotal || 0), awayGoals: Number(match.matchInfo[1].shoot.goalTotal || 0),
       homeShootout: Number(match.matchInfo[0].shoot.shootOutScore || 0), awayShootout: Number(match.matchInfo[1].shoot.shootOutScore || 0),
@@ -110,7 +113,7 @@ export async function GET(request: Request) {
     ];
     const finalStart = semifinal.every((series) => series.complete) ? semifinal.map(finishedAt).sort().at(-1)! : null;
     const final = resolveSeries("FINAL", "최종 모지리 결정전", finalStart ? [semifinal[0].advancingLoser!, semifinal[1].advancingLoser!] : null, 5, matches, finalStart);
-    return NextResponse.json({ connected: true, updatedAt: new Date().toISOString(), startsAt: `${START_AT}+09:00`, status: Date.now() < new Date(`${START_AT}+09:00`).getTime() ? "scheduled" : final.complete ? "complete" : "live", rounds: { opening, semifinal, final }, matchedGames: [...new Set([...opening, ...semifinal, final].flatMap((series) => series.games.map((game) => game.matchId)))].length, mojiri: final.advancingLoser }, { headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" } });
+    return NextResponse.json({ connected: true, updatedAt: new Date().toISOString(), startsAt: START_AT_KST, status: Date.now() < new Date(START_AT_KST).getTime() ? "scheduled" : final.complete ? "complete" : "live", rounds: { opening, semifinal, final }, matchedGames: [...new Set([...opening, ...semifinal, final].flatMap((series) => series.games.map((game) => game.matchId)))].length, mojiri: final.advancingLoser }, { headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" } });
   } catch (error) {
     return NextResponse.json({ connected: false, reason: error instanceof Error ? error.message : "라이브 경기 조회 실패" }, { status: 502 });
   }

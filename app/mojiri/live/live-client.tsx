@@ -8,7 +8,7 @@ type Series = { id: string; label: string; bestOf: number; participants: string[
 type LiveData = { connected: boolean; locked?: boolean; reason?: string; updatedAt: string; startsAt: string; revealAt?: string; status: "scheduled" | "live" | "complete"; rounds: { opening: Series[]; semifinal: Series[]; final: Series }; matchedGames: number; mojiri: string | null };
 
 const kickoff = new Date("2026-08-21T21:30:00+09:00");
-const clock = (value: string) => new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(`${value}+09:00`));
+const clock = (value: string) => new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(`${value}Z`));
 
 function SeriesCard({ series, final = false }: { series: Series; final?: boolean }) {
   const needed = Math.ceil(series.bestOf / 2);
