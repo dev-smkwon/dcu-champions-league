@@ -283,8 +283,258 @@
         }
       ],
       "mojiriEleven": {
-        "best": [],
-        "worst": []
+        "bestAdjustment": {
+          "method": "position-average-shrinkage",
+          "priorMatches": 3,
+          "minimumAppearances": 2,
+          "requiresAdvancingLoss": true
+        },
+        "best": [
+          {
+            "owner": "그냥강혜중",
+            "spId": 863202811,
+            "name": "에미 마르티네스",
+            "position": 0,
+            "grade": 8,
+            "appearances": 4,
+            "goals": 0,
+            "assists": 0,
+            "rating": 5.78
+          },
+          {
+            "owner": "따이민",
+            "spId": 856207865,
+            "name": "마르키뉴스",
+            "position": 4,
+            "grade": 8,
+            "appearances": 6,
+            "goals": 0,
+            "assists": 0,
+            "rating": 4.78
+          },
+          {
+            "owner": "따이민",
+            "spId": 863256196,
+            "name": "윌리안 파초",
+            "position": 6,
+            "grade": 8,
+            "appearances": 6,
+            "goals": 0,
+            "assists": 0,
+            "rating": 5.18
+          },
+          {
+            "owner": "6년제",
+            "spId": 863232580,
+            "name": "가브리엘 마갈량이스",
+            "position": 6,
+            "grade": 8,
+            "appearances": 5,
+            "goals": 1,
+            "assists": 0,
+            "rating": 5.5
+          },
+          {
+            "owner": "6년제",
+            "spId": 863243715,
+            "name": "윌리암 살리바",
+            "position": 4,
+            "grade": 8,
+            "appearances": 5,
+            "goals": 1,
+            "assists": 0,
+            "rating": 5.52
+          },
+          {
+            "owner": "6년제",
+            "spId": 836246669,
+            "name": "부카요 사카",
+            "position": 12,
+            "grade": 9,
+            "appearances": 5,
+            "goals": 0,
+            "assists": 0,
+            "rating": 6
+          },
+          {
+            "owner": "6년제",
+            "spId": 856251566,
+            "name": "가브리엘 마르티넬리",
+            "position": 16,
+            "grade": 8,
+            "appearances": 5,
+            "goals": 0,
+            "assists": 1,
+            "rating": 6.26
+          },
+          {
+            "owner": "그냥강혜중",
+            "spId": 848224411,
+            "name": "곤살루 게드스",
+            "position": 19,
+            "grade": 8,
+            "appearances": 4,
+            "goals": 1,
+            "assists": 1,
+            "rating": 6.33
+          },
+          {
+            "owner": "그냥강혜중",
+            "spId": 851204838,
+            "name": "라울 히메네스",
+            "position": 25,
+            "grade": 11,
+            "appearances": 4,
+            "goals": 2,
+            "assists": 2,
+            "rating": 7.58
+          },
+          {
+            "owner": "6년제",
+            "spId": 856241651,
+            "name": "빅토르 요케레스",
+            "position": 25,
+            "grade": 9,
+            "appearances": 5,
+            "goals": 5,
+            "assists": 1,
+            "rating": 7.64
+          },
+          {
+            "owner": "따이민",
+            "spId": 836231747,
+            "name": "킬리안 음바페",
+            "position": 25,
+            "grade": 8,
+            "appearances": 6,
+            "goals": 4,
+            "assists": 3,
+            "rating": 7.73
+          }
+        ],
+        "worst": [
+          {
+            "owner": "씅민쓰",
+            "spId": 856203841,
+            "name": "닉 포프",
+            "position": 0,
+            "grade": 8,
+            "appearances": 2,
+            "goals": 0,
+            "assists": 0,
+            "rating": 7.8
+          },
+          {
+            "owner": "박수환",
+            "spId": 851262118,
+            "name": "T. 리브라멘토",
+            "position": 3,
+            "grade": 11,
+            "appearances": 2,
+            "goals": 1,
+            "assists": 0,
+            "rating": 7.35
+          },
+          {
+            "owner": "씅민쓰",
+            "spId": 856203574,
+            "name": "존 스톤스",
+            "position": 4,
+            "grade": 8,
+            "appearances": 2,
+            "goals": 0,
+            "assists": 0,
+            "rating": 7.25
+          },
+          {
+            "owner": "씅민쓰",
+            "spId": 836188377,
+            "name": "카일 워커",
+            "position": 3,
+            "grade": 8,
+            "appearances": 2,
+            "goals": 0,
+            "assists": 1,
+            "rating": 7.15
+          },
+          {
+            "owner": "박수환",
+            "spId": 867223334,
+            "name": "조엘린통",
+            "position": 4,
+            "grade": 9,
+            "appearances": 2,
+            "goals": 1,
+            "assists": 0,
+            "rating": 7.15
+          },
+          {
+            "owner": "박수환",
+            "spId": 867210047,
+            "name": "파비안 셰어",
+            "position": 9,
+            "grade": 10,
+            "appearances": 2,
+            "goals": 1,
+            "assists": 5,
+            "rating": 9.2
+          },
+          {
+            "owner": "박수환",
+            "spId": 856234742,
+            "name": "하비 반스",
+            "position": 18,
+            "grade": 10,
+            "appearances": 2,
+            "goals": 4,
+            "assists": 1,
+            "rating": 8.9
+          },
+          {
+            "owner": "씅민쓰",
+            "spId": 866202126,
+            "name": "해리 케인",
+            "position": 18,
+            "grade": 5,
+            "appearances": 2,
+            "goals": 1,
+            "assists": 2,
+            "rating": 8.25
+          },
+          {
+            "owner": "박수환",
+            "spId": 851234824,
+            "name": "요안 위사",
+            "position": 25,
+            "grade": 10,
+            "appearances": 2,
+            "goals": 2,
+            "assists": 1,
+            "rating": 8.75
+          },
+          {
+            "owner": "6w91oap5jy",
+            "spId": 866202126,
+            "name": "해리 케인",
+            "position": 21,
+            "grade": 5,
+            "appearances": 3,
+            "goals": 5,
+            "assists": 0,
+            "rating": 8.57
+          },
+          {
+            "owner": "대가대다님",
+            "spId": 845037576,
+            "name": "호나우두",
+            "position": 24,
+            "grade": 8,
+            "appearances": 7,
+            "goals": 8,
+            "assists": 3,
+            "rating": 8.06
+          }
+        ]
       },
       "footballRecords": [],
       "negativeFootballRecords": [],
