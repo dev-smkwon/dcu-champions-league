@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { FloatingNav } from "../components/FloatingNav";
 import tournamentData from "../../data/mojiri-tournaments.json";
-import { MojiriLiveClient } from "./live/live-client";
 import { MojiriMonthSelect } from "./month-select";
 
 type Game = { matchId: string; startedAt: string; home: string; away: string; homeGoals: number; awayGoals: number; note?: string };
@@ -13,7 +12,6 @@ type Tournament = { id: string; title: string; status: string; participants: str
 type MojiriStat = { name: string; played: number; wins: number; losses: number; goalsFor: number; goalsAgainst: number; scoreless: number; biggestDefeat: number; maxLosingStreak: number; forfeits: number; titles: number };
 
 const tournaments = tournamentData.tournaments as Tournament[];
-const tournament = tournaments[0];
 const timeLabel = (value: string) => new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(value));
 
 function buildMojiriStats() {
@@ -86,11 +84,11 @@ export default async function MojiriPage({ searchParams }: { searchParams: Promi
   const requestedMonth = (await searchParams).month;
   const augustRevealed = Date.now() >= new Date("2026-08-22T05:00:00+09:00").getTime();
   const selectedMonth = requestedMonth === "2026-07" || requestedMonth === "2026-08" ? requestedMonth : augustRevealed ? "2026-08" : "2026-07";
-  if (selectedMonth === "2026-08") return <main className="subpage mojiri-page mojiri-live-page"><FloatingNav/><header className="subhero mojiri-hero live-hero"><div><p>REVERSE TOURNAMENT · 2026-08</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span></div><div><Link className="mojiri-draw-link" href="/mojiri/draw">조 추첨식 열기 →</Link><MojiriMonthSelect value={selectedMonth}/></div></header><section className="page-shell mojiri-shell"><MojiriLiveClient/></section></main>;
+  const tournament = tournaments.find((item) => item.id === selectedMonth) || tournaments[0];
   const [opening, semifinal, finalRound] = tournament.rounds;
   const tournamentGames = tournament.rounds.flatMap((round) => round.series.flatMap((series) => series.games.map((game, index) => ({ ...game, round: round.name, series: series.label, gameNumber: index + 1 })))).sort((a, b) => a.startedAt.localeCompare(b.startedAt));
   return <main className="subpage mojiri-page"><FloatingNav />
-    <header className="subhero mojiri-hero"><div><p>REVERSE TOURNAMENT · {tournament.id}</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span></div><div><Link className="mojiri-draw-link" href="/mojiri/draw">조 추첨식 열기 →</Link><MojiriMonthSelect value={selectedMonth}/><div className="mojiri-crown"><i>🤡</i><span>7월의 모지리</span><strong>{tournament.mojiri}</strong></div></div></header>
+    <header className="subhero mojiri-hero"><div><p>REVERSE TOURNAMENT · {tournament.id}</p><h1>모지리 토너먼트</h1><span>끝까지 살아남은 패배자, 단 한 명.</span></div><div><Link className="mojiri-draw-link" href="/mojiri/draw">조 추첨식 열기 →</Link><MojiriMonthSelect value={selectedMonth}/><div className="mojiri-crown"><i>🤡</i><span>{Number(tournament.id.slice(5))}월의 모지리</span><strong>{tournament.mojiri}</strong></div></div></header>
     <section className="page-shell mojiri-shell">
       <div className="reverse-bracket">
         <section><header><span>ROUND 01</span><h2>{opening.name}</h2></header><div>{opening.series.map((series) => <SeriesCard series={series} key={series.id} />)}</div></section>
@@ -99,7 +97,7 @@ export default async function MojiriPage({ searchParams }: { searchParams: Promi
         <BracketConnector from={2} />
         <section><header><span>FINAL</span><h2>{finalRound.name}</h2></header><div>{finalRound.series.map((series) => <SeriesCard series={series} final key={series.id} />)}</div></section>
       </div>
-      <aside className="mojiri-result"><span>JULY 2026 · HALL OF SHAME</span><div><i>🤡</i><strong>{tournament.mojiri}</strong><p>최종전 1승 3패<br/>초대 이달의 모지리 등극</p></div></aside>
+      <aside className="mojiri-result"><span>{tournament.id} · HALL OF SHAME</span><div><i>🤡</i><strong>{tournament.mojiri}</strong><p>최종 라운드 패배<br/>{Number(tournament.id.slice(5))}월의 모지리 등극</p></div></aside>
       <section className="mojiri-records"><header><div><span>MOJIRI ARCHIVE</span><h2>모지리 기록실</h2></div><p>저장된 모든 모지리 대회 누적 · 공동 기록은 함께 수상</p></header>
         <section className="mojiri-eleven"><header><div><span>REVERSE BEST ELEVEN · 4-3-3</span><h2>모지리 베스트 & 워스트 11</h2></div><p>BEST 11: 패자 진출 경험 필수 · 선수 최소 2경기</p></header><div><MojiriLineup title="모지리 BEST 11" subtitle="패배하며 살아남은 스쿼드만 후보" players={tournament.mojiriEleven.best} best/><MojiriLineup title="모지리 WORST 11" subtitle="너무 잘해서 탈락 · 전체 참가자 대상" players={tournament.mojiriEleven.worst} best={false}/></div><aside><b>BEST 11 후보 조건</b><span>소속 유저가 최소 한 번 패자로 다음 라운드에 진출해야 하며, 선수는 2경기 이상 출전해야 합니다. 이후 포지션 평균 3경기분을 섞어 표본을 보정합니다. WORST 11은 전체 참가자를 대상으로 기존 기준을 유지합니다.</span></aside></section>
         <h3 className="football-title">기본 축구 기록 <small>7월 대회 · API 기록 보관</small></h3><div className="mojiri-football-grid">{tournament.footballRecords.map((record) => <FootballRecordCard record={record} key={record.id} />)}</div>
