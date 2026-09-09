@@ -2,7 +2,7 @@
 
 ## Start every task here
 
-- Read `docs/PROJECT_CONTEXT.md`, `docs/DECISIONS.md`, and `docs/BACKLOG.md` before changing behavior.
+- Read `docs/QUICKSTART.md` first, then follow its task-specific reading map. Read applicable decisions before changing behavior; do not load every document or large JSON by default.
 - Inspect `git status` and recent commits. Preserve unrelated or user-authored changes.
 - Treat this repository and its checked-in documents as the source of truth; do not rely on prior chat history being available.
 

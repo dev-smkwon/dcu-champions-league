@@ -1,0 +1,22 @@
+.mojiri-scope{display:inline-flex;gap:4px;padding:5px;background:#edf0f8;border-radius:14px;margin-bottom:8px}
+.mojiri-scope a{padding:10px 22px;border-radius:10px;font-size:16px;font-weight:700;color:#546078;text-decoration:none}
+.mojiri-scope a[aria-current=page]{background:#101d48;color:white;box-shadow:0 3px 8px #101d4826}
+.mojiri-scope a:focus-visible{outline:3px solid #759bff;outline-offset:3px}
+#records{scroll-margin-top:100px}
+.mojiri-lineup .lineup-player{min-width:0}
+.mojiri-football-record strong{overflow-wrap:anywhere}
+.mojiri-games strong small{display:block;font-size:13px;line-height:1.6}
+.mojiri-match-archive em{white-space:normal;line-height:1.5}
+.mojiri-jinxes{margin:32px 0;padding:24px;background:#f0f3fb;border:1px solid #dce3f3;border-radius:24px}
+.mojiri-jinxes header>span{font-size:13px;font-weight:700;letter-spacing:.12em;color:#526395}
+.mojiri-jinxes header h3{font-size:24px;margin:8px 0}
+.mojiri-jinxes p{font-size:15px;line-height:1.7;color:#56627a}
+.jinx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:20px}
+.jinx-grid article{padding:22px;background:white;border-radius:18px;min-width:0}
+.jinx-grid article>span{font-size:13px;color:#6551a6;background:#f1edff;padding:4px 9px;border-radius:8px}
+.jinx-grid h4{font-size:19px;margin:16px 0 8px;color:#172445}
+.jinx-grid strong{display:block;font-size:32px;color:#354e92;margin:16px 0}
+.jinx-grid strong small{font-size:16px;color:#65718b}
+.jinx-grid .jinx-evidence{font-size:14px;line-height:1.7;color:#65718b;overflow-wrap:anywhere;border-top:1px solid #e8ecf5;padding-top:12px;margin-top:12px}
+.mojiri-jinxes .jinx-note{font-size:14px;margin-bottom:0}
+@media(max-width:600px){.mojiri-records>header{align-items:flex-start;gap:16px;flex-wrap:wrap}.mojiri-lineup .lineup-player b{font-size:13px}.mojiri-jinxes{padding:18px}}

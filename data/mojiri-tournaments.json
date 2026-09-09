@@ -51,7 +51,12 @@
                   "home": "대가대다님",
                   "away": "6w91oap5jy",
                   "homeGoals": 2,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "대가대다님",
+                  "shootout": {
+                    "home": 5,
+                    "away": 4
+                  }
                 },
                 {
                   "matchId": "6a88475a3f9f3c311382b384",
@@ -59,7 +64,8 @@
                   "home": "대가대다님",
                   "away": "6w91oap5jy",
                   "homeGoals": 3,
-                  "awayGoals": 4
+                  "awayGoals": 4,
+                  "winner": "6w91oap5jy"
                 },
                 {
                   "matchId": "6a884acdf9532a0544614237",
@@ -67,7 +73,8 @@
                   "home": "대가대다님",
                   "away": "6w91oap5jy",
                   "homeGoals": 1,
-                  "awayGoals": 3
+                  "awayGoals": 3,
+                  "winner": "6w91oap5jy"
                 }
               ]
             },
@@ -92,7 +99,8 @@
                   "home": "씅민쓰",
                   "away": "그냥강혜중",
                   "homeGoals": 3,
-                  "awayGoals": 0
+                  "awayGoals": 0,
+                  "winner": "씅민쓰"
                 },
                 {
                   "matchId": "6a88509f0328fd2c6089844e",
@@ -100,7 +108,8 @@
                   "home": "씅민쓰",
                   "away": "그냥강혜중",
                   "homeGoals": 2,
-                  "awayGoals": 1
+                  "awayGoals": 1,
+                  "winner": "씅민쓰"
                 }
               ]
             },
@@ -125,7 +134,8 @@
                   "home": "6년제",
                   "away": "박수환",
                   "homeGoals": 1,
-                  "awayGoals": 6
+                  "awayGoals": 6,
+                  "winner": "박수환"
                 },
                 {
                   "matchId": "6a884fe1c25b255492ee768b",
@@ -133,7 +143,8 @@
                   "home": "6년제",
                   "away": "박수환",
                   "homeGoals": 3,
-                  "awayGoals": 4
+                  "awayGoals": 4,
+                  "winner": "박수환"
                 }
               ]
             },
@@ -179,7 +190,8 @@
                   "home": "그냥강혜중",
                   "away": "대가대다님",
                   "homeGoals": 6,
-                  "awayGoals": 4
+                  "awayGoals": 4,
+                  "winner": "그냥강혜중"
                 },
                 {
                   "matchId": "6a8855ec6b6b634469d3eb07",
@@ -187,7 +199,8 @@
                   "home": "그냥강혜중",
                   "away": "대가대다님",
                   "homeGoals": 3,
-                  "awayGoals": 0
+                  "awayGoals": 0,
+                  "winner": "그냥강혜중"
                 }
               ]
             },
@@ -212,7 +225,8 @@
                   "home": "6년제",
                   "away": "따이민",
                   "homeGoals": 4,
-                  "awayGoals": 3
+                  "awayGoals": 3,
+                  "winner": "6년제"
                 },
                 {
                   "matchId": "6a8854d961ada8780447d59d",
@@ -220,7 +234,8 @@
                   "home": "6년제",
                   "away": "따이민",
                   "homeGoals": 1,
-                  "awayGoals": 5
+                  "awayGoals": 5,
+                  "winner": "따이민"
                 },
                 {
                   "matchId": "6a88576d9318bd3f4186cb85",
@@ -228,7 +243,8 @@
                   "home": "6년제",
                   "away": "따이민",
                   "homeGoals": 4,
-                  "awayGoals": 3
+                  "awayGoals": 3,
+                  "winner": "6년제"
                 }
               ]
             }
@@ -259,7 +275,8 @@
                   "home": "대가대다님",
                   "away": "따이민",
                   "homeGoals": 4,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "대가대다님"
                 },
                 {
                   "matchId": "6a885f1f3b95614cf4a05476",
@@ -267,7 +284,8 @@
                   "home": "대가대다님",
                   "away": "따이민",
                   "homeGoals": 4,
-                  "awayGoals": 3
+                  "awayGoals": 3,
+                  "winner": "대가대다님"
                 },
                 {
                   "matchId": "6a8861d06acf60495c4cf840",
@@ -275,7 +293,8 @@
                   "home": "대가대다님",
                   "away": "따이민",
                   "homeGoals": 5,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "대가대다님"
                 }
               ]
             }
@@ -536,8 +555,237 @@
           }
         ]
       },
-      "footballRecords": [],
-      "negativeFootballRecords": [],
+      "footballRecords": [
+        {
+          "id": "goals",
+          "title": "득점왕",
+          "icon": "⚽",
+          "owner": "대가대다님",
+          "player": "호나우두 (대가대다님 · +8)",
+          "spId": 845037576,
+          "value": 8,
+          "unit": "골",
+          "proxy": false
+        },
+        {
+          "id": "assists",
+          "title": "도움왕",
+          "icon": "🎁",
+          "owner": "대가대다님",
+          "player": "로타어 마테우스 (대가대다님 · +11) · 파비안 셰어 (박수환 · +10)",
+          "spId": 101191189,
+          "value": 5,
+          "unit": "도움",
+          "proxy": false
+        },
+        {
+          "id": "conceded",
+          "title": "실점왕",
+          "icon": "🥅",
+          "owner": "대가대다님",
+          "player": "대가대다님",
+          "value": 25,
+          "unit": "실점",
+          "proxy": false
+        },
+        {
+          "id": "rating",
+          "title": "평점왕",
+          "icon": "⭐",
+          "owner": "박수환",
+          "player": "파비안 셰어 (박수환 · +10)",
+          "spId": 867210047,
+          "value": 9.2,
+          "unit": "평점",
+          "proxy": false
+        },
+        {
+          "id": "tackles",
+          "title": "태클왕",
+          "icon": "🛡️",
+          "owner": "6w91oap5jy",
+          "player": "미키 반더벤 (6w91oap5jy · +8) · 마리오 르미나 (그냥강혜중 · +8)",
+          "spId": 863264453,
+          "value": 9,
+          "unit": "회",
+          "proxy": false
+        }
+      ],
+      "negativeFootballRecords": [
+        {
+          "id": "spray",
+          "title": "난사왕",
+          "icon": "🔫",
+          "owner": "대가대다님",
+          "player": "마이콘 (대가대다님 · +9)",
+          "spId": 845135455,
+          "value": 18.18,
+          "unit": "% 골 전환율",
+          "proxy": false
+        },
+        {
+          "id": "weak-shot",
+          "title": "소녀슛 장인",
+          "icon": "🫧",
+          "owner": "대가대다님",
+          "player": "마이콘 (대가대다님 · +9)",
+          "spId": 845135455,
+          "value": 72.73,
+          "unit": "% 유효슛",
+          "proxy": false
+        },
+        {
+          "id": "pass-donor",
+          "title": "패스 기부천사",
+          "icon": "🎁",
+          "owner": "박수환",
+          "player": "앤서니 고든 (박수환 · +9)",
+          "spId": 867242964,
+          "value": 4,
+          "unit": "실패/경기",
+          "proxy": false
+        },
+        {
+          "id": "turnover",
+          "title": "볼 소유권 반납왕",
+          "icon": "🫴",
+          "owner": "씅민쓰",
+          "player": "마커스 래시포드 (씅민쓰 · +8)",
+          "spId": 856231677,
+          "value": 43.75,
+          "unit": "% 드리블 성공",
+          "proxy": false
+        },
+        {
+          "id": "miss-tackle",
+          "title": "태클 헛발왕",
+          "icon": "🦶",
+          "owner": "대가대다님",
+          "player": "로타어 마테우스 (대가대다님 · +11) · 비티냐 (그냥강혜중 · +8)",
+          "spId": 101191189,
+          "value": 22.22,
+          "unit": "% 태클 성공",
+          "proxy": false
+        },
+        {
+          "id": "air",
+          "title": "허공의 지배자",
+          "icon": "🛫",
+          "owner": "대가대다님",
+          "player": "덴젤 둠프리스 (대가대다님 · +10) · 밀란 슈크리니아르 (대가대다님 · +10) · 윌리안 파초 (따이민 · +8)",
+          "spId": 863233096,
+          "value": 0,
+          "unit": "% 공중볼 성공",
+          "proxy": false
+        },
+        {
+          "id": "low-rating",
+          "title": "평점 바닥공사",
+          "icon": "🕳️",
+          "owner": "따이민",
+          "player": "마르키뉴스 (따이민 · +8)",
+          "spId": 856207865,
+          "value": 4.78,
+          "unit": "평점",
+          "proxy": false
+        },
+        {
+          "id": "striker",
+          "title": "공격수 맞아요?",
+          "icon": "❓",
+          "owner": "6w91oap5jy",
+          "player": "피터 크라우치 (6w91oap5jy · +8)",
+          "spId": 861051257,
+          "value": 0.33,
+          "unit": "골/경기",
+          "proxy": false
+        },
+        {
+          "id": "island",
+          "title": "도움 없는 섬",
+          "icon": "🏝️",
+          "owner": "6w91oap5jy",
+          "player": "피터 크라우치 (6w91oap5jy · +8)",
+          "spId": 861051257,
+          "value": 0.67,
+          "unit": "G+A/경기",
+          "proxy": false
+        },
+        {
+          "id": "yellow",
+          "title": "옐로카펫",
+          "icon": "🟨",
+          "owner": "대가대다님",
+          "player": "밀란 슈크리니아르 (대가대다님 · +10) · 후벵 네베스 (그냥강혜중 · +8)",
+          "spId": 848232363,
+          "value": 1,
+          "unit": "장",
+          "proxy": false
+        },
+        {
+          "id": "red",
+          "title": "퇴근 본능",
+          "icon": "🟥",
+          "owner": "-",
+          "player": "기록 없음",
+          "value": 0,
+          "unit": "장",
+          "proxy": false
+        },
+        {
+          "id": "foul",
+          "title": "반칙 머신",
+          "icon": "🚨",
+          "owner": "그냥강혜중",
+          "player": "그냥강혜중",
+          "value": 2.5,
+          "unit": "회/경기",
+          "proxy": false
+        },
+        {
+          "id": "offside",
+          "title": "옵사이드 산책",
+          "icon": "🚶",
+          "owner": "6w91oap5jy",
+          "player": "6w91oap5jy",
+          "value": 0.67,
+          "unit": "회/경기",
+          "proxy": false
+        },
+        {
+          "id": "gk-ga",
+          "title": "버스 놓친 골키퍼",
+          "icon": "🚌",
+          "owner": "6년제",
+          "player": "다비드 라야 (6년제 · +8)",
+          "spId": 856220901,
+          "value": 4.2,
+          "unit": "팀 실점/출전",
+          "proxy": true
+        },
+        {
+          "id": "butter",
+          "title": "손에 버터",
+          "icon": "🧈",
+          "owner": "그냥강혜중",
+          "player": "에미 마르티네스 (그냥강혜중 · +8)",
+          "spId": 863202811,
+          "value": 5.78,
+          "unit": "평점",
+          "proxy": false
+        },
+        {
+          "id": "spectator",
+          "title": "수비 구경꾼",
+          "icon": "👀",
+          "owner": "6년제",
+          "player": "위리엔 팀버 (6년제 · +8) · 루크 쇼 (씅민쓰 · +9)",
+          "spId": 851251805,
+          "value": 0,
+          "unit": "태클/경기",
+          "proxy": false
+        }
+      ],
       "mojiri": "따이민"
     },
     {
@@ -590,7 +838,8 @@
                   "home": "그냥강혜중",
                   "away": "6년제",
                   "homeGoals": 1,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "6년제"
                 },
                 {
                   "matchId": "6a64c7cf1a7f631381baaf60",
@@ -598,7 +847,8 @@
                   "home": "그냥강혜중",
                   "away": "6년제",
                   "homeGoals": 1,
-                  "awayGoals": 5
+                  "awayGoals": 5,
+                  "winner": "6년제"
                 }
               ]
             },
@@ -623,7 +873,8 @@
                   "home": "씅민쓰",
                   "away": "6w91oap5jy",
                   "homeGoals": 5,
-                  "awayGoals": 4
+                  "awayGoals": 4,
+                  "winner": "씅민쓰"
                 },
                 {
                   "matchId": "6a64cc4d58db0470e92842d8",
@@ -631,7 +882,8 @@
                   "home": "씅민쓰",
                   "away": "6w91oap5jy",
                   "homeGoals": 4,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "씅민쓰"
                 }
               ]
             },
@@ -656,7 +908,8 @@
                   "home": "박수환",
                   "away": "따이민",
                   "homeGoals": 3,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "박수환"
                 },
                 {
                   "matchId": "6a64c7d571e9ca755f29aac2",
@@ -664,7 +917,8 @@
                   "home": "박수환",
                   "away": "따이민",
                   "homeGoals": 5,
-                  "awayGoals": 1
+                  "awayGoals": 1,
+                  "winner": "박수환"
                 }
               ]
             },
@@ -710,7 +964,8 @@
                   "home": "그냥강혜중",
                   "away": "6w91oap5jy",
                   "homeGoals": 3,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "그냥강혜중"
                 },
                 {
                   "matchId": "6a64d29959428dbc6118bee0",
@@ -718,7 +973,8 @@
                   "home": "그냥강혜중",
                   "away": "6w91oap5jy",
                   "homeGoals": 3,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "그냥강혜중"
                 }
               ]
             },
@@ -743,7 +999,8 @@
                   "home": "대가대다님",
                   "away": "따이민",
                   "homeGoals": 0,
-                  "awayGoals": 2
+                  "awayGoals": 2,
+                  "winner": "따이민"
                 },
                 {
                   "matchId": "6a64cf1e662a147b762386c9",
@@ -751,7 +1008,8 @@
                   "home": "대가대다님",
                   "away": "따이민",
                   "homeGoals": 0,
-                  "awayGoals": 4
+                  "awayGoals": 4,
+                  "winner": "따이민"
                 }
               ]
             }
@@ -782,7 +1040,8 @@
                   "home": "대가대다님",
                   "away": "6w91oap5jy",
                   "homeGoals": 1,
-                  "awayGoals": 4
+                  "awayGoals": 4,
+                  "winner": "6w91oap5jy"
                 },
                 {
                   "matchId": "6a64d79e14e652c3c8400a58",
@@ -790,7 +1049,8 @@
                   "home": "대가대다님",
                   "away": "6w91oap5jy",
                   "homeGoals": 3,
-                  "awayGoals": 1
+                  "awayGoals": 1,
+                  "winner": "대가대다님"
                 },
                 {
                   "matchId": "6a64da2a8e56026e4b52a619",
@@ -799,7 +1059,8 @@
                   "away": "6w91oap5jy",
                   "homeGoals": 0,
                   "awayGoals": 3,
-                  "note": "네트워크 끊김에 따른 몰수패 · 정식 경기 인정"
+                  "note": "네트워크 끊김에 따른 몰수패 · 정식 경기 인정",
+                  "winner": "6w91oap5jy"
                 },
                 {
                   "matchId": "6a64de8926676e3f381e3a0c",
@@ -807,7 +1068,8 @@
                   "home": "대가대다님",
                   "away": "6w91oap5jy",
                   "homeGoals": 3,
-                  "awayGoals": 4
+                  "awayGoals": 4,
+                  "winner": "6w91oap5jy"
                 }
               ]
             }

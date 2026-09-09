@@ -23,6 +23,7 @@ import "./mojiri-draw.css";
 import "./mojiri-draw-overrides.css";
 import "./mojiri-live.css";
 import "./mojiri-month.css";
+import "./mojiri-records.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
