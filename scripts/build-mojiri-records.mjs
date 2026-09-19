@@ -81,12 +81,14 @@ function build(tournaments, historical) {
     const evidence = enriched.find(q => q.owner===p.owner && q.spId===p.spId && q.grade===p.grade);
     return { ...evidence, ...p, historicalSelection: true };
   });
-  return { matchCount:games.length, mojiriEleven: historical ? {best:historicalPlayers('best'),worst:historicalPlayers('worst')} : {best:select(true),worst:select(false)},footballRecords,negativeFootballRecords };
+  const hasHistoricalSelection = historical?.best?.length === 11 && historical?.worst?.length === 11;
+  return { matchCount:games.length, mojiriEleven: hasHistoricalSelection ? {best:historicalPlayers('best'),worst:historicalPlayers('worst')} : {best:select(true),worst:select(false)},footballRecords,negativeFootballRecords };
 }
 const records = { version:1, months:Object.fromEntries(data.tournaments.filter(t=>t.status==='completed').map(t=>[t.id,build([t],t.mojiriEleven)])), total:build(data.tournaments.filter(t=>t.status==='completed')) };
 for (const t of data.tournaments) {
   // Keep historical selections; only enrich their evidence. August's missing awards are filled.
   const r=records.months[t.id];
+  if (!t.mojiriEleven.best.length || !t.mojiriEleven.worst.length) t.mojiriEleven = r.mojiriEleven;
   if (!t.footballRecords.length) t.footballRecords=r.footballRecords;
   if (!t.negativeFootballRecords.length) t.negativeFootballRecords=r.negativeFootballRecords;
 }
