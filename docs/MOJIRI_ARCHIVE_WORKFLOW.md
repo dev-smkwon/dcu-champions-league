@@ -1,11 +1,11 @@
-# Mojiri archive workflow (2026-09-09)
+# Mojiri archive workflow (2026-10-12)
 
 ## Display and scope
 
 - `/mojiri` lists `status: completed` tournaments from `data/mojiri-tournaments.json`, newest ID (`YYYY-MM`) first. No calendar/date hardcoding or scheduled agent is needed for published snapshots.
 - Unknown/missing `month` falls back to latest completed tournament. Future fixtures must not be marked completed.
 - Record room `scope=month` follows the page month; `scope=total` includes all completed tournaments. Bracket stays on selected month. Timeline follows record scope.
-- September 18, 2026 is tentative only. Do not activate September or invent a kickoff/reveal time.
+- Completed archives currently cover July through October 2026. October contains 17 matches from the signed draw and the October 3 tournament session.
 
 ## Adding a completed tournament
 

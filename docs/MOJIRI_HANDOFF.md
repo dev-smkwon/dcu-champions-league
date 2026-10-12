@@ -1,10 +1,12 @@
 # Mojiri handoff
 
-## Implementation update (2026-09-09, local only)
+## Implementation update (2026-10-12, local only)
 
-Read `MOJIRI_ARCHIVE_WORKFLOW.md` first: it supersedes the source-inspection observations below. Completed months now auto-populate; monthly/total record scope is implemented; all 29 raw details are archived; August now has 5 basic / 16 reproducible negative awards; shootout scores and decisive winners are saved. Historical monthly XI membership is preserved with expandable reference evidence; total XI is recomputed. The current record room uses 16 consistently defined negative categories in both scopes (the original 22 July snapshot awards remain saved). No September schedule was activated and no deployment was requested.
+October is archived from signed draw `63a9e4cd-8e4b-4abf-930d-1a26d0df0436` and 17 consecutive matches played on October 3 from 17:26 to 19:32 KST. 그냥강혜중 is the October Mojiri after losing the five-game final 2–3 to 대가대다님. Complete raw match details, monthly/total records, BEST/WORST XI, awards, and jinx denominators have been regenerated. The archive now contains 60 matches across July–October.
 
-Source inspection: 2026-09-09, HEAD `5982e7e`. This document records current behavior and proposals separately. No September implementation or schedule has been activated by this document.
+Read `MOJIRI_ARCHIVE_WORKFLOW.md` first. Completed months auto-populate; monthly/total record scope is implemented; all 60 raw details are archived; each monthly record scope has 5 basic / 16 reproducible negative awards. Shootout scores and decisive winners are saved. Historical monthly XI membership is preserved, while total XI is recomputed.
+
+Source inspection refreshed: 2026-10-12. July through October are completed archives.
 
 ## Confirmed rules
 
@@ -20,22 +22,15 @@ Source inspection: 2026-09-09, HEAD `5982e7e`. This document records current beh
 | Month | Mojiri | Games | BEST/WORST | Basic / negative player awards |
 | --- | --- | --- | --- | --- |
 | 2026-07 | 대가대다님 | 14 | 11 / 11 | 5 / 22 |
-| 2026-08 | 따이민 | 15 | 11 / 11 | 0 / 0 (unfinished, not zero performance) |
+| 2026-08 | 따이민 | 15 | 11 / 11 | 5 / 16 |
+| 2026-09 | 대가대다님 | 14 | 11 / 11 | 5 / 16 |
+| 2026-10 | 그냥강혜중 | 17 | 11 / 11 | 5 / 16 |
 
 August final: 대가대다님 3–0 따이민. User confirmed the inferred result and authorized archival. JSON stores bracket, scores, UTC timestamps and selected lineup snapshots; it does NOT store complete match-detail responses. Detail links still call NEXON and can expire.
 
-## September: supplied draw, tentative date
+## October archive
 
-User supplied the following draw on 2026-09-09. Tentative event date: **2026-09-18 (Friday)**. Start/end/reveal time not confirmed. Do not reuse August times or activate an automatic reveal without an agreed schedule.
-
-| Slot pair | Users |
-| --- | --- |
-| A1 / A2 | 따이민 / 그냥강혜중 |
-| B1 / B2 | 박수환 / 씅민쓰 |
-| C1 / C2 | 대가대다님 / 6w91oap5jy |
-| D1 | 6년제 (automatic forfeit) |
-
-Draw ID: `0b75a711-422b-4083-9a00-6bef4196ce64`; payload drawnAt: `2026-09-08T12:41:18.176Z`; version 1. These are user-supplied payload facts; this handoff does not assert a fresh server signature verification. September is not yet in tournament JSON or the month selector.
+Signed draw slots: A 대가대다님 / 6년제, B 따이민 / 씅민쓰, C 그냥강혜중 / 6w91oap5jy, D 박수환. 대가대다님 and 그냥강혜중 advanced through the reverse bracket; 대가대다님 won the final 3–2, making 그냥강혜중 the October Mojiri. The first C game was decided after a 4–4 normal-time score; its explicit API winner and shootout score are retained.
 
 ## Source map
 
@@ -55,15 +50,11 @@ Aggregate by owner + spId + grade. Exclude position 28 and rating <= 0; require 
 
 BEST candidates: owners appearing in advancingLoser (includes D bye). Rank ascending `(ratingTotal + groupMeanRating * 3) / (appearances + 3)`, where group mean is the unweighted mean of eligible cards' average ratings. WORST: all eligible owners, descending raw mean rating. Tie: more appearances. Snapshot displays raw rating, not adjusted score. No goal/assist weighting in this script.
 
-## Prioritized improvements — not implemented
+## Remaining improvements
 
-1. Generate month options/default from saved tournaments; remove August date hardcoding. Optional upcoming-cup card can show tentative September date without replacing latest result.
-2. Preserve shootout scores and explicit match winner in archive. Current saved Game and novelty-stat code compare normal goals only; August A game 1 is 2:2 but has a decisive series result. Backfill from evidence, never guess a tied game's winner.
-3. Complete August basic/negative awards; hide or explain empty sections. Basic-record subtitle is still hardcoded to July.
-4. Separate selected-month statistics from career statistics with a clear scope control. Currently bracket/lineups are monthly, user novelty leaders aggregate all saved tournaments.
-5. Make lineup reasoning inspectable (raw/adjusted rating, appearances, eligibility), then consider specific defensive roles. Changing formula needs explicit decision and reproducible snapshots.
-6. Preserve available full match details for durable detail pages; match IDs alone cannot provide them after expiration.
-7. Before September inference, parameterize event config and add meaningful validation: UTC/KST boundary, early kickoff, shootout/forfeit result, loser progression, duplicate IDs, incomplete and ambiguous series. August originally returned zero games because UTC was compared to KST; do not repeat a build-only validation.
+1. Parameterize the per-month archive scripts into one validated command.
+2. Make lineup reasoning inspectable (raw/adjusted rating, appearances, eligibility), then consider specific defensive roles. Changing formula needs explicit decision and reproducible snapshots.
+3. Add archive fallback to the match-detail route so saved matches remain viewable after upstream expiration.
 
 ## Finish criteria for a monthly archive
 

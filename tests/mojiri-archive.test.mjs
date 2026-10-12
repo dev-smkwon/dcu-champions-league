@@ -5,7 +5,7 @@ const read = async p => JSON.parse(await readFile(new URL('../data/'+p,import.me
 const data=await read('mojiri-tournaments.json');
 const records=await read('mojiri-records.json');
 const raw=await read('mojiri-match-details.json');
-test('29 archived games, unique IDs, correct participants and decisive series scores',()=>{
+test('60 archived games, unique IDs, correct participants and decisive series scores',()=>{
  const ids=[];
  for(const t of data.tournaments) for(const r of t.rounds) for(const s of r.series){
   const wins=Object.fromEntries(s.participants.map(p=>[p,0]));
@@ -18,7 +18,7 @@ test('29 archived games, unique IDs, correct participants and decisive series sc
   }
   if(s.games.length) assert.deepEqual(wins,s.seriesScore,`${t.id}/${s.id}`);
  }
- assert.equal(ids.length,29);assert.equal(new Set(ids).size,29);assert.equal(records.total.matchCount,29);
+ assert.equal(ids.length,60);assert.equal(new Set(ids).size,60);assert.equal(records.total.matchCount,60);
 });
 test('monthly scope counts, historic XI preserved and total XI evidence',()=>{
  for(const t of data.tournaments){const r=records.months[t.id];assert.equal(r.matchCount,t.rounds.flatMap(x=>x.series.flatMap(s=>s.games)).length);
