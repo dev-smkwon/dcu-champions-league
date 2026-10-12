@@ -4,6 +4,8 @@
 
 October is archived from signed draw `63a9e4cd-8e4b-4abf-930d-1a26d0df0436` and 17 consecutive matches played on October 3 from 17:26 to 19:32 KST. 그냥강혜중 is the October Mojiri after losing the five-game final 2–3 to 대가대다님. Complete raw match details, monthly/total records, BEST/WORST XI, awards, and jinx denominators have been regenerated. The archive now contains 60 matches across July–October.
 
+Total scope now includes seven derived jinx/event cards and a sortable career table. Rates exclude bye series where appropriate and show their denominator; the career table covers finals, Mojiri rate, final survival, series escape, sweep losses, deciding series, biggest defeat, nemesis, and streaks. These are render-time bracket calculations rather than additional stored API facts.
+
 Read `MOJIRI_ARCHIVE_WORKFLOW.md` first. Completed months auto-populate; monthly/total record scope is implemented; all 60 raw details are archived; each monthly record scope has 5 basic / 16 reproducible negative awards. Shootout scores and decisive winners are saved. Historical monthly XI membership is preserved, while total XI is recomputed.
 
 Source inspection refreshed: 2026-10-12. July through October are completed archives.

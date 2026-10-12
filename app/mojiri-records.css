@@ -20,3 +20,22 @@
 .jinx-grid .jinx-evidence{font-size:14px;line-height:1.7;color:#65718b;overflow-wrap:anywhere;border-top:1px solid #e8ecf5;padding-top:12px;margin-top:12px}
 .mojiri-jinxes .jinx-note{font-size:14px;margin-bottom:0}
 @media(max-width:600px){.mojiri-records>header{align-items:flex-start;gap:16px;flex-wrap:wrap}.mojiri-lineup .lineup-player b{font-size:13px}.mojiri-jinxes{padding:18px}}
+.jinx-grid article.is-event{border:1px solid #e7cc83;background:linear-gradient(145deg,#fffdf4,#fff7dc)}
+.jinx-grid article.is-event>span{color:#8a6413;background:#f7e8b7}
+.mojiri-career{margin:32px 0;padding:24px;border:1px solid #e1d8e5;border-radius:24px;background:#fff}
+.mojiri-career>header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.mojiri-career>header span{color:#9d3550;font-size:13px;font-weight:800;letter-spacing:.12em}
+.mojiri-career>header h3{margin:6px 0 0;color:#241c29;font-size:24px}
+.mojiri-career>header p,.mojiri-career>footer{margin:0;color:#847987;font-size:13px}
+.career-table-wrap{overflow-x:auto;border:1px solid #ebe5ed;border-radius:16px}
+.mojiri-career table{width:100%;min-width:1180px;border-collapse:collapse;background:#fff}
+.mojiri-career th,.mojiri-career td{padding:13px 11px;border-bottom:1px solid #eee9f0;font-size:13px;text-align:center;white-space:nowrap}
+.mojiri-career thead th{position:sticky;top:0;background:#f7f3f8;color:#655c69;font-weight:800}
+.mojiri-career thead button{display:inline-flex;align-items:center;gap:5px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+.mojiri-career thead button i{color:#aa3d56;font-size:12px;font-style:normal}
+.mojiri-career tbody th{position:sticky;left:0;z-index:1;background:#fff;color:#2b2230;font-size:14px;text-align:left}
+.mojiri-career tbody tr:hover td,.mojiri-career tbody tr:hover th{background:#fff8fa}
+.mojiri-career td.career-bad{color:#b6324c;font-size:17px;font-weight:900}
+.mojiri-career td small,.mojiri-career td span{display:block;color:#978c9b;font-size:10px;line-height:1.5}
+.mojiri-career>footer{padding-top:13px;line-height:1.6}
+@media(max-width:700px){.mojiri-career{padding:17px}.mojiri-career>header{align-items:flex-start;gap:7px;flex-direction:column}.mojiri-career>header p,.mojiri-career>footer{font-size:11px}}

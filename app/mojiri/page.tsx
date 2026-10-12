@@ -3,6 +3,8 @@ import { FloatingNav } from "../components/FloatingNav";
 import tournamentData from "../../data/mojiri-tournaments.json";
 import recordsData from "../../data/mojiri-records.json";
 import { MojiriJinxes } from "./jinxes";
+import { buildMojiriCareers } from "./jinx-data";
+import { MojiriCareerTable } from "./career-table";
 import { MojiriMonthSelect } from "./month-select";
 
 type Game = { matchId: string; startedAt: string; home: string; away: string; homeGoals: number; awayGoals: number; note?: string; winner?: string | null; shootout?: { home: number; away: number } };
@@ -88,6 +90,7 @@ export default async function MojiriPage({ searchParams }: { searchParams: Promi
   const records = total ? recordsData.total : recordsData.months[selectedMonth as keyof typeof recordsData.months];
   const recordTournament = records || tournament;
   const mojiriStats = buildMojiriStats(scopedTournaments);
+  const careerRows = total ? buildMojiriCareers(available) : [];
 const leaders = (value: (stat: MojiriStat) => number, direction: "max" | "min" = "max") => {
   const ranked = mojiriStats.map((stat) => ({ stat, value: value(stat) }));
   const best = direction === "max" ? Math.max(...ranked.map((item) => item.value)) : Math.min(...ranked.map((item) => item.value));
@@ -109,7 +112,7 @@ const leaders = (value: (stat: MojiriStat) => number, direction: "max" | "min" =
       <aside className="mojiri-result"><span>{tournament.id} · HALL OF SHAME</span><div><i>🤡</i><strong>{tournament.mojiri}</strong><p>최종 라운드 패배<br/>{Number(tournament.id.slice(5))}월의 모지리 등극</p></div></aside>
       <section className="mojiri-records" id="records"><header><div><span>MOJIRI ARCHIVE</span><h2>모지리 기록실</h2></div><div><nav className="mojiri-scope" aria-label="기록 집계 범위"><Link aria-current={!total ? "page" : undefined} href={`/mojiri?month=${selectedMonth}&scope=month#records`}>월별</Link><Link aria-current={total ? "page" : undefined} href={`/mojiri?month=${selectedMonth}&scope=total#records`}>토탈</Link></nav><p>{scopeLabel} · 공동 기록은 함께 수상</p></div></header>
         <section className="mojiri-eleven"><header><div><span>REVERSE BEST ELEVEN · 4-3-3</span><h2>모지리 베스트 & 워스트 11</h2></div><p>BEST 11: 패자 진출 경험 필수 · 선수 최소 2경기</p></header><div><MojiriLineup title="모지리 BEST 11" subtitle="패배하며 살아남은 스쿼드만 후보" players={recordTournament.mojiriEleven.best} best/><MojiriLineup title="모지리 WORST 11" subtitle="너무 잘해서 탈락 · 전체 참가자 대상" players={recordTournament.mojiriEleven.worst} best={false}/></div><aside><b>BEST 11 후보 조건</b><span>소속 유저가 최소 한 번 패자로 다음 라운드에 진출해야 하며, 선수는 2경기 이상 출전해야 합니다. 이후 포지션 평균 3경기분을 섞어 표본을 보정합니다. WORST 11은 전체 참가자를 대상으로 기존 기준을 유지합니다.</span></aside></section>
-        {total && <MojiriJinxes tournaments={available}/>}
+        {total && <><MojiriJinxes tournaments={available}/><MojiriCareerTable rows={careerRows}/></>}
         <h3 className="football-title">기본 축구 기록 <small>{scopeLabel} · 보관된 API 기록</small></h3><div className="mojiri-football-grid">{recordTournament.footballRecords.map((record) => <FootballRecordCard record={record} key={record.id} />)}</div>
         <h3>그래도 잘한 것들</h3><div className="mojiri-record-grid positive-grid">
           <RecordCard icon="🏃" title="탈출왕" copy="가장 적은 경기만 치르고 빠르게 탈출" result={leaders((stat) => stat.played, "min")} unit="경기" />
